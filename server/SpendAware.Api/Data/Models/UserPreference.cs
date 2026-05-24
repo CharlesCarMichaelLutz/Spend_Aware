@@ -1,6 +1,6 @@
 namespace SpendAware.Api.Data.Models;
 
-public class UserPreferences
+public class UserPreference
 {
     public int UserId  { get; set; }
     public string Language { get; set; }
