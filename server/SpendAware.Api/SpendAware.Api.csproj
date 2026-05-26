@@ -18,10 +18,6 @@
 
   <ItemGroup>
     <Folder Include="Database\" />
-    <Folder Include="Data\Requests\" />
-    <Folder Include="Data\Responses\" />
-    <Folder Include="Repositories\" />
-    <Folder Include="Services\" />
   </ItemGroup>
 
 </Project>
