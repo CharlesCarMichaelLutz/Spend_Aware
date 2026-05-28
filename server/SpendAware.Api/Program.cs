@@ -32,7 +32,12 @@ services.AddAuthentication(x =>
     };
 });
 
-services.AddOpenApi();
+services.AddAuthorization();
+
+services.AddOpenApi(options =>
+{
+    options.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
+});
 services.AddScoped<IExpenseService, ExpenseService>();
 services.AddScoped<IUserService, UserService>();
 services.AddSingleton<IPasswordHasher, PasswordHasher>();
@@ -44,12 +49,15 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
-    app.MapScalarApiReference();
+    app.MapScalarApiReference(options =>
+    {
+        options.AddPreferredSecuritySchemes("Bearer");
+    });
 }
 
 app.UseHttpsRedirection();
 app.UseAuthentication();
-//app.UseAuthorization();
+app.UseAuthorization();
 
 app.MapPost("register", (IUserService service, [FromBody] CreateUserRequest user) =>
 { 
@@ -78,7 +86,7 @@ app.MapPost("login", (IUserService service, [FromBody] CreateUserRequest user) =
     }
 });
 
-app.MapGet("users", (IUserService service) =>
+app.MapGet("users",  (IUserService service) =>
 {
     var response = service.GetAllUsers();
     return Results.Ok(response);
@@ -96,7 +104,7 @@ app.MapPatch("expenses", (IExpenseService service, [FromBody] Expense expense) =
     return Results.Ok(response);
 });
 
-app.MapGet("expenses",  (IExpenseService service) =>
+app.MapGet("expenses", (IExpenseService service) =>
 {
     var response =  service.GetAll();
     return Results.Ok(response);
