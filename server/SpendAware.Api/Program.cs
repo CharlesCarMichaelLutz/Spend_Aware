@@ -6,6 +6,7 @@ using Scalar.AspNetCore;
 using SpendAware.Api.Data.Models;
 using SpendAware.Api.Data.Requests;
 using SpendAware.Api.Infrastructure;
+using SpendAware.Api.Repositories;
 using SpendAware.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -36,6 +37,7 @@ services.AddScoped<IExpenseService, ExpenseService>();
 services.AddScoped<IUserService, UserService>();
 services.AddSingleton<IPasswordHasher, PasswordHasher>();
 services.AddScoped<ITokenService, TokenService>();
+services.AddSingleton<IDataStore, DataStore>();
 
 var app = builder.Build();
 
@@ -74,6 +76,12 @@ app.MapPost("login", (IUserService service, [FromBody] CreateUserRequest user) =
     {
         return Results.BadRequest(ex.Message);
     }
+});
+
+app.MapGet("users", (IUserService service) =>
+{
+    var response = service.GetAllUsers();
+    return Results.Ok(response);
 });
 
 app.MapPost("expenses",  (IExpenseService service, [FromBody] Expense expense) =>

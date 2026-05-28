@@ -20,7 +20,7 @@ public class PasswordHasher : IPasswordHasher
     {
         byte[] salt = RandomNumberGenerator.GetBytes(SaltSize);
         byte[] hash = Rfc2898DeriveBytes.Pbkdf2(password, salt, HashIterations, Algorithm, HashSize);
-        return $"{Convert.ToHexString(hash)}--{Convert.ToHexString(salt)}";
+        return $"{Convert.ToHexString(hash)}-{Convert.ToHexString(salt)}";
     }
 
     public bool Verify(string password, string passwordHash)
