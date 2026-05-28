@@ -13,6 +13,12 @@ public interface IExpenseService
 
 public class ExpenseService : IExpenseService
 {
+    private readonly IDataStore _dataStore;
+
+    public ExpenseService(IDataStore dataStore)
+    {
+        _dataStore = dataStore;
+    }
     //create
     public Expense CreateExpense(Expense request)
     {
@@ -25,42 +31,30 @@ public class ExpenseService : IExpenseService
             Currency = request.Currency
         };
         
-        DataStore.Expenses.Add(expense);
+        _dataStore.AddExpense(expense);
 
-        var getExpense = GetExpenseById(expense.Id);
+        var getExpense = GetExpense(expense.Id);
         
         return getExpense;
     }
     //update
     public Expense UpdateExpense(Expense update)
     {
-        DataStore.Expenses = DataStore.Expenses.Select(expense =>
-        {
-            if (expense.Id == update.Id)
-            {
-                expense.Place = update.Place;
-                expense.Description = update.Description;
-                expense.Amount = update.Amount;
-            }
-
-            return expense;
-        }).ToList();
-        return update;
+        return _dataStore.UpdateExpense(update);
     }
     //delete
     public int DeleteExpense(int id)
     {
-        DataStore.Expenses = DataStore.Expenses.FindAll(expense => expense.Id != id).ToList();
-        return id;
+        return _dataStore.DeleteExpenseById(id);
     }
     //getAll
     public List<Expense> GetAll()
     {
-        return  DataStore.Expenses;
+        return _dataStore.GetExpenses();
     }
     //getById
-    private  Expense GetExpenseById(int id)
+    private  Expense GetExpense(int id)
     {
-        return DataStore.Expenses.FirstOrDefault(x => x.Id == id);
+        return _dataStore.GetExpenseById(id);
     }
 }
