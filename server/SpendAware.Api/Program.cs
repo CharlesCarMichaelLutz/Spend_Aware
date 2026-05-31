@@ -117,15 +117,9 @@ app.MapDelete("expenses", (IExpenseService service, [FromBody] int id) =>
     var response = service.DeleteExpense(id);
 });
 
-app.MapGet("report", (IMonthlyExpenseReportService service) =>
+app.MapGet("report", async (IMonthlyExpenseReportService service) =>
 {
-    var response = service.GetMonthlyReport();
-    return Results.Ok(response);
-});
-
-app.MapGet("email", (IMailService service) =>
-{
-    var response = service.SendEmail();
+    var response = await service.GetMonthlyReport();
     return Results.Ok(response);
 });
 

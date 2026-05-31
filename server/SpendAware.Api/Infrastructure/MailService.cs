@@ -1,73 +1,45 @@
 using MailKit.Net.Smtp;
 using MimeKit;
-using MimeKit.Text;
-using MimeKit.Utils;
+using SpendAware.Api.Data.Models;
 
 namespace SpendAware.Api.Infrastructure;
 
 public interface IMailService
 {
-    //Task<Message> SendEmail();
-    Task<MimeMessage> SendEmail();
-}
-
-public class Message
-{
-    public MimeMessage Text  { get; set; }
+    Task SendEmail(List<UserExpenseReport> reports);
 }
 
 public class MailService : IMailService
 {
-//    public async Task<Message> SendEmail()
-    public async Task<MimeMessage> SendEmail()
+    //iterate over with each user an expense list then send
+    public async Task SendEmail(List<UserExpenseReport> reports)
     {
-        var message = new MimeMessage();
-        var from = new MailboxAddress("SpendAware", "Team@SpendAware.net");
-        message.From.Add(from);
-        var to = new MailboxAddress("User1", "User1@User1.net");
-        message.To.Add(to);
-        message.Subject = "Monthly Expense Report for May";
-//          message.Body = new TextPart(TextFormat.Html)
-//          {
-//              Text = """
-//                     Hello User1,
-//
-//                     Your total monthly expenses for May 2026 was $1365.34. 
-//                     You can download a pdf of your monthly expenses below. 
-//                     Thanks for using SpendAware and always review your spending patterns to stay on track financially.
-//
-//                     Best,
-//                     SpendAware Team
-//                     """
-//          };
-        var bb = new BodyBuilder();
-        bb.TextBody = "Hello Spend Aware members in plain text!";
-        var imageEntity = bb.LinkedResources.Add("cat.jpg");
-        imageEntity.ContentId = MimeUtils.GenerateMessageId();
-        var htmlBody = $"""
-                        <p>Hey, look - here's a picture of my cat!</p>
-                        <img src="cid:{imageEntity.ContentId}" alt="the cool cat!" />
-                        """;
-        bb.HtmlBody = htmlBody;
-        
-        //bb.HtmlBody = "<p>Hello Spend Aware members <em>in HTML!</e></p>";
-        // bb.Attachments.Add("cat.jpg");
-        message.Body = bb.ToMessageBody();
+        foreach (var u in reports)
+        {
+            //dynamic variables for each user
+            string reportMonth = "May";
+            string reportYear = "2026";
+            string currencySymbol = "$";
+            
+            //email structure with MimeMessage
+            var message = new MimeMessage();
+            var from = new MailboxAddress("SpendAware", "Team@SpendAware.net");
+            message.From.Add(from);
+            var to = new MailboxAddress($"{u.UserResponse.Username}", $"{u.UserResponse.EmailAddress}");
+            message.To.Add(to);
+            message.Subject = "Monthly Expense Report for May";
+            var bb = new BodyBuilder();
+            bb.HtmlBody =
+                $"<p>Hello {u.UserResponse.Username},</p>\n  \n<p>\nThanks for using Spend Aware, your solution for personal finance! <br>Total monthly expenses for {reportMonth} {reportYear} was {currencySymbol}{u.Total}. <br>You can download a pdf of your monthly expenses attached below. <br>Review your spending patterns to stay on track financially.  \n</p>\n  \n<p>Best,  \nSpendAware Team\n</p>\n</div>";
+            //build monthly report and attach as pdf
+            bb.Attachments.Add("cat.jpg");
+            message.Body = bb.ToMessageBody();
 
-        using var smtp = new SmtpClient();
-        await smtp.ConnectAsync("localhost", 1025);
-        await smtp.SendAsync(message);
-        await smtp.DisconnectAsync(true);
-        Console.WriteLine("Mail sent!");
-        message.WriteTo("message.eml");
-        MimeMessage loadedMessage = MimeMessage.Load("message.eml");
-
-        //var msgsent = new Message
-        //{
-        //  Text = message
-        //};
-
-        //return msgsent;
-        return loadedMessage;
+            //start email relay server and send
+            using var smtp = new SmtpClient();
+            await smtp.ConnectAsync("localhost", 1025);
+            await smtp.SendAsync(message);
+            await smtp.DisconnectAsync(true);
+        }
     }
 }

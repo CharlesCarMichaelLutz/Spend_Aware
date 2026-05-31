@@ -1,30 +1,34 @@
 
 using SpendAware.Api.Data.Models;
 using SpendAware.Api.Data.Responses;
+using SpendAware.Api.Infrastructure;
 using SpendAware.Api.Repositories;
 
 namespace SpendAware.Api.Services;
 
 public interface IMonthlyExpenseReportService
 {
-    List<UserExpenseReport> GetMonthlyReport();
+    Task<List<UserExpenseReport>> GetMonthlyReport();
 }
 
 public class MonthlyExpenseReportService : IMonthlyExpenseReportService
 {
     private readonly IDataStore _dataStore;
+    private readonly IMailService _mailService;
 
-    public MonthlyExpenseReportService(IDataStore dataStore)
+    public MonthlyExpenseReportService(IDataStore dataStore, IMailService  mailService)
     {
         _dataStore = dataStore;
+        _mailService = mailService;
     }
-    
-    DateTime start = new DateTime(2026, 5, 1);
-    DateTime end = new DateTime(2026, 5, 31);
 
-    //get users and expenses
-    public List<UserExpenseReport> GetMonthlyReport()
+    //build report
+    public async Task<List<UserExpenseReport>> GetMonthlyReport()
     {
+        DateTime start = new DateTime(2026, 5, 1);
+        DateTime end = new DateTime(2026, 5, 31);
+
+        //get users and expenses
         var userList = _dataStore.GetUsersForReport();
         var reports = new List<UserExpenseReport>();
         
@@ -35,15 +39,16 @@ public class MonthlyExpenseReportService : IMonthlyExpenseReportService
             reports.Add(new UserExpenseReport
             {
                 UserResponse = user,
-                Expenses = expenses.ToList()
+                Expenses = expenses.ToList(),
+                Total = expenses.Sum(e => e.Amount)
             });
         }
+
+        await _mailService.SendEmail(reports);
 
         return reports;
     }
     
-    //build report
-        //the report will create a message with the following
     //generate pdf 
         //the pdf will be a list of all the monthly expenses
    
