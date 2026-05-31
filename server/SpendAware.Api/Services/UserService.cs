@@ -45,10 +45,12 @@ public class UserService : IUserService
             //hash the password from request
             PasswordHash = _passwordHasher.Hash(request.Password)
         };
-        //validate and confirm user email by code
         //add user to DB
         _dataStore.AddUser(user);
         // create/save/send Refresh Token as httponly cookie
+        
+        //validate and confirm user email by code
+        
         //return UserLoginResponse
         var response = new UserLoginResponse
         {

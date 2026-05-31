@@ -25,10 +25,12 @@ public class ExpenseService : IExpenseService
         var expense = new Expense()
         {
             Id = request.Id,
+            UserId = request.UserId,
             Place =  request.Place,
             Description = request.Description,
             Amount = request.Amount,
-            Currency = request.Currency
+            Currency = request.Currency,
+            CreatedAt = DateTime.UtcNow
         };
         
         _dataStore.AddExpense(expense);

@@ -43,6 +43,8 @@ services.AddScoped<IUserService, UserService>();
 services.AddSingleton<IPasswordHasher, PasswordHasher>();
 services.AddScoped<ITokenService, TokenService>();
 services.AddSingleton<IDataStore, DataStore>();
+services.AddScoped<IMonthlyExpenseReportService, MonthlyExpenseReportService>();
+services.AddScoped<IMailService, MailService>();
 
 var app = builder.Build();
 
@@ -113,6 +115,18 @@ app.MapGet("expenses", (IExpenseService service) =>
 app.MapDelete("expenses", (IExpenseService service, [FromBody] int id) =>
 {
     var response = service.DeleteExpense(id);
+});
+
+app.MapGet("report", (IMonthlyExpenseReportService service) =>
+{
+    var response = service.GetMonthlyReport();
+    return Results.Ok(response);
+});
+
+app.MapGet("email", (IMailService service) =>
+{
+    var response = service.SendEmail();
+    return Results.Ok(response);
 });
 
 app.Run();
