@@ -45,6 +45,12 @@ services.AddScoped<ITokenService, TokenService>();
 services.AddSingleton<IDataStore, DataStore>();
 services.AddScoped<IMonthlyExpenseReportService, MonthlyExpenseReportService>();
 services.AddScoped<IMailService, MailService>();
+services.AddScoped<IPdfGenerator, PdfGenerator>();
+
+// services.AddCors(options =>
+// {
+//     
+// })
 
 var app = builder.Build();
 
@@ -55,6 +61,13 @@ if (app.Environment.IsDevelopment())
     {
         options.AddPreferredSecuritySchemes("Bearer");
     });
+}
+
+using (var scope = app.Services.CreateScope())
+{
+    var pdfGenerator  = scope.ServiceProvider.GetRequiredService<IPdfGenerator>();
+    //Task.Delay(2000).Wait();
+    pdfGenerator.CreatePdf();
 }
 
 app.UseHttpsRedirection();

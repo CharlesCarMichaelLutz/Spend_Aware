@@ -1,4 +1,3 @@
-
 using SpendAware.Api.Data.Models;
 using SpendAware.Api.Data.Responses;
 using SpendAware.Api.Infrastructure;
@@ -15,11 +14,13 @@ public class MonthlyExpenseReportService : IMonthlyExpenseReportService
 {
     private readonly IDataStore _dataStore;
     private readonly IMailService _mailService;
+    private readonly IPdfGenerator _pdfGenerator;
 
-    public MonthlyExpenseReportService(IDataStore dataStore, IMailService  mailService)
+    public MonthlyExpenseReportService(IDataStore dataStore, IMailService  mailService, IPdfGenerator pdfGenerator)
     {
         _dataStore = dataStore;
         _mailService = mailService;
+        _pdfGenerator = pdfGenerator;
     }
 
     //build report
@@ -43,17 +44,14 @@ public class MonthlyExpenseReportService : IMonthlyExpenseReportService
                 Total = expenses.Sum(e => e.Amount)
             });
         }
-
+        //generate pdf 
+            //the pdf will be a list of all the monthly expenses
+        await _pdfGenerator.GeneratePdfReports(reports);
+        
+        //send email
         await _mailService.SendEmail(reports);
 
         return reports;
     }
-    
-    //generate pdf 
-        //the pdf will be a list of all the monthly expenses
-   
-    
-
-    //send email
 }
 
