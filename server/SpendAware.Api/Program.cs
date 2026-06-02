@@ -66,7 +66,6 @@ if (app.Environment.IsDevelopment())
 using (var scope = app.Services.CreateScope())
 {
     var pdfGenerator  = scope.ServiceProvider.GetRequiredService<IPdfGenerator>();
-    //Task.Delay(2000).Wait();
     pdfGenerator.CreatePdf();
 }
 

@@ -32,7 +32,15 @@ public class MailService : IMailService
             bb.HtmlBody =
                 $"<p>Hello {u.UserResponse.Username},</p>\n  \n<p>\nThanks for using Spend Aware, your solution for personal finance! <br>Total monthly expenses for {reportMonth} {reportYear} was {currencySymbol}{u.Total}. <br>You can download a pdf of your monthly expenses attached below. <br>Review your spending patterns to stay on track financially.  \n</p>\n  \n<p>Best,  \nSpendAware Team\n</p>\n</div>";
             //build monthly report and attach as pdf
-            bb.Attachments.Add("cat.jpg");
+            // bb.Attachments.Add("cat.jpg");
+            if (u.PdfFile != null && u.PdfFile.Length > 0)
+            {
+                bb.Attachments.Add(
+                    $"Report_{u.UserResponse.Id}.pdf",
+                    u.PdfFile,
+                    new ContentType("application", "pdf")
+                );
+            }
             message.Body = bb.ToMessageBody();
 
             //start email relay server and send

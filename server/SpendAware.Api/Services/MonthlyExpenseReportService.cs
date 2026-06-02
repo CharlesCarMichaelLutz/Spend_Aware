@@ -1,5 +1,4 @@
 using SpendAware.Api.Data.Models;
-using SpendAware.Api.Data.Responses;
 using SpendAware.Api.Infrastructure;
 using SpendAware.Api.Repositories;
 
@@ -41,12 +40,11 @@ public class MonthlyExpenseReportService : IMonthlyExpenseReportService
             {
                 UserResponse = user,
                 Expenses = expenses.ToList(),
-                Total = expenses.Sum(e => e.Amount)
+                Total = expenses.Sum(e => e.Amount),
             });
         }
         //generate pdf 
-            //the pdf will be a list of all the monthly expenses
-        await _pdfGenerator.GeneratePdfReports(reports);
+        _pdfGenerator.GeneratePdfReports(reports);
         
         //send email
         await _mailService.SendEmail(reports);
