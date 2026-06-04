@@ -8,6 +8,7 @@ public interface IExpenseReportService
 {
     Task<List<UserExpenseReport>> GetMonthlyReport();
     MemoryStream GetAllExpensesByYear(int id);
+    MemoryStream GetAllExpensesByMonth(int id);
 }
 
 public class ExpenseReportService : IExpenseReportService
@@ -23,13 +24,11 @@ public class ExpenseReportService : IExpenseReportService
         _pdfGenerator = pdfGenerator;
     }
 
-    //build report
     public async Task<List<UserExpenseReport>> GetMonthlyReport()
     {
         DateTime start = new DateTime(2026, 5, 1);
         DateTime end = new DateTime(2026, 5, 31);
 
-        //get users and expenses
         var userList = _dataStore.GetUsersForReport();
         var reports = new List<UserExpenseReport>();
         
@@ -44,10 +43,8 @@ public class ExpenseReportService : IExpenseReportService
                 Total = expenses.Sum(e => e.Amount),
             });
         }
-        //generate pdf 
         _pdfGenerator.CreateMonthlyAutomatedPdfReports(reports);
         
-        //send email
         await _mailService.SendEmail(reports);
 
         return reports;
@@ -63,7 +60,14 @@ public class ExpenseReportService : IExpenseReportService
         return _pdfGenerator.CreatePdfByYear(expenses);
     }
     
-    //GetAllExpensesByMonth
-    
+    public MemoryStream GetAllExpensesByMonth(int id)
+    {
+        DateTime start = new DateTime(2026, 5, 1);
+        DateTime end = new DateTime(2026, 5, 31);
+        
+        var expenses = _dataStore.GetExpensesByDate(id, start, end);
+        
+        return _pdfGenerator.CreatePdfByMonth(expenses);
+    }
 }
 

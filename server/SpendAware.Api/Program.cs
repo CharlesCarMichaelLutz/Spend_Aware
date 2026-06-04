@@ -133,9 +133,15 @@ app.MapGet("automated-report", async (IExpenseReportService service) =>
     return Results.Ok(response);
 });
 
-app.MapPost("report", (IExpenseReportService service, [FromBody] int id) =>
+app.MapPost("report/year", (IExpenseReportService service, [FromBody] int id) =>
 {
     var stream = service.GetAllExpensesByYear(id);
+    return Results.File(stream, "application/pdf", "test.pdf");
+});
+
+app.MapPost("report/month", (IExpenseReportService service, [FromBody] int id) =>
+{
+    var stream = service.GetAllExpensesByMonth(id);
     return Results.File(stream, "application/pdf", "test.pdf");
 });
 

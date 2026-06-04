@@ -10,7 +10,7 @@ public interface IPdfGenerator
 {
     void CreateMonthlyAutomatedPdfReports(List<UserExpenseReport> reports);
     MemoryStream CreatePdfByYear(List<Expense> expenseList);
-    void CreatePdfByMonth(List<Expense> expenseList);
+    MemoryStream CreatePdfByMonth(List<Expense> expenseList);
     void CreatePdf();
 }
 
@@ -96,7 +96,7 @@ public class PdfGenerator : IPdfGenerator
         return stream;
     }
     
-    public void CreatePdfByMonth(List<Expense> expenseList)
+    public MemoryStream CreatePdfByMonth(List<Expense> expenseList)
     {
         var document = Document.Create(container =>
         {
@@ -127,17 +127,11 @@ public class PdfGenerator : IPdfGenerator
                     });
             });
         });
+        var stream = new MemoryStream();
+        document.GeneratePdf(stream);
+        stream.Position = 0;
 
-        try
-        {
-            document.ShowInCompanion();
-            //document.GeneratePdf("test.pdf");
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex.Message);
-        }
-        
+        return stream;
     }
 
     public void CreatePdf()
