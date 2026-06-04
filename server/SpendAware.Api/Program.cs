@@ -45,10 +45,9 @@ services.AddScoped<IUserService, UserService>();
 services.AddSingleton<IPasswordHasher, PasswordHasher>();
 services.AddScoped<ITokenService, TokenService>();
 services.AddSingleton<IDataStore, DataStore>();
-services.AddScoped<IMonthlyExpenseReportService, MonthlyExpenseReportService>();
+services.AddScoped<IExpenseReportService, ExpenseReportService>();
 services.AddScoped<IMailService, MailService>();
 services.AddScoped<IPdfGenerator, PdfGenerator>();
-services.AddScoped<IExpenseExportService, ExpenseExportService>();
 
 var app = builder.Build();
 
@@ -128,13 +127,13 @@ app.MapDelete("expenses", (IExpenseService service, [FromBody] int id) =>
     var response = service.DeleteExpense(id);
 });
 
-app.MapGet("automated-report", async (IMonthlyExpenseReportService service) =>
+app.MapGet("automated-report", async (IExpenseReportService service) =>
 {
     var response = await service.GetMonthlyReport();
     return Results.Ok(response);
 });
 
-app.MapPost("report", (IExpenseExportService service, [FromBody] int id) =>
+app.MapPost("report", (IExpenseReportService service, [FromBody] int id) =>
 {
     var stream = service.GetAllExpensesByYear(id);
     return Results.File(stream, "application/pdf", "test.pdf");

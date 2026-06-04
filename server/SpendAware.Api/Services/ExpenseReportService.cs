@@ -4,18 +4,19 @@ using SpendAware.Api.Repositories;
 
 namespace SpendAware.Api.Services;
 
-public interface IMonthlyExpenseReportService
+public interface IExpenseReportService
 {
     Task<List<UserExpenseReport>> GetMonthlyReport();
+    MemoryStream GetAllExpensesByYear(int id);
 }
 
-public class MonthlyExpenseReportService : IMonthlyExpenseReportService
+public class ExpenseReportService : IExpenseReportService
 {
     private readonly IDataStore _dataStore;
     private readonly IMailService _mailService;
     private readonly IPdfGenerator _pdfGenerator;
 
-    public MonthlyExpenseReportService(IDataStore dataStore, IMailService  mailService, IPdfGenerator pdfGenerator)
+    public ExpenseReportService(IDataStore dataStore, IMailService  mailService, IPdfGenerator pdfGenerator)
     {
         _dataStore = dataStore;
         _mailService = mailService;
@@ -44,12 +45,25 @@ public class MonthlyExpenseReportService : IMonthlyExpenseReportService
             });
         }
         //generate pdf 
-        _pdfGenerator.GeneratePdfReports(reports);
+        _pdfGenerator.CreateMonthlyAutomatedPdfReports(reports);
         
         //send email
         await _mailService.SendEmail(reports);
 
         return reports;
     }
+    
+    public MemoryStream GetAllExpensesByYear(int id)
+    {
+        DateTime start = new DateTime(2026, 1, 1);
+        DateTime end = new DateTime(2026, 12, 31);
+        
+        var expenses = _dataStore.GetExpensesByDate(id, start, end);
+        
+        return _pdfGenerator.CreatePdfByYear(expenses);
+    }
+    
+    //GetAllExpensesByMonth
+    
 }
 

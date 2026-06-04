@@ -1,5 +1,3 @@
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
 using QuestPDF.Companion;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
@@ -10,8 +8,7 @@ namespace SpendAware.Api.Infrastructure;
 
 public interface IPdfGenerator
 {
-    void GeneratePdfReports(List<UserExpenseReport> reports);
-    // byte[] CreatePdfByYear(List<Expense> expenseList);
+    void CreateMonthlyAutomatedPdfReports(List<UserExpenseReport> reports);
     MemoryStream CreatePdfByYear(List<Expense> expenseList);
     void CreatePdfByMonth(List<Expense> expenseList);
     void CreatePdf();
@@ -24,7 +21,7 @@ public class PdfGenerator : IPdfGenerator
         QuestPDF.Settings.License = LicenseType.Community;
     }
     
-    public void GeneratePdfReports(List<UserExpenseReport> reports)
+    public void CreateMonthlyAutomatedPdfReports(List<UserExpenseReport> reports)
     {
         foreach (var report in reports)
         {
@@ -61,7 +58,6 @@ public class PdfGenerator : IPdfGenerator
         }
     }
 
-    // public byte[] CreatePdfByYear(List<Expense> expenseList)
     public MemoryStream CreatePdfByYear(List<Expense> expenseList)
     {
         var document = Document.Create(container =>
@@ -93,8 +89,6 @@ public class PdfGenerator : IPdfGenerator
                     });
             });
         });
-        // byte[] pdf  = document.GeneratePdf();
-        // return pdf;
         var stream = new MemoryStream();
         document.GeneratePdf(stream);
         stream.Position = 0;
