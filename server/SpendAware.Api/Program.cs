@@ -13,27 +13,29 @@ var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
 var services = builder.Services;
 
-services.AddAuthentication(x =>
-{
-    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer(options =>
-{
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidIssuer = config["Jwt:Issuer"],
-        ValidAudience = config["Jwt:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Secret"]!)),
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-    };
-});
+ services.AddAuthentication(x =>
+ {
+     x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+     x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+     x.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+ }).AddJwtBearer(options =>
+ {
+     options.TokenValidationParameters = new TokenValidationParameters
+     {
+         ValidIssuer = config["Jwt:Issuer"],
+         ValidAudience = config["Jwt:Audience"],
+         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Secret"]!)),
+         ValidateIssuer = true,
+         ValidateAudience = true,
+         ValidateLifetime = true,
+         ValidateIssuerSigningKey = true,
+     };
+ });
 
 services.AddAuthorization();
 
+
+// services.AddOpenApi();
 services.AddOpenApi(options =>
 {
     options.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
@@ -46,17 +48,14 @@ services.AddSingleton<IDataStore, DataStore>();
 services.AddScoped<IMonthlyExpenseReportService, MonthlyExpenseReportService>();
 services.AddScoped<IMailService, MailService>();
 services.AddScoped<IPdfGenerator, PdfGenerator>();
-
-// services.AddCors(options =>
-// {
-//     
-// })
+services.AddScoped<IExpenseExportService, ExpenseExportService>();
 
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    // app.MapScalarApiReference();
     app.MapScalarApiReference(options =>
     {
         options.AddPreferredSecuritySchemes("Bearer");
@@ -129,10 +128,16 @@ app.MapDelete("expenses", (IExpenseService service, [FromBody] int id) =>
     var response = service.DeleteExpense(id);
 });
 
-app.MapGet("report", async (IMonthlyExpenseReportService service) =>
+app.MapGet("automated-report", async (IMonthlyExpenseReportService service) =>
 {
     var response = await service.GetMonthlyReport();
     return Results.Ok(response);
+});
+
+app.MapPost("report", (IExpenseExportService service, [FromBody] int id) =>
+{
+    var stream = service.GetAllExpensesByYear(id);
+    return Results.File(stream, "application/pdf", "test.pdf");
 });
 
 app.Run();
