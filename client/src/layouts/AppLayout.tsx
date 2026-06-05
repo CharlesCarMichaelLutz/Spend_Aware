@@ -3,8 +3,12 @@ import { Outlet } from "react-router"
 export function AppLayout() {
     return (
         <>
-            <h1>AppLayout</h1>
-            <Outlet />
+            <div className="container">
+                <h1 className="text-medium">AppLayout</h1>
+                {/* title bar
+                aside with navigation */}
+                <Outlet />
+            </div>
         </>
     )
 }

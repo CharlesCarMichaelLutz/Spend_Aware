@@ -1,9 +1,41 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: 'Inter', system-ui, sans-serif;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  margin-bottom: 2rem;
+}
+
+/*Body text, table data, descriptions*/
+.text-regular {
+    font-weight: 400;
+}
+
+/*Column headers, category labels, emphasized rows*/
+.text-medium {
+    font-weight: 500;
+}
+
+/*Section headers, totals, active navigation*/
+.text-semi-bold {
+    font-weight: 600;
+}
+
+/*Page titles, grand totals (optional — 600 often suffices)*/
+.text-bold {
+    font-weight: 700;
+}
+
 div {
     display: flex;
     justify-content: center;
     align-items: center;
-}
-
-h1 {
-    color: green;
 }

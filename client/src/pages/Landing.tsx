@@ -1,4 +1,10 @@
 
 export function Landing() {
-return <h1>Landing</h1>
+    return (
+        <>
+            <div className="container">
+                <h1 className="text-bold">Landing</h1>
+            </div>
+        </>
+    ) 
 }
