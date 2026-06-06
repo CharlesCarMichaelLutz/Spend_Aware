@@ -1,5 +1,8 @@
+import { LandingModal } from "./LandingModal"
+import {useEffect, useState} from "react";
 
 export function Landing() {
+    const [isLandingModalOpen, setIsLandingModalOpen] = useState(false)
     return (
         <>
             <div className="container">
@@ -46,9 +49,21 @@ export function Landing() {
                             <input type="text" id="email" required />
                             <label htmlFor="password">Password</label>
                             <input type="password" id="password" required />
-                            <button type="submit">Submit</button>
+                            <button type="submit" onClick={() => setIsLandingModalOpen(true)}>Submit</button>
                         </form>
                     </section>
+                     <LandingModal isOpen={isLandingModalOpen} onClose={() => setIsLandingModalOpen(false)}>
+                         <button onClick={() => setIsLandingModalOpen(false)}>Close</button>
+                         <h3>We sent you a code</h3>
+                         <p>Enter it below to verify:</p>
+                         <h4><em>test@test.com</em></h4>
+                         <form>
+                             <label>Verification code</label>
+                             <input type="text" name="verification_code" id="verification_code" />
+                             <button type="submit">Submit</button>
+                         </form>
+                         <p>Did not receive the code? <button>Resend it</button></p>
+                     </LandingModal>
                 </div>
             </div>
         </>
