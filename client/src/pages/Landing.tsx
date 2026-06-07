@@ -2,10 +2,10 @@ import { LandingModal } from "./LandingModal"
 import {useEffect, useState} from "react";
 
 export function Landing() {
-    const [isLandingModalOpen, setIsLandingModalOpen] = useState(false)
+    const [isLandingModalOpen, setIsLandingModalOpen] = useState<boolean>(false)
     return (
         <>
-            <div className="container">
+            <div className="landing-container">
                 <div className="landing-left">
                     <section className="welcome">
                          <img height={200} width={300} className="logo-image"/>
