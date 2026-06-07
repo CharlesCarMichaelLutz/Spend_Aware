@@ -13,7 +13,29 @@ export function AppLayout() {
             <div className="app-layout-container">
                 <aside className={`sidebar ${isCollapsed ? "collapsed" : ""}`}></aside>
                 <div className="right-panel">
-                    <header><button onClick={toggleSidebar} className="toggle-btn">{isCollapsed ? "open" : "close"}</button></header>
+                    <header className="header-panel">
+                            <div className="header-left">
+                                <button onClick={toggleSidebar} className="toggle-btn">
+                                    {isCollapsed ? "open" : "close"}
+                                </button>
+                            </div>
+                            <div className="header-middle">
+                                <div className="currency-group">
+                                    <img height={40} width={34} className="currency-image" />
+                                    <img height={40} width={34} className="currency-image" />
+                                    <img height={40} width={34} className="currency-image" />
+                                </div>
+                                <h2>Spend Aware</h2>
+                                <div className="currency-group">
+                                    <img height={40} width={34} className="currency-image" />
+                                    <img height={40} width={34} className="currency-image" />
+                                    <img height={40} width={34} className="currency-image" />
+                                </div>
+                            </div>
+                            <div className="header-right">
+                                <button>logout</button>
+                            </div>
+                    </header>
                     <main>
                         <Outlet />
                     </main>
