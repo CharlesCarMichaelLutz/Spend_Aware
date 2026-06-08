@@ -203,6 +203,40 @@ body {
   flex: 0;
 }
 
+.sidebar-container {
+  border: 2px solid yellow;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.sidebar-user {
+  border: 2px dotted darkblue;
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.user-identicon {
+  background-color:  lightskyblue;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  margin-top: 1rem;
+}
+
+.sidebar-username {
+ /*margin: 0;*/
+}
+
+.sidebar-menu {
+  border: 2px solid green;
+  flex: 8;
+  /*display: flex;*/
+}
+
 .right-panel {
   border: 2px dotted orange;
   flex: 8;
@@ -250,10 +284,53 @@ body {
 main {
   border: 2px dotted purple;
   flex: 1;
+  display: flex;
+  width: 100%;
   overflow-y: auto;
 }
 
 /* AppLayout end */
+
+/*Dashbaord */
+
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.dashboard-top {
+  border: 2px dotted purple;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dashboard-top > form {
+  gap: 1rem;
+}
+
+.dashboard-top > form > input{
+}
+
+.dashboard-middle {
+  border: 2px dotted purple;
+  flex: 5;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.dashboard-middle > table {
+  padding-top: 1.5rem;
+  
+}
+
+.dashboard-bottom {
+  border: 2px dotted purple;
+  flex: 1;
+}
 
 
 
