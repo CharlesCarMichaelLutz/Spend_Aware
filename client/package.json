@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@fontsource/inter": "^5.2.8",
+    "json-server": "^1.0.0-beta.15",
     "minidenticons": "^4.2.1",
     "react": "^19.2.6",
     "react-dom": "^19.2.6",

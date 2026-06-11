@@ -323,7 +323,7 @@ main {
 }
 
 .dashboard-middle > table {
-  padding-top: 1.5rem;
+  /*padding-top: 1.5rem;*/
   
 }
 
@@ -334,33 +334,116 @@ main {
 
 /* Year */
 
-.month-cards-wrapper {
+.year-wrapper {
   border: 5px solid purple;
   width: 100%;
   height: 100vh;
-  padding: 1rem;
+  /*padding: 3rem 0;*/
+  padding: 1.5rem 0 3rem 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.year-title-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 90%;
+  padding-bottom: 1rem;
+}
+
+.year-title {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  padding-left: 6rem;
 }
 
 .month-cards-grid {
-  border: 5px dotted green;
+  border: 1px solid #777;
   display: grid;
-  /*grid-template-columns: repeat(2, 1fr);*/
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
   height: 100vh;
+  width: 90%;
+  flex: 9;
+  border-radius: 0.25rem;
+  padding: 2rem;
 }
 
 .month-card {
-  /*display: flex;*/
-  /*flex-direction: column;*/
   border: 1px solid #777;
   background-color: white;
-  /*padding: 1rem;*/
   border-radius: 0.25rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  
+}
+
+/* Month */
+
+.month-wrapper {
+  border: 5px solid purple;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.month-title-wrapper {
+  border: 5px solid darkblue;
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  /*padding-bottom: 1rem;*/
+}
+
+.month-title {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  /*padding-left: 6rem;*/
+}
+
+.month-table-wrapper {
+  border: 2px solid #777;
+  flex: 9;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  width: 100%;
+  border-radius: 0.25rem;
+}
+
+table {
+  /*border-collapse: separate;*/
+  /*border-spacing: 0 15px;*/
+  color: lightgrey;
+  /*margin-top: 40px;*/
+  width: 100%;
+}
+
+th,
+td {
+  /*border: 1px solid #777;*/
+  /*width: 300px;*/
+  width: 10rem;
+  text-align: center;
+  padding: 10px;
+}
+
+thead {
+  background-color: navy;
+  color: white;
 }
 
 

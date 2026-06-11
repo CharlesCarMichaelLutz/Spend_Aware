@@ -3,6 +3,7 @@ import {useEffect, useState} from "react";
 
 export function Landing() {
     const [isLandingModalOpen, setIsLandingModalOpen] = useState<boolean>(false)
+    
     return (
         <>
             <div className="landing-container">
