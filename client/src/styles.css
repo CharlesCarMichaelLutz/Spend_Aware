@@ -235,6 +235,7 @@ body {
   border: 2px solid green;
   flex: 8;
   /*display: flex;*/
+  overflow-y: auto;
 }
 
 .right-panel {
@@ -305,6 +306,7 @@ main {
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
 
 .dashboard-top > form {
@@ -320,6 +322,7 @@ main {
   display: flex;
   align-items: flex-start;
   justify-content: center;
+  overflow: auto;
 }
 
 .dashboard-middle > table {
@@ -330,6 +333,7 @@ main {
 .dashboard-bottom {
   border: 2px dotted purple;
   flex: 1;
+  flex-shrink: 0;
 }
 
 /* Year */
@@ -405,6 +409,7 @@ main {
   align-items: center;
   width: 100%;
   /*padding-bottom: 1rem;*/
+  flex-shrink: 0;
 }
 
 .month-title {
@@ -424,27 +429,50 @@ main {
   border-radius: 0.25rem;
 }
 
+.month-pagination {
+  border: 2px solid #777;
+  flex: 1;
+  display: flex;
+  width: 100%;
+  flex-shrink: 0;
+}
+
 table {
   /*border-collapse: separate;*/
   /*border-spacing: 0 15px;*/
-  color: lightgrey;
-  /*margin-top: 40px;*/
+  /*color: lightgrey;*/
+  color: #777;
   width: 100%;
+}
+
+thead > tr > th {
+  background-color: navy;
+  color: white;
 }
 
 th,
 td {
   /*border: 1px solid #777;*/
   /*width: 300px;*/
-  width: 10rem;
+  /*width: 10rem;*/
   text-align: center;
-  padding: 10px;
+  /*padding: 10px;*/
 }
 
-thead {
-  background-color: navy;
-  color: white;
+tr {
+  padding-bottom: 1rem;
 }
+
+tr:nth-child(odd) {
+  background-color: #f2f2f2;
+}
+
+tr:nth-child(even) {
+  /*background-color: #ffffff;*/
+  background-color: #d4edda;
+}
+
+
 
 
 

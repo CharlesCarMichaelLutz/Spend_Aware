@@ -15,3 +15,7 @@ export type Expense = {
     created_at: string;
     updated_at: string;
 }
+
+export type YearEntry = { 
+    year: number; months: string[] 
+}

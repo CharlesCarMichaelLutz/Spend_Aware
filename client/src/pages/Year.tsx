@@ -1,5 +1,10 @@
+
+
 export function Year() {
-  const years : string[] = [
+    
+
+    
+  const months : string[] = [
       "January",
       "February",
       "March",
@@ -22,8 +27,8 @@ export function Year() {
             <button>Get Report</button>
           </div>
           <div className="month-cards-grid">
-            {years.map(year => (
-                <div key={year} className="month-card">{year}</div>
+            {months.map(month => (
+                <div key={month} className="month-card">{month}</div>
             ))}
           </div>
         </div>

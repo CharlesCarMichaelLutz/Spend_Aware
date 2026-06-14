@@ -1,12 +1,62 @@
 import { Outlet } from "react-router"
-import {useState} from "react";
+import { useEffect, useState } from "react";
+import type { YearEntry } from "../types/types"
 
 export function AppLayout() {
-    const [isCollapsed, setIsCollapsed] = useState<boolean>(false)
-    
+    const [isCollapsed, setIsCollapsed] = useState(false);
+    const [dateList, setDateList] = useState<YearEntry[]>([]);
+
+    const id = 1;
+
     function toggleSidebar() {
-        setIsCollapsed(!isCollapsed)
+        setIsCollapsed(prev => !prev);
     }
+
+    useEffect(() => {
+        async function getUserAndCalculate(): Promise<void> {
+            try {
+                const response = await fetch(`http://localhost:8000/users/${id}`);
+
+                if (!response.ok) {
+                    throw new Error("Failed to fetch user");
+                }
+                
+                const data = await response.json();
+                console.log("user:", data);
+
+                const createdDateStr = data.created_at;
+                const startDate = new Date(createdDateStr);
+                const currentDate = new Date();
+
+                const items: {year: number, months: string[]}[] = []
+                let current = new Date(startDate.getFullYear(), startDate.getMonth());
+
+                while (current <= currentDate) {
+                    const year = current.getFullYear();
+                    const monthName = current.toLocaleString('default', { month: 'long' });
+
+                    let yearEntry = items.find((item) => item.year === year);
+
+                    if (!yearEntry) {
+                        yearEntry = { year, months: [] };
+                        items.push(yearEntry);
+                    }
+                    
+                    if(!yearEntry.months.includes(monthName)) {
+                        yearEntry.months.push(monthName);
+                    }
+
+                    current.setMonth(current.getMonth() + 1);
+                }
+
+                setDateList(items);
+            } catch (err) {
+                console.error("Failed to fetch user data:", err);
+            }
+        }
+
+        getUserAndCalculate()
+    }, [id]);
     
     return (
         <>
@@ -20,32 +70,18 @@ export function AppLayout() {
                         <div className="sidebar-menu">
                             <nav>
                                 <h3>Year</h3>
-                                <ul>
-                                    <li>2026
-                                        <ul>
-                                            <li>January</li>
-                                            <li>February</li>
-                                            <li>March</li>
-                                            <li>April</li>
-                                        </ul>
-                                    </li>
-                                    <li>2025
-                                        <ul>
-                                            <li>January</li>
-                                            <li>February</li>
-                                            <li>March</li>
-                                            <li>April</li>
-                                        </ul>
-                                    </li>
-                                    <li>2024
-                                        <ul>
-                                            <li>January</li>
-                                            <li>February</li>
-                                            <li>March</li>
-                                            <li>April</li>
-                                        </ul>
-                                    </li>
-                                </ul>
+                                    <ul>
+                                        {dateList.map((entry) => (
+                                            <li key={entry.year}>
+                                                {entry.year}
+                                                <ul>
+                                                    {entry.months.map((month) => (
+                                                        <li key={month}>{month}</li>
+                                                    ))}
+                                                </ul>
+                                            </li>
+                                        ))}
+                                    </ul>
                             </nav>
                         </div>
                     </div>

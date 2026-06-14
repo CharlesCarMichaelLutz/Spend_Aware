@@ -4,31 +4,11 @@ import type { User, Expense } from "../types/types"
 export function Dashboard() {
     const [expenseData, setExpenseData] = useState<Expense[]>([]);
     const [user, setUser] = useState<User | null>(null);
+    
 
-    const id = 1;
+    // const id = 1;
     // const id = 2;
-    //const id = 3;
-    
-    
-    useEffect(() => {
-        async function getUserById(id: number):Promise<void> {
-            try {
-                const response = await fetch(`http://localhost:8000/users/${id}`)
-                
-                if(!response.ok) {
-                    throw new Error("Failed to fetch user");
-                }
-                
-                const userData: User = await response.json();
-                setUser({userData})
-                console.log("user :", userData) 
-            }
-            catch(err) {
-                console.error(err);
-            }
-        }
-        getUserById(id)
-    },[id])
+    const id = 3;
     
     //pass in the start/end date, and user_id
     
@@ -58,6 +38,26 @@ export function Dashboard() {
         }
         getExpensesByUserId(firstDay, lastDay, id);
     }, [user])
+
+    useEffect(() => {
+        async function getUserById(id: number):Promise<void> {
+            try {
+                const response = await fetch(`http://localhost:8000/users/${id}`)
+
+                if(!response.ok) {
+                    throw new Error("Failed to fetch user");
+                }
+
+                const userData: User = await response.json();
+                setUser({userData})
+                console.log("user :", userData)
+            }
+            catch(err) {
+                console.error(err);
+            }
+        }
+        getUserById(id)
+    },[id])
 
     //previous month March
     // const now = new Date();
@@ -90,8 +90,6 @@ export function Dashboard() {
     console.log(firstDay)
     const lastDay = new Date(year, now.getMonth() + 1, 1)
     console.log(lastDay)
-    
-    //display expenses from above request in table 
     
     return (
         <>
@@ -136,7 +134,7 @@ export function Dashboard() {
                                 <th>Delete</th>
                             </tr>
                         </thead>
-
+                        {/*display expenses from above request in table*/}
                         <tbody>
                             {expenseData.map((e) => (
                                 <tr key={e.id}>
@@ -152,54 +150,6 @@ export function Dashboard() {
                                     </td>
                                 </tr>
                             ))}
-                            {/*<tr>*/}
-                            {/*    <td>Date 3</td>*/}
-                            {/*    <td>Place 1</td>*/}
-                            {/*    <td>Description 5</td>*/}
-                            {/*    <td>Amount 2</td>*/}
-                            {/*    <td>*/}
-                            {/*        <button>Edit</button>*/}
-                            {/*    </td>*/}
-                            {/*    <td>*/}
-                            {/*        <button>Delete</button>*/}
-                            {/*    </td>*/}
-                            {/*</tr>*/}
-                            {/*<tr>*/}
-                            {/*    <td>Date 4</td>*/}
-                            {/*    <td>Place 2</td>*/}
-                            {/*    <td>Description 3</td>*/}
-                            {/*    <td>Amount 5</td>*/}
-                            {/*    <td>*/}
-                            {/*        <button>Edit</button>*/}
-                            {/*    </td>*/}
-                            {/*    <td>*/}
-                            {/*        <button>Delete</button>*/}
-                            {/*    </td>*/}
-                            {/*</tr>*/}
-                            {/*<tr>*/}
-                            {/*    <td>Date 2</td>*/}
-                            {/*    <td>Place 1</td>*/}
-                            {/*    <td>Description 4</td>*/}
-                            {/*    <td>Amount 3</td>*/}
-                            {/*    <td>*/}
-                            {/*        <button>Edit</button>*/}
-                            {/*    </td>*/}
-                            {/*    <td>*/}
-                            {/*        <button>Delete</button>*/}
-                            {/*    </td>*/}
-                            {/*</tr>*/}
-                            {/*<tr>*/}
-                            {/*    <td>Date 7</td>*/}
-                            {/*    <td>Place 4</td>*/}
-                            {/*    <td>Description 2</td>*/}
-                            {/*    <td>Amount 6</td>*/}
-                            {/*    <td>*/}
-                            {/*        <button>Edit</button>*/}
-                            {/*    </td>*/}
-                            {/*    <td>*/}
-                            {/*        <button>Delete</button>*/}
-                            {/*    </td>*/}
-                            {/*</tr>*/}
                         </tbody>
 
                         <tfoot>

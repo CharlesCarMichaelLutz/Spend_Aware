@@ -59,6 +59,7 @@ export function Month() {
                         </tfoot>
                     </table>
                 </div>
+                <div className="month-pagination">Pagination Bar</div>
             </div>
         </>
     )
