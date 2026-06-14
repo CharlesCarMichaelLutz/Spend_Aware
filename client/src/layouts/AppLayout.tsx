@@ -1,6 +1,7 @@
 import { Outlet } from "react-router"
 import { useEffect, useState } from "react";
 import type { YearEntry } from "../types/types"
+import { NestedListItem } from "../components/NestedListItem"
 
 export function AppLayout() {
     const [isCollapsed, setIsCollapsed] = useState(false);
@@ -20,7 +21,7 @@ export function AppLayout() {
                 if (!response.ok) {
                     throw new Error("Failed to fetch user");
                 }
-                
+
                 const data = await response.json();
                 console.log("user:", data);
 
@@ -41,7 +42,7 @@ export function AppLayout() {
                         yearEntry = { year, months: [] };
                         items.push(yearEntry);
                     }
-                    
+
                     if(!yearEntry.months.includes(monthName)) {
                         yearEntry.months.push(monthName);
                     }
@@ -57,58 +58,52 @@ export function AppLayout() {
 
         getUserAndCalculate()
     }, [id]);
-    
+
     return (
         <>
             <div className="app-layout-container">
                 <aside className={`sidebar ${isCollapsed ? "collapsed" : ""}`}>
                     <div className="sidebar-container">
                         <div className="sidebar-user">
-                                <img height={60} width={40} className="user-identicon"/>
-                                <h2 className="sidebar-username">UserFive</h2>
+                            <img height={60} width={40} className="user-identicon"/>
+                            <h2 className="sidebar-username">UserFive</h2>
                         </div>
                         <div className="sidebar-menu">
                             <nav>
                                 <h3>Year</h3>
-                                    <ul>
-                                        {dateList.map((entry) => (
-                                            <li key={entry.year}>
-                                                {entry.year}
-                                                <ul>
-                                                    {entry.months.map((month) => (
-                                                        <li key={month}>{month}</li>
-                                                    ))}
-                                                </ul>
-                                            </li>
-                                        ))}
-                                    </ul>
+                                <ul>
+                                    { console.log("date list:", dateList) }
+                                    {dateList.map((entry) => (
+                                        <NestedListItem key={entry.year} entry={entry} />
+                                    ))}
+                                </ul>
                             </nav>
                         </div>
                     </div>
                 </aside>
                 <div className="right-panel">
                     <header className="header-panel">
-                            <div className="header-left">
-                                <button onClick={toggleSidebar} className="toggle-btn">
-                                    {isCollapsed ? "open" : "close"}
-                                </button>
+                        <div className="header-left">
+                            <button onClick={toggleSidebar} className="toggle-btn">
+                                {isCollapsed ? "open" : "close"}
+                            </button>
+                        </div>
+                        <div className="header-middle">
+                            <div className="currency-group">
+                                <img height={40} width={34} className="currency-image" />
+                                <img height={40} width={34} className="currency-image" />
+                                <img height={40} width={34} className="currency-image" />
                             </div>
-                            <div className="header-middle">
-                                <div className="currency-group">
-                                    <img height={40} width={34} className="currency-image" />
-                                    <img height={40} width={34} className="currency-image" />
-                                    <img height={40} width={34} className="currency-image" />
-                                </div>
-                                <h1>Spend Aware</h1>
-                                <div className="currency-group">
-                                    <img height={40} width={34} className="currency-image" />
-                                    <img height={40} width={34} className="currency-image" />
-                                    <img height={40} width={34} className="currency-image" />
-                                </div>
+                            <h1>Spend Aware</h1>
+                            <div className="currency-group">
+                                <img height={40} width={34} className="currency-image" />
+                                <img height={40} width={34} className="currency-image" />
+                                <img height={40} width={34} className="currency-image" />
                             </div>
-                            <div className="header-right">
-                                <button>logout</button>
-                            </div>
+                        </div>
+                        <div className="header-right">
+                            <button>logout</button>
+                        </div>
                     </header>
                     <main>
                         <Outlet />
@@ -118,3 +113,4 @@ export function AppLayout() {
         </>
     )
 }
+
