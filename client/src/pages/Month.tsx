@@ -1,9 +1,12 @@
+import {useParams} from "react-router";
 export function Month() {
+    const { year, month } = useParams()
     return (
         <>
             <div className="month-wrapper">
                 <div className="month-title-wrapper">
-                    <h3>Month</h3>
+                    {/*<h3>Month</h3>*/}
+                    <h3>{year} - {month}</h3>
                     <button>Get Report</button>
                 </div>
                 <div className="month-table-wrapper">

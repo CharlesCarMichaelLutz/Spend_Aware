@@ -1,31 +1,29 @@
 import { useState } from "react";
-import {Navigate, useLocation} from "react-router";
+import { Link } from "react-router";
 
 export function NestedListItem({children, entry}) {
     const [isListOpen, setIsListOpen] = useState<boolean>(false);
-    const location = useLocation();
 
     function toggleListItem() {
         setIsListOpen(!isListOpen);
     }
 
-    function goToMonthExpensePage() {
-        < Navigate to="/" state={{ from: location }} />
-    }
     return (
         <>
             <li>
+                {/*<Link to="/dashboard/:year">{entry.year}</Link>*/}
+                {/*<Link to={`/dashboard/${year.year}`}>{entry.year}</Link>*/}
+                <Link to={`/dashboard/${entry.year}`}>{entry.year}</Link>
                 <div onClick={toggleListItem}>
-                    {entry.year}
                     <span>
                     {isListOpen ? '▼' : '▶'}
                     </span>
                 </div>
                 {isListOpen && (
                     <ul>
-                        {/*{children}*/}
                         {entry.months.map((month) => (
-                            <li key={month}><button onClick={goToMonthExpensePage}>{month}</button></li>
+                            // <li key={month}><Link to="/dashboard/:year/:month">{month}</Link></li>
+                            <li key={month}><Link to={`/dashboard/${year.year}/${month}`}>{month}</Link></li>
                         ))}
                     </ul>
                 )}
