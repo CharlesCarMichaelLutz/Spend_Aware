@@ -1,10 +1,10 @@
-import { Outlet, useParams } from "react-dom"
 import { getYearData } from "../api/years"
-import {useLoaderData} from "react-router";
+import {useLoaderData, Outlet, useParams } from "react-router";
 
 export function Year() {
     const { year } = useParams()
-    const {  } = useLoaderData()
+    //gets year and correct months wanted from the server
+    const yearList = useLoaderData()
     console.log("year", year)
     
   const months : string[] = [
@@ -26,9 +26,7 @@ export function Year() {
       <>
         <div className="year-wrapper">
           <div className="year-title-wrapper">
-            {/*<h3 className="year-title">2026</h3>*/}
               <h3 className="year-title">{year}</h3>
-              
             <button>Get Report</button>
           </div>
           <div className="month-cards-grid">
@@ -37,17 +35,15 @@ export function Year() {
             ))}
           </div>
         </div>
-          < Outlet />
+          <div>
+              < Outlet />
+          </div>
       </>
   );
 }
 
-function loader({ params }) {
+export async function yearLoader({ params }) {
     const { year } = params;
-    return getYearData(year)
+    return await getYearData(year)
 }
 
-export const yearRoute = {
-    loader,
-    component: Year,
-}

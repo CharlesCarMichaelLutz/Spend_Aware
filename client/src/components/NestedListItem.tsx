@@ -7,12 +7,11 @@ export function NestedListItem({children, entry}) {
     function toggleListItem() {
         setIsListOpen(!isListOpen);
     }
+    console.log("entries:", entry)
 
     return (
         <>
             <li>
-                {/*<Link to="/dashboard/:year">{entry.year}</Link>*/}
-                {/*<Link to={`/dashboard/${year.year}`}>{entry.year}</Link>*/}
                 <Link to={`/dashboard/${entry.year}`}>{entry.year}</Link>
                 <div onClick={toggleListItem}>
                     <span>
@@ -22,8 +21,7 @@ export function NestedListItem({children, entry}) {
                 {isListOpen && (
                     <ul>
                         {entry.months.map((month) => (
-                            // <li key={month}><Link to="/dashboard/:year/:month">{month}</Link></li>
-                            <li key={month}><Link to={`/dashboard/${year.year}/${month}`}>{month}</Link></li>
+                            <li key={month}><Link to={`/dashboard/${entry.year}/${month}`}>{month}</Link></li>
                         ))}
                     </ul>
                 )}

@@ -18,7 +18,10 @@ export function Dashboard() {
             async function getExpensesByUserId(start: Date, end: Date, id: number):Promise<void> {
                 try {
                     const startStr = start.toISOString().split('T')[0];
+                    console.log("start date:", startStr);
+                    
                     const endStr = end.toISOString().split('T')[0];
+                    console.log("end date:", endStr);
                     
                     //filter expense for specific date with TS
                     const response = await fetch(`http://localhost:8000/expenses?user_id=${id}&created_at_gt=${startStr}&created_at_lte=${endStr}`)
