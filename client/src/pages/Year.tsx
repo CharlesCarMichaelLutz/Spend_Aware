@@ -3,9 +3,7 @@ import {useLoaderData, Outlet, useParams } from "react-router";
 
 export function Year() {
     const { year } = useParams()
-    //gets year and correct months wanted from the server
     const yearList = useLoaderData()
-    console.log("year", year)
     
   const months : string[] = [
       "January",

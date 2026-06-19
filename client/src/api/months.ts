@@ -6,7 +6,6 @@ export async function getMonthData(start: Date,end: Date, id: number) {
     }
 
     const data = await response.json();
-    console.log("get month data:", data);
 
     return data
 }
