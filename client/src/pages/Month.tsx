@@ -52,7 +52,7 @@ export function Month() {
 export async function monthLoader({ params }) {
     const { year, month } = params;
     
-    const id = 1;
+    const id = 3;
 
     if (!year || !month) {
         throw new Response("Missing year or month parameter", { status: 400 });

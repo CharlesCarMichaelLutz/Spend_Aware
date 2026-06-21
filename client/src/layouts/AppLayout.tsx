@@ -7,7 +7,7 @@ export function AppLayout() {
     const [isCollapsed, setIsCollapsed] = useState(false);
     const [dateList, setDateList] = useState<YearEntry[]>([]);
 
-    const id = 1;
+    const id = 2;
 
     function toggleSidebar() {
         setIsCollapsed(prev => !prev);
@@ -72,7 +72,6 @@ export function AppLayout() {
                             <nav>
                                 <h3>Year</h3>
                                 <ul>
-                                    { console.log("date list:", dateList) }
                                     {dateList.map((entry) => (
                                         <NestedListItem key={entry.year} entry={entry} />
                                     ))}

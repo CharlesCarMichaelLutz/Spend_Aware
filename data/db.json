@@ -1,8 +1,8 @@
 {
     "users": [
         {"id":1,"username":"nlingfoot0","email":"shutchcraft0@gravatar.com","created_at":"2024-03-22"},
-        {"id":2,"username":"pdallicott1","email":"fisley1@reddit.com","created_at":"2024-04-09"},
-        {"id":3,"username":"hcrackel2","email":"dchurching2@epa.gov","created_at":"2024-05-24"}
+        {"id":2,"username":"pdallicott1","email":"fisley1@reddit.com","created_at":"2025-04-09"},
+        {"id":3,"username":"hcrackel2","email":"dchurching2@epa.gov","created_at":"2023-05-24"}
     ],
     "expenses": [
         {"id":1,"user_id":1,"place":"Eco-friendly electric bike with a 30-mile range.","description":"Toy drone that flies with gestures and is easy to control.","amount":7603.73,"created_at":"2026-03-25","updated_at":null},
