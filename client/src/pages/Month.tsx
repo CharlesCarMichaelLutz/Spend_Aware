@@ -24,14 +24,15 @@ export function Month() {
                         </thead>
 
                         <tbody>
-                        {expenseList.map(expense => (
+                        {expenseList.length > 0 ? expenseList.map(expense => (
                             <tr key={expense.id}>
                                 <td>{expense.created_at}</td>
                                 <td>{expense.place}</td>
                                 <td>{expense.description}</td>
                                 <td>{expense.amount}</td>
                             </tr>
-                        ))}
+                        )) : <p>No Expenses entered for {month} </p>
+                        }
                         </tbody>
 
                         <tfoot>

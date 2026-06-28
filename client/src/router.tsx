@@ -2,7 +2,9 @@ import { createBrowserRouter } from "react-router"
 import { Landing } from "./pages/Landing"
 import { AppLayout } from "./layouts/AppLayout"
 import { Dashboard } from "./pages/Dashboard"
-import { Year, yearLoader } from "./pages/Year"
+//import { Year, yearLoader } from "./pages/Year"
+import { Year } from "./pages/Year"
+
 import { Month, monthLoader } from "./pages/Month"
 
 export const router = createBrowserRouter([
@@ -17,7 +19,7 @@ export const router = createBrowserRouter([
                     { index: true, Component: Dashboard},
                     {
                         path: ":year",
-                        loader: yearLoader,
+                        // loader: yearLoader,
                         Component: Year
                     },
                     {

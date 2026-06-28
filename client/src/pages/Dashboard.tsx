@@ -1,5 +1,6 @@
 import {useEffect, useState} from "react";
 import type { User, Expense } from "../types/types"
+// import { Paginate } from "../components/Paginate"
 
 export function Dashboard() {
     const [expenseData, setExpenseData] = useState<Expense[]>([]);
@@ -129,6 +130,7 @@ export function Dashboard() {
                     </table>
                 </div>
                 <div className="dashboard-bottom">Pagination Bar</div>
+                {/*<Paginate className="dashboard-bottom" />*/}
             </section>
         </>
     )

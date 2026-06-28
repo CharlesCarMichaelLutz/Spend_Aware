@@ -1,9 +1,8 @@
-import { getYearData } from "../api/years"
-import {useLoaderData, Outlet, useParams } from "react-router";
+// import { getYearData } from "../api/years"
+import { Outlet, useParams, NavLink } from "react-router";
 
 export function Year() {
     const { year } = useParams()
-    const yearList = useLoaderData()
     
   const months : string[] = [
       "January",
@@ -24,14 +23,18 @@ export function Year() {
       <>
         <div className="year-wrapper">
           <div className="year-title-wrapper">
-              <h3 className="year-title">{year}</h3>
+              <h3 className="year-title">Year:{year}</h3>
             <button>Get Report</button>
           </div>
-          <div className="month-cards-grid">
-            {months.map(month => (
-                <div key={month} className="month-card">{month}</div>
-            ))}
-          </div>
+            <div className="month-cards-grid">
+                {months.map(month => (
+                    <div key={month} className="month-card">
+                        <NavLink to={`/dashboard/${year}/${month}`}>
+                            {month}
+                        </NavLink>
+                    </div>
+                ))}
+            </div>
         </div>
           <div>
               < Outlet />
@@ -40,8 +43,14 @@ export function Year() {
   );
 }
 
-export async function yearLoader({ params }) {
-    const { year } = params;
-    return await getYearData(year)
-}
+// only want to get the months the user has an expense for not empty ones so cards are rendered correctly
+
+//query API for expenses from passed in year
+//filter response array of expenses for months
+//create new array with months
+//render months as cards on Year page 
+
+
+
+
 

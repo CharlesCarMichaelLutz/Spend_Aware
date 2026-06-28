@@ -1,13 +1,11 @@
-import { Outlet } from "react-router"
+import { Outlet, NavLink } from "react-router"
 import { useEffect, useState } from "react";
 import type { YearEntry } from "../types/types"
-import { NestedListItem } from "../components/NestedListItem"
 
 export function AppLayout() {
     const [isCollapsed, setIsCollapsed] = useState(false);
-    const [dateList, setDateList] = useState<YearEntry[]>([]);
-
-    const id = 2;
+    const [yearList, setYearList] = useState([]);
+    const id = 3;
 
     function toggleSidebar() {
         setIsCollapsed(prev => !prev);
@@ -27,30 +25,26 @@ export function AppLayout() {
 
                 const createdDateStr = data.created_at;
                 const startDate = new Date(createdDateStr);
-                const currentDate = new Date();
+                const timeRightNow = new Date();
 
-                const items: {year: number, months: string[]}[] = []
+                const items = []
+                
                 let current = new Date(startDate.getFullYear(), startDate.getMonth());
 
-                while (current <= currentDate) {
+                while (current <= timeRightNow) {
                     const year = current.getFullYear();
-                    const monthName = current.toLocaleString('default', { month: 'long' });
 
-                    let yearEntry = items.find((item) => item.year === year);
+                    let yearEntry = items.find((item) => item === year);
 
                     if (!yearEntry) {
-                        yearEntry = { year, months: [] };
+                        yearEntry = year ;
                         items.push(yearEntry);
                     }
 
-                    if(!yearEntry.months.includes(monthName)) {
-                        yearEntry.months.push(monthName);
-                    }
-
-                    current.setMonth(current.getMonth() + 1);
+                    current.setFullYear(current.getFullYear() + 1);
                 }
 
-                setDateList(items);
+                setYearList(items);
             } catch (err) {
                 console.error("Failed to fetch user data:", err);
             }
@@ -72,8 +66,10 @@ export function AppLayout() {
                             <nav>
                                 <h3>Year</h3>
                                 <ul>
-                                    {dateList.map((entry) => (
-                                        <NestedListItem key={entry.year} entry={entry} />
+                                    {yearList.map((year) => (
+                                        <li>
+                                            <NavLink to={`/dashboard/${year}`}>{year}</NavLink>
+                                        </li>
                                     ))}
                                 </ul>
                             </nav>

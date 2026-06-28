@@ -16,6 +16,14 @@ export type Expense = {
     updated_at: string;
 }
 
-export type YearEntry = { 
-    year: number; months: string[] 
+// export type YearEntry = { 
+//     year: number; months: string[] 
+// }
+
+export type YearEntry = {
+    year: number;
+}
+
+export type MonthList = {
+    month: string;
 }
