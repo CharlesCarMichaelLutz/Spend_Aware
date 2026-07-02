@@ -67,7 +67,7 @@ export function AppLayout() {
                                 <h3>Year</h3>
                                 <ul>
                                     {yearList.map((year) => (
-                                        <li>
+                                        <li key={year}>
                                             <NavLink to={`/dashboard/${year}`}>{year}</NavLink>
                                         </li>
                                     ))}

@@ -12,26 +12,14 @@ export function Dashboard() {
     const [expenseList, setExpenseList] = useState<Expense[]>([]);
     const [user, setUser] = useState<User | null>(null);
     
-    // const [expenseRecord, setExpenseRecord] = useState({ 
-    //     user_id: id,
-    //     date: "",
-    //     description: "",
-    //     place: "", 
-    //     amount: "" 
-    // });
-    
     const expenseRefs = {
         user_id: id,
-        date: useRef(""),
+        created_at: useRef(""),
         description: useRef(""),
         place: useRef(""),
         amount: useRef("")
     }
-    
-    // function handleExpenseChange(e) {
-    //     setExpenseRecord(e.target.value);
-    // }
-    
+
     function clearExpenseRecord() {
         setExpenseRecord({})
     }
@@ -39,7 +27,7 @@ export function Dashboard() {
     async function createExpense() {
         const currentExpense = {
             user_id: id,
-            date: expenseRefs.date.current.value,
+            created_at: expenseRefs.created_at.current.value,
             description: expenseRefs.description.current.value,
             place: expenseRefs.place.current.value,
             amount: expenseRefs.amount.current.value
@@ -85,7 +73,6 @@ export function Dashboard() {
             console.log(error);
         }
     }
-    
     
     useEffect(() => {
         if(!user) return; 
@@ -140,53 +127,13 @@ export function Dashboard() {
     return (
         <>
             <section className="dashboard">
-                {/*<div className="dashboard-top">*/}
-                {/*    <form onSubmit={createExpense}>*/}
-                {/*        <label >Date:</label>*/}
-                {/*        <input*/}
-                {/*            type="date"*/}
-                {/*            name="date"*/}
-                {/*            value={expenseRecord.date}*/}
-                {/*            onChange={handleExpenseChange}*/}
-                {/*            required*/}
-                {/*        />*/}
-                {/*        <label >Description:</label>*/}
-                {/*        <input*/}
-                {/*            type="text"*/}
-                {/*            name="description"*/}
-                {/*            value={expenseRecord.description}*/}
-                {/*            onChange={handleExpenseChange}*/}
-                {/*            placeholder='enter description' */}
-                {/*            required*/}
-                {/*        />*/}
-                {/*        <label >Place:</label>*/}
-                {/*        <input*/}
-                {/*            type="text"*/}
-                {/*            name="place"*/}
-                {/*            value={expenseRecord.place}*/}
-                {/*            onChange={handleExpenseChange}*/}
-                {/*            placeholder='enter place'*/}
-                {/*            required*/}
-                {/*        />*/}
-                {/*        <label >Amount:</label>*/}
-                {/*        <input*/}
-                {/*            type="number"*/}
-                {/*            name="amount"*/}
-                {/*            value={expenseRecord.amount}*/}
-                {/*            onChange={handleExpenseChange}*/}
-                {/*            placeholder='enter amount' */}
-                {/*            required*/}
-                {/*        />*/}
-                {/*        <button className="submit">Submit</button>*/}
-                {/*    </form>*/}
-                {/*</div>*/}
                 <div className="dashboard-top">
                     <form onSubmit={createExpense}>
                         <label >Date:</label>
                         <input
                             type="date"
                             name="date"
-                            ref={expenseRefs.date}
+                            ref={expenseRefs.created_at}
                             required
                         />
                         <label >Description:</label>
@@ -229,20 +176,6 @@ export function Dashboard() {
                             </tr>
                         </thead>
                         <tbody>
-                            {/*{expenseList.map((e) => (*/}
-                            {/*    <tr key={e.id}>*/}
-                            {/*        <td>{e.created_at}</td>*/}
-                            {/*        <td>{e.place}</td>*/}
-                            {/*        <td>{e.description}</td>*/}
-                            {/*        <td>{e.amount}</td>*/}
-                            {/*        <td>*/}
-                            {/*            <button >Edit</button>*/}
-                            {/*        </td>*/}
-                            {/*        <td>*/}
-                            {/*            <button onClick={deleteExpense(id)}>Delete</button>*/}
-                            {/*        </td>*/}
-                            {/*    </tr>*/}
-                            {/*))}*/}
                             {expenseList.map((expense) => {
                                     return <ExpenseItem key={expense.id} {...expense} setExpenseList={setExpenseList} />
                             })}
