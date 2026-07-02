@@ -54,26 +54,6 @@ export function Dashboard() {
         }
     }
     
-    async function deleteExpense(id) {
-        
-        try{
-            const response = await baseApi.delete(`expenses/${id}`, expenseRecord);
-
-            if(!response.ok) {
-                throw new Error("Failed to delete expense");
-            }
-
-            const expense = await response.json();
-
-            setExpenseList((list) => 
-                list.filter((message) => message.id !== expense.id )
-            )
-            
-        } catch (error) {
-            console.log(error);
-        }
-    }
-    
     useEffect(() => {
         if(!user) return; 
             //use the year and month to get expenses for that user from data source
@@ -136,20 +116,20 @@ export function Dashboard() {
                             ref={expenseRefs.created_at}
                             required
                         />
-                        <label >Description:</label>
-                        <input
-                            type="text"
-                            name="description"
-                            ref={expenseRefs.description}
-                            placeholder='enter description'
-                            required
-                        />
                         <label >Place:</label>
                         <input
                             type="text"
                             name="place"
                             ref={expenseRefs.place}
                             placeholder='enter place'
+                            required
+                        />
+                        <label >Description:</label>
+                        <input
+                            type="text"
+                            name="description"
+                            ref={expenseRefs.description}
+                            placeholder='enter description'
                             required
                         />
                         <label >Amount:</label>
@@ -197,21 +177,3 @@ export function Dashboard() {
     )
 }
 
-//Process for deleteing an expense from the Dashboard
-//onClick, warning message
-//submitting will permanently delete the expense. Do you wish to continue?
-//onClick, 
-//deleteExpense(id)
-//call API delete expense record from the DB 
-// filter expenseList to reflect deleted message 
-//render new list
-//when new list is rendered pagination will have one less record effecting pages and requests
-
-//Process for updating an expense from the Dashboard
-//onClick, expense becomes editable in the table,
-//edit the expense with it's own form and a save button
-//onClick save
-//updateExpense(expense)
-//call API update expense record from the DB
-//map expenseList to reflect updated message
-//render new list in table 

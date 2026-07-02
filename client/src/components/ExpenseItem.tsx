@@ -40,6 +40,26 @@ export function ExpenseItem({ id, user_id, created_at, description, place, amoun
             console.log(error);
         }
     }
+
+    async function deleteExpense(id) {
+
+        try{
+            // const response = await baseApi.delete(`expenses/${id}`, expenseRecord);
+            //
+            // if(!response.ok) {
+            //     throw new Error("Failed to delete expense");
+            // }
+            //
+            // const expense = await response.json();
+
+            setExpenseList((list) =>
+                list.filter((message) => message.id !== id )
+            )
+
+        } catch (error) {
+            console.log(error);
+        }
+    }
     
     return (
         <tr>
