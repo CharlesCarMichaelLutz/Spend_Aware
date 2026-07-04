@@ -11,6 +11,15 @@ public interface IMailService
 
 public class MailService : IMailService
 {
+    private readonly string _smtpHost;
+    private readonly int _smtpPort;
+
+    public MailService(IConfiguration config)
+    {
+        _smtpHost = config["Smtp:Host"] ?? "mailpit";
+        _smtpPort = int.Parse(config["Smtp:Port"] ?? "1025");
+    }
+    
     //iterate over with each user an expense list then send
     public async Task SendEmail(List<UserExpenseReport> reports)
     {
@@ -45,7 +54,8 @@ public class MailService : IMailService
 
             //start email relay server and send
             using var smtp = new SmtpClient();
-            await smtp.ConnectAsync("localhost", 1025);
+            // await smtp.ConnectAsync("localhost", 1025);
+            await smtp.ConnectAsync(_smtpHost, _smtpPort);
             await smtp.SendAsync(message);
             await smtp.DisconnectAsync(true);
         }

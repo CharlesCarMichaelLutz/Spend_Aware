@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
 using SpendAware.Api.Data.Models;
 using SpendAware.Api.Data.Requests;
+using SpendAware.Api.Database;
 using SpendAware.Api.Infrastructure;
 using SpendAware.Api.Repositories;
 using SpendAware.Api.Services;
@@ -34,12 +35,12 @@ var services = builder.Services;
 
 services.AddAuthorization();
 
-
-// services.AddOpenApi();
 services.AddOpenApi(options =>
 {
     options.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
 });
+services.AddScoped<IPostgresSqlConnectionFactory>(_ => 
+    new  PostgresSqlConnectionFactory(config.GetValue<string>("ConnectionStrings:Spend_Aware")!));
 services.AddScoped<IExpenseService, ExpenseService>();
 services.AddScoped<IUserService, UserService>();
 services.AddSingleton<IPasswordHasher, PasswordHasher>();
@@ -49,12 +50,17 @@ services.AddScoped<IExpenseReportService, ExpenseReportService>();
 services.AddScoped<IMailService, MailService>();
 services.AddScoped<IPdfGenerator, PdfGenerator>();
 
+services.AddCors(options =>
+{
+    options.AddPolicy("SpendAware", policy =>
+        policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+});
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
-    // app.MapScalarApiReference();
     app.MapScalarApiReference(options =>
     {
         options.AddPreferredSecuritySchemes("Bearer");
@@ -66,6 +72,8 @@ using (var scope = app.Services.CreateScope())
     var pdfGenerator  = scope.ServiceProvider.GetRequiredService<IPdfGenerator>();
     pdfGenerator.CreatePdf();
 }
+
+app.UseCors("SpendAware");
 
 app.UseHttpsRedirection();
 app.UseAuthentication();

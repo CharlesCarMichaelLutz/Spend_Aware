@@ -1,0 +1,94 @@
+﻿services:
+# React TS with Vite client
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: app-client
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+    environment:
+      - VITE_API_URL=http://localhost:5000
+    depends_on:
+      - spendaware.api
+    networks:
+      - app-network
+# .NET 10 web Api
+  spendaware.api:
+    image: spendaware.api
+    build:
+      context: .
+      dockerfile: server/SpendAware.Api/Dockerfile
+    container_name: app-server
+    ports:
+      - "5000:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+#      - ConnectionStrings__Spend_Aware=Host=postgres-db;Database=spend_aware;Username=postgres;Password=postgres
+#      - Smtp__Host=mailpit
+#      - Smtp__Port=1025
+#      - Smtp__UseSsl=false
+    depends_on:
+      - postgres
+      - mailpit
+    networks:
+        - app-network
+# Postgres database      
+  postgres:
+    image: postgres:16-alpine
+    container_name: postgres-db
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=spend_aware
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - app-network
+# Mailpit Email client  
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: app-mailpit
+    ports:
+      - "1025:1025" 
+      - "8025:8025"
+    volumes:
+      - mailpit_data:/data
+    environment:
+        MP_DATABASE: /data/mailpit.db
+    networks:
+      - app-network
+# PgAdmin DB interface  
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin4-container
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin12345
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+    networks:
+      - app-network
+
+volumes:
+  postgres-data:
+  mailpit_data:
+  pgadmin_data:
+
+networks:
+  app-network:
+    driver: bridge
+        
+
+
