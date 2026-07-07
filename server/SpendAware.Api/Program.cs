@@ -2,7 +2,6 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using Scalar.AspNetCore;
 using SpendAware.Api.Data.Models;
 using SpendAware.Api.Data.Requests;
 using SpendAware.Api.Database;
@@ -34,11 +33,8 @@ var services = builder.Services;
  });
 
 services.AddAuthorization();
+services.AddOpenApi();
 
-services.AddOpenApi(options =>
-{
-    options.AddDocumentTransformer<BearerSecuritySchemeTransformer>();
-});
 services.AddScoped<IPostgresSqlConnectionFactory>(_ => 
     new  PostgresSqlConnectionFactory(config.GetValue<string>("ConnectionStrings:Spend_Aware")!));
 services.AddScoped<IExpenseService, ExpenseService>();
@@ -61,9 +57,9 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
-    app.MapScalarApiReference(options =>
+    app.UseSwaggerUI(options =>
     {
-        options.AddPreferredSecuritySchemes("Bearer");
+        options.SwaggerEndpoint("/openapi/v1.json", "Spend Aware API v1");
     });
 }
 
@@ -75,7 +71,7 @@ using (var scope = app.Services.CreateScope())
 
 app.UseCors("SpendAware");
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 

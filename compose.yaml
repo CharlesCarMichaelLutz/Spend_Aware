@@ -16,26 +16,74 @@
       - spendaware.api
     networks:
       - app-network
+    
 # .NET 10 web Api
+#  spendaware.api:
+#    image: spendaware.api
+#    build:
+#      context: .
+#      dockerfile: server/SpendAware.Api/Dockerfile
+#    container_name: app-server
+#    ports:
+#      - "5000:8080"
+#      - "5001:8081"
+#    environment:
+#      - ASPNETCORE_ENVIRONMENT=Development
+#      - Jwt__Secret=191fdaa3-204f-4c20-a1b3-2397c15a80d6
+#      - Jwt__Issuer=server
+#      - Jwt__Audience=client
+#      - ConnectionStrings__Spend_Aware=Host=postgres-db;Database=spend_aware;Username=postgres;Password=postgres
+#      - Smtp__Host=mailpit
+#      - Smtp__Port=1025
+#      - Smtp__UseSsl=false
+#    volumes:
+#      - ./server/SpendAware.Api:/app 
+#      - /app/bin                      
+#      - /app/obj
+#    command: dotnet watch run --urls "http://0.0.0.0:8080"
+#    depends_on:
+#      postgres:
+#        condition: service_healthy
+#      mailpit:
+#         condition: service_started
+#    restart: always
+#    networks:
+#        - app-network
+          
   spendaware.api:
     image: spendaware.api
     build:
       context: .
       dockerfile: server/SpendAware.Api/Dockerfile
+      target: build
     container_name: app-server
     ports:
       - "5000:8080"
+      - "5001:8081"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-#      - ConnectionStrings__Spend_Aware=Host=postgres-db;Database=spend_aware;Username=postgres;Password=postgres
-#      - Smtp__Host=mailpit
-#      - Smtp__Port=1025
-#      - Smtp__UseSsl=false
+      - Jwt__Secret=191fdaa3-204f-4c20-a1b3-2397c15a80d6
+      - Jwt__Issuer=server
+      - Jwt__Audience=client
+      - ConnectionStrings__Spend_Aware=Host=postgres-db;Database=spend_aware;Username=postgres;Password=postgres
+      - Smtp__Host=mailpit
+      - Smtp__Port=1025
+      - Smtp__UseSsl=false
+    volumes:
+      - ./server/SpendAware.Api:/src/server/SpendAware.Api
+      - /src/server/SpendAware.Api/bin
+      - /src/server/SpendAware.Api/obj
+    working_dir: /src/server/SpendAware.Api
+    command: dotnet watch run --urls "http://0.0.0.0:8080"
     depends_on:
-      - postgres
-      - mailpit
+      postgres:
+        condition: service_healthy
+      mailpit:
+        condition: service_started
+    restart: always
     networks:
-        - app-network
+      - app-network
+        
 # Postgres database      
   postgres:
     image: postgres:16-alpine
@@ -43,6 +91,12 @@
     restart: always
     ports:
       - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d spend_aware"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
@@ -51,6 +105,7 @@
       - postgres-data:/var/lib/postgresql/data
     networks:
       - app-network
+      
 # Mailpit Email client  
   mailpit:
     image: axllent/mailpit:latest
@@ -64,6 +119,7 @@
         MP_DATABASE: /data/mailpit.db
     networks:
       - app-network
+      
 # PgAdmin DB interface  
   pgadmin:
     image: dpage/pgadmin4:latest
