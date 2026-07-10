@@ -39,6 +39,7 @@ services.AddScoped<IPostgresSqlConnectionFactory>(_ =>
     new  PostgresSqlConnectionFactory(config.GetValue<string>("ConnectionStrings:Spend_Aware")!));
 services.AddScoped<IExpenseService, ExpenseService>();
 services.AddScoped<IUserService, UserService>();
+services.AddScoped<IUserRepository, UserRepository>();
 services.AddSingleton<IPasswordHasher, PasswordHasher>();
 services.AddScoped<ITokenService, TokenService>();
 services.AddSingleton<IDataStore, DataStore>();
@@ -53,6 +54,7 @@ services.AddCors(options =>
 });
 
 var app = builder.Build();
+Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
 
 if (app.Environment.IsDevelopment())
 {
@@ -75,12 +77,12 @@ app.UseCors("SpendAware");
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapPost("register", (IUserService service, [FromBody] CreateUserRequest user) =>
+app.MapPost("register", async (IUserService service, [FromBody] CreateUserRequest user) =>
 { 
     //validate user input with FluentValidation
     try
     {
-        var response =  service.CreateUser(user);
+        var response = await service.CreateUser(user);
         return Results.Ok(response);
     }
     catch (Exception ex)

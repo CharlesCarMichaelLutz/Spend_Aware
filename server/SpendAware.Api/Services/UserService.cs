@@ -5,12 +5,10 @@ using SpendAware.Api.Infrastructure;
 using SpendAware.Api.Repositories;
 
 namespace SpendAware.Api.Services;
-
-//interface
 public interface IUserService
 {
-    UserLoginResponse CreateUser(CreateUserRequest request);
-    UserLoginResponse LoginUser(CreateUserRequest request);
+    Task<UserLoginResponse> CreateUser(CreateUserRequest request);
+    Task<UserLoginResponse> LoginUser(CreateUserRequest request);
     IEnumerable<UserResponse> GetAllUsers();
 }
 public class UserService : IUserService
@@ -18,60 +16,69 @@ public class UserService : IUserService
     private readonly IPasswordHasher _passwordHasher;
     private readonly ITokenService _tokenService;
     private readonly IDataStore _dataStore;
-    
-    public UserService(IPasswordHasher passwordHasher, ITokenService tokenService, IDataStore dataStore)
+    private readonly IUserRepository _userRepository;
+
+    public UserService(IPasswordHasher passwordHasher, ITokenService tokenService, IDataStore dataStore, IUserRepository userRepository)
     {
         _passwordHasher = passwordHasher;
         _tokenService = tokenService;
         _dataStore = dataStore;
+        _userRepository = userRepository;
     }
     //register
-    public UserLoginResponse CreateUser(CreateUserRequest request)
+    public async Task<UserLoginResponse> CreateUser(CreateUserRequest request)
     {
         const string message = "Failed to create user try again";
-        //check user for existing email in DB
-        var checkUserEmail = _dataStore.CheckEmail(request.EmailAddress);
         
+        var checkUserEmail = await _userRepository.CheckEmail(request.Email);
+
         if (checkUserEmail is not null)
         {
             throw new Exception(message);
         }
-        //create user model
-        var user = new User
+
+        var createUser = new User
         {
-            Id = request.Id,
             Username = request.Username,
-            EmailAddress = request.EmailAddress,
-            //hash the password from request
-            PasswordHash = _passwordHasher.Hash(request.Password)
+            Email = request.Email,
+            PasswordHash = _passwordHasher.Hash(request.Password),
+            CreatedAt = DateTimeOffset.UtcNow
         };
-        //add user to DB
-        _dataStore.AddUser(user);
+        
+        var user = await _userRepository.CreateUser(createUser);
+        
         // create/save/send Refresh Token as httponly cookie
-        
+
         //validate and confirm user email by code
-        
+
         //return UserLoginResponse
         var response = new UserLoginResponse
         {
             Id = user.Id,
             Username = user.Username,
-            EmailAddress = user.EmailAddress,
+            Email = user.Email,
+            CreatedAt = user.CreatedAt,
             //generate token JWT
             AccessToken = _tokenService.Create(user.Username)
         };
+        
+        if(user is null)
+        {
+            throw new Exception(message);
+        }
         return response;
     }
     //login
-    public UserLoginResponse LoginUser(CreateUserRequest request)
+    public async Task<UserLoginResponse> LoginUser(CreateUserRequest request)
     {
         const string message = "Login failed try again";
         //check user by email in DB
-        var user = _dataStore.CheckEmail(request.EmailAddress) ?? throw new Exception(message);
-        
+        // var user = _dataStore.CheckEmail(request.EmailAddress) ?? throw new Exception(message);
+        var user = await _userRepository.GetUserById(request.Username) ?? throw new Exception(message);
+
         //check password and password hash
         bool verified = _passwordHasher.Verify(request.Password, user.PasswordHash);
-        
+
         if (!verified)
         {
             throw new Exception(message);
@@ -83,7 +90,8 @@ public class UserService : IUserService
         {
             Id = user.Id,
             Username = user.Username,
-            EmailAddress = user.EmailAddress,
+            Email = user.Email,
+            CreatedAt = user.CreatedAt,
             //generate token JWT
             AccessToken = _tokenService.Create(user.Username)
         };
@@ -93,15 +101,15 @@ public class UserService : IUserService
     //logout
     //getall
     public IEnumerable<UserResponse> GetAllUsers()
-    { 
+    {
         //var userList = DataStore.Users;
         var userList = _dataStore.GetUsers();
-        
+
         return userList.Select(u => new UserResponse
         {
             Id = u.Id,
             Username = u.Username,
-            EmailAddress = u.EmailAddress
+            Email = u.Email
         });
     }
 }
