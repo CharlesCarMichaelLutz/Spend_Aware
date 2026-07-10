@@ -34,7 +34,7 @@ public class MailService : IMailService
             var message = new MimeMessage();
             var from = new MailboxAddress("SpendAware", "Team@SpendAware.net");
             message.From.Add(from);
-            var to = new MailboxAddress($"{u.UserResponse.Username}", $"{u.UserResponse.EmailAddress}");
+            var to = new MailboxAddress($"{u.UserResponse.Username}", $"{u.UserResponse.Email}");
             message.To.Add(to);
             message.Subject = "Monthly Expense Report for May";
             var bb = new BodyBuilder();

@@ -9,7 +9,7 @@ public interface IUserService
 {
     Task<UserLoginResponse> CreateUser(CreateUserRequest request);
     Task<UserLoginResponse> LoginUser(CreateUserRequest request);
-    IEnumerable<UserResponse> GetAllUsers();
+    Task<IEnumerable<UserResponse>> GetAllUsers();
 }
 public class UserService : IUserService
 {
@@ -25,7 +25,6 @@ public class UserService : IUserService
         _dataStore = dataStore;
         _userRepository = userRepository;
     }
-    //register
     public async Task<UserLoginResponse> CreateUser(CreateUserRequest request)
     {
         const string message = "Failed to create user try again";
@@ -51,14 +50,12 @@ public class UserService : IUserService
 
         //validate and confirm user email by code
 
-        //return UserLoginResponse
         var response = new UserLoginResponse
         {
             Id = user.Id,
             Username = user.Username,
             Email = user.Email,
             CreatedAt = user.CreatedAt,
-            //generate token JWT
             AccessToken = _tokenService.Create(user.Username)
         };
         
@@ -68,42 +65,37 @@ public class UserService : IUserService
         }
         return response;
     }
-    //login
+    
     public async Task<UserLoginResponse> LoginUser(CreateUserRequest request)
     {
         const string message = "Login failed try again";
-        //check user by email in DB
-        // var user = _dataStore.CheckEmail(request.EmailAddress) ?? throw new Exception(message);
+        
         var user = await _userRepository.GetUserById(request.Username) ?? throw new Exception(message);
 
-        //check password and password hash
         bool verified = _passwordHasher.Verify(request.Password, user.PasswordHash);
 
         if (!verified)
         {
             throw new Exception(message);
         }
+        
         //validate and confirm user email by code
         // create/save/send Refresh Token as httponly cookie
-        //return UserLoginResponse
+        
         var response = new UserLoginResponse
         {
             Id = user.Id,
             Username = user.Username,
             Email = user.Email,
             CreatedAt = user.CreatedAt,
-            //generate token JWT
             AccessToken = _tokenService.Create(user.Username)
         };
         return response;
     }
-    //refresh-token
-    //logout
-    //getall
-    public IEnumerable<UserResponse> GetAllUsers()
+
+    public async Task<IEnumerable<UserResponse>> GetAllUsers()
     {
-        //var userList = DataStore.Users;
-        var userList = _dataStore.GetUsers();
+        var userList = await _userRepository.GetAllUsers();
 
         return userList.Select(u => new UserResponse
         {
@@ -112,4 +104,6 @@ public class UserService : IUserService
             Email = u.Email
         });
     }
+    //refresh-token
+    //logout
 }

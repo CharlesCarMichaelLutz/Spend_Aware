@@ -1,21 +1,21 @@
 ﻿services:
 # React TS with Vite client
-  client:
-    build:
-      context: ./client
-      dockerfile: Dockerfile
-    container_name: app-client
-    ports:
-      - "5173:5173"
-    volumes:
-      - ./client:/app
-      - /app/node_modules
-    environment:
-      - VITE_API_URL=http://localhost:5000
-    depends_on:
-      - spendaware.api
-    networks:
-      - app-network
+#  client:
+#    build:
+#      context: ./client
+#      dockerfile: Dockerfile
+#    container_name: app-client
+#    ports:
+#      - "5173:5173"
+#    volumes:
+#      - ./client:/app
+#      - /app/node_modules
+#    environment:
+#      - VITE_API_URL=http://localhost:5000
+#    depends_on:
+#      - spendaware.api
+#    networks:
+#      - app-network
     
 # .NET 10 web Api
 #  spendaware.api:
@@ -50,39 +50,39 @@
 #    networks:
 #        - app-network
           
-  spendaware.api:
-    image: spendaware.api
-    build:
-      context: .
-      dockerfile: server/SpendAware.Api/Dockerfile
-      target: build
-    container_name: app-server
-    ports:
-      - "5000:8080"
-      - "5001:8081"
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - Jwt__Secret=191fdaa3-204f-4c20-a1b3-2397c15a80d6
-      - Jwt__Issuer=server
-      - Jwt__Audience=client
-      - ConnectionStrings__Spend_Aware=Host=postgres-db;Database=spend_aware;Username=postgres;Password=postgres
-      - Smtp__Host=mailpit
-      - Smtp__Port=1025
-      - Smtp__UseSsl=false
-    volumes:
-      - ./server/SpendAware.Api:/src/server/SpendAware.Api
-      - /src/server/SpendAware.Api/bin
-      - /src/server/SpendAware.Api/obj
-    working_dir: /src/server/SpendAware.Api
-    command: dotnet watch run --urls "http://0.0.0.0:8080"
-    depends_on:
-      postgres:
-        condition: service_healthy
-      mailpit:
-        condition: service_started
-    restart: always
-    networks:
-      - app-network
+#  spendaware.api:
+#    image: spendaware.api
+#    build:
+#      context: .
+#      dockerfile: server/SpendAware.Api/Dockerfile
+#      target: build
+#    container_name: app-server
+#    ports:
+#      - "5000:8080"
+#      - "5001:8081"
+#    environment:
+#      - ASPNETCORE_ENVIRONMENT=Development
+#      - Jwt__Secret=191fdaa3-204f-4c20-a1b3-2397c15a80d6
+#      - Jwt__Issuer=server
+#      - Jwt__Audience=client
+#      - ConnectionStrings__Spend_Aware=Host=postgres-db;Database=spend_aware;Username=postgres;Password=postgres
+#      - Smtp__Host=mailpit
+#      - Smtp__Port=1025
+#      - Smtp__UseSsl=false
+#    volumes:
+#      - ./server/SpendAware.Api:/src/server/SpendAware.Api
+#      - /src/server/SpendAware.Api/bin
+#      - /src/server/SpendAware.Api/obj
+#    working_dir: /src/server/SpendAware.Api
+#    command: dotnet watch run --urls "http://0.0.0.0:8080"
+#    depends_on:
+#      postgres:
+#        condition: service_healthy
+#      mailpit:
+#        condition: service_started
+#    restart: always
+#    networks:
+#      - app-network
         
 # Postgres database      
   postgres:

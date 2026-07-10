@@ -73,7 +73,7 @@ using (var scope = app.Services.CreateScope())
 
 app.UseCors("SpendAware");
 
-// app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
@@ -91,11 +91,11 @@ app.MapPost("register", async (IUserService service, [FromBody] CreateUserReques
     }
 });
 
-app.MapPost("login", (IUserService service, [FromBody] CreateUserRequest user) =>
+app.MapPost("login", async (IUserService service, [FromBody] CreateUserRequest user) =>
 {
     try
     {
-        var response = service.LoginUser(user);
+        var response = await service.LoginUser(user);
         return Results.Ok(response);
     }
     catch (Exception ex)
@@ -104,9 +104,9 @@ app.MapPost("login", (IUserService service, [FromBody] CreateUserRequest user) =
     }
 });
 
-app.MapGet("users",  (IUserService service) =>
+app.MapGet("users",  async (IUserService service) =>
 {
-    var response = service.GetAllUsers();
+    var response = await service.GetAllUsers();
     return Results.Ok(response);
 });
 

@@ -2,21 +2,20 @@ using Org.BouncyCastle.Crypto.Generators;
 using SpendAware.Api.Data.Models;
 using SpendAware.Api.Database;
 using Dapper;
+using SpendAware.Api.Data.Responses;
 
 namespace SpendAware.Api.Repositories;
 
 public interface IUserRepository
 {
-    // Task<User?> CheckEmail(string email);
     Task<string?> CheckEmail(string email);
-    
     Task<User?> CreateUser(User user);
     Task<User?> GetUserById(string username);
+    Task<IEnumerable<UserResponse>> GetAllUsers();
 }
 
 public class UserRepository : IUserRepository
 {
-    //create db connection  interface
     private readonly IPostgresSqlConnectionFactory _connectionFactory;
     
     public UserRepository(IPostgresSqlConnectionFactory connectionFactory)
@@ -31,7 +30,7 @@ public class UserRepository : IUserRepository
             """
                 SELECT email FROM users WHERE email = @Email
             """;
-        return await connection.QuerySingleOrDefaultAsync<string>(sql, email);
+        return await connection.QuerySingleOrDefaultAsync<string>(sql, new { email = email});
     }
     
     public async Task<User?> CreateUser(User user)
@@ -41,7 +40,7 @@ public class UserRepository : IUserRepository
             """
                 INSERT INTO users 
                     (username, password_hash, email, created_date)
-                VALUES (@Username, @Email, @PasswordHash, @CreatedAt)
+                VALUES (@Username, @PasswordHash, @Email, @CreatedAt)
                 RETURNING id, username, email, created_date
             """;
         return await connection.QuerySingleOrDefaultAsync<User>(sql, user); 
@@ -54,8 +53,16 @@ public class UserRepository : IUserRepository
             """
                 SELECT * FROM users WHERE username = @Username
             """;
-
-        return await connection.QuerySingleOrDefaultAsync<User>(sql, username);
+        return await connection.QuerySingleOrDefaultAsync<User>(sql, new {username = username });
     }
-
+    
+    public async Task<IEnumerable<UserResponse>> GetAllUsers()
+    {
+        using var connection = await _connectionFactory.CreateConnectionAsync();
+        const string sql =
+            """
+                SELECT id, username, email FROM users
+            """;
+        return await connection.QueryAsync<UserResponse>(sql);
+    }
 }
