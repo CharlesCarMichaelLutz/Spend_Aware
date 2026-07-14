@@ -7,6 +7,8 @@ public class UserExpenseReport
 {
     public UserResponse UserResponse { get; set; }
     public decimal Total { get; set; }
-    public List<Expense> Expenses { get; set; }
+    // public List<Expense> Expenses { get; set; }
+    // public List<ExpenseResponse> Expenses { get; set; }
+    public IEnumerable<ExpenseResponse> Expenses { get; set; }
     public byte[] PdfFile { get; set; }
 }

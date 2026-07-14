@@ -1,62 +1,119 @@
 using SpendAware.Api.Data.Models;
+using SpendAware.Api.Data.Requests;
+using SpendAware.Api.Data.Responses;
 using SpendAware.Api.Repositories;
 
 namespace SpendAware.Api.Services;
 
 public interface IExpenseService
 {
-    Expense CreateExpense(Expense request);
-    List<Expense> GetAll();
-    Expense UpdateExpense(Expense request);
-    int DeleteExpense(int id);
+    Task<ExpenseResponse> CreateExpense(ExpenseRequest request);
+    Task<ExpenseResponse> UpdateExpense(UpdateExpenseRequest update);
+    Task<bool> DeleteExpense(int id);
+    Task<IEnumerable<ExpenseResponse>> LoadCurrentMonthExpenseList(LoadExpenseListRequest request);
+    // Task<IEnumerable<ExpenseResponse>> LoadExpenseListHistoryByMonth(LoadExpenseListRequest request);
 }
 
 public class ExpenseService : IExpenseService
 {
-    private readonly IDataStore _dataStore;
+    private readonly  IExpenseRepository _expenseRepository;
 
-    public ExpenseService(IDataStore dataStore)
+    public ExpenseService(IExpenseRepository expenseRepository)
     {
-        _dataStore = dataStore;
+        _expenseRepository = expenseRepository;
     }
-    //create
-    public Expense CreateExpense(Expense request)
+    
+    public async Task<ExpenseResponse> CreateExpense(ExpenseRequest request)
     {
+        const string message = "Expense was not created";
+        
         var expense = new Expense()
         {
-            Id = request.Id,
             UserId = request.UserId,
             Place =  request.Place,
             Description = request.Description,
             Amount = request.Amount,
-            Currency = request.Currency,
-            CreatedAt = DateTime.UtcNow
+            CreatedAt = request.CreatedAt.ToUniversalTime()
         };
         
-        _dataStore.AddExpense(expense);
+        var status = await _expenseRepository.SaveAndGetExpense(expense) ?? throw new Exception(message);
 
-        var getExpense = GetExpense(expense.Id);
+        var response = new ExpenseResponse
+        {
+            Id = status.Id,
+            Place = status.Place,
+            Description = status.Description,
+            Amount = status.Amount,
+            CreatedAt = status.CreatedAt.ToString("O"),
+        };
         
-        return getExpense;
+        return response;
     }
-    //update
-    public Expense UpdateExpense(Expense update)
+    
+    public async Task<ExpenseResponse> UpdateExpense(UpdateExpenseRequest update)
     {
-        return _dataStore.UpdateExpense(update);
+        const string message = "could not update expense";
+
+        var expense = new UpdateExpense
+        {
+            Id = update.Id,
+            Place = update.Place,
+            Description = update.Description,
+            Amount = update.Amount,
+            CreatedAt = update.CreatedAt,
+            UpdatedAt = update.UpdatedAt
+        };
+        
+        var status = await _expenseRepository.UpdateAndGetExpense(expense) ?? throw new Exception(message);
+
+        return status;
     }
-    //delete
-    public int DeleteExpense(int id)
+    
+    // //delete
+    public async Task<bool> DeleteExpense(int id)
     {
-        return _dataStore.DeleteExpenseById(id);
+        const string message = "could not delete expense";
+        var status = await _expenseRepository.DeleteExpenseById(id);
+
+        if (!status)
+        {
+            throw new Exception(message);
+        }
+
+        return status;
     }
+    
     //getAll
-    public List<Expense> GetAll()
+    public async Task<IEnumerable<ExpenseResponse>> LoadCurrentMonthExpenseList(LoadExpenseListRequest request)
     {
-        return _dataStore.GetExpenses();
+        const string message = "could not retrieve expenses";
+        
+        var expenseList = await _expenseRepository.GetCurrentMonthExpenseList(request) ?? throw new Exception(message);
+
+        return expenseList.Select(e => new ExpenseResponse
+        {
+            Id = e.Id,
+            Place = e.Place,
+            Description = e.Description,
+            Amount = e.Amount,
+            CreatedAt = e.CreatedAt,
+            UpdatedAt = e.UpdatedAt
+        });
     }
-    //getById
-    private  Expense GetExpense(int id)
-    {
-        return _dataStore.GetExpenseById(id);
-    }
+
+    // public async Task<IEnumerable<ExpenseResponse>> LoadExpenseListHistoryByMonth(LoadExpenseListRequest request)
+    // {
+    //     const string message = "Could not get monthly history";
+    //
+    //     var monthlyExpenseList = await _expenseRepository.GetExpenseListHistoryByMonth(request);
+    //         
+    //     return monthlyExpenseList.Select(e => new ExpenseResponse
+    //     {
+    //         Id = e.Id,
+    //         Place = e.Place,
+    //         Description = e.Description,
+    //         Amount = e.Amount,
+    //         CreatedAt = e.CreatedAt
+    //     });
+    // }
 }

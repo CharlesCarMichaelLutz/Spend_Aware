@@ -3,14 +3,19 @@ using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
 using SpendAware.Api.Data.Models;
+using SpendAware.Api.Data.Responses;
 
 namespace SpendAware.Api.Infrastructure;
 
 public interface IPdfGenerator
 {
     void CreateMonthlyAutomatedPdfReports(List<UserExpenseReport> reports);
-    MemoryStream CreatePdfByYear(List<Expense> expenseList);
-    MemoryStream CreatePdfByMonth(List<Expense> expenseList);
+    // MemoryStream CreatePdfByYear(List<Expense> expenseList);
+    MemoryStream CreatePdfByYear(IEnumerable<ExpenseResponse> expenseList);
+    
+    // MemoryStream CreatePdfByMonth(List<Expense> expenseList);
+    MemoryStream CreatePdfByMonth(IEnumerable<ExpenseResponse> expenseList);
+    
     void CreatePdf();
 }
 
@@ -58,7 +63,7 @@ public class PdfGenerator : IPdfGenerator
         }
     }
 
-    public MemoryStream CreatePdfByYear(List<Expense> expenseList)
+    public MemoryStream CreatePdfByYear(IEnumerable<ExpenseResponse> expenseList)
     {
         var document = Document.Create(container =>
         {
@@ -96,7 +101,7 @@ public class PdfGenerator : IPdfGenerator
         return stream;
     }
     
-    public MemoryStream CreatePdfByMonth(List<Expense> expenseList)
+    public MemoryStream CreatePdfByMonth(IEnumerable<ExpenseResponse> expenseList)
     {
         var document = Document.Create(container =>
         {

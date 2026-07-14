@@ -28,7 +28,9 @@ public class UserRepository : IUserRepository
         using var connection = await _connectionFactory.CreateConnectionAsync();
         const string sql =
             """
-                SELECT email FROM users WHERE email = @Email
+                SELECT email 
+                FROM users 
+                WHERE email = @Email
             """;
         return await connection.QuerySingleOrDefaultAsync<string>(sql, new { email = email});
     }
@@ -41,7 +43,7 @@ public class UserRepository : IUserRepository
                 INSERT INTO users 
                     (username, password_hash, email, created_date)
                 VALUES (@Username, @PasswordHash, @Email, @CreatedAt)
-                RETURNING id, username, email, created_date
+                RETURNING id, username, email, created_date AS CreatedAt
             """;
         return await connection.QuerySingleOrDefaultAsync<User>(sql, user); 
     }
@@ -51,7 +53,9 @@ public class UserRepository : IUserRepository
         using var connection = await _connectionFactory.CreateConnectionAsync();
         const string sql =
             """
-                SELECT * FROM users WHERE username = @Username
+                SELECT id, username, email, password_hash, created_date AS CreatedAt
+                FROM users 
+                WHERE username = @Username
             """;
         return await connection.QuerySingleOrDefaultAsync<User>(sql, new {username = username });
     }
@@ -61,7 +65,8 @@ public class UserRepository : IUserRepository
         using var connection = await _connectionFactory.CreateConnectionAsync();
         const string sql =
             """
-                SELECT id, username, email FROM users
+                SELECT id, username, email, created_date AS CreatedAt
+                FROM users
             """;
         return await connection.QueryAsync<UserResponse>(sql);
     }

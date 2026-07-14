@@ -8,21 +8,19 @@ namespace SpendAware.Api.Services;
 public interface IUserService
 {
     Task<UserLoginResponse> CreateUser(CreateUserRequest request);
-    Task<UserLoginResponse> LoginUser(CreateUserRequest request);
-    Task<IEnumerable<UserResponse>> GetAllUsers();
+    Task<UserLoginResponse> LoginUser(LoginUserRequest request);
+    Task<IEnumerable<UsersResponse>> GetAllUsers();
 }
 public class UserService : IUserService
 {
     private readonly IPasswordHasher _passwordHasher;
     private readonly ITokenService _tokenService;
-    private readonly IDataStore _dataStore;
     private readonly IUserRepository _userRepository;
 
-    public UserService(IPasswordHasher passwordHasher, ITokenService tokenService, IDataStore dataStore, IUserRepository userRepository)
+    public UserService(IPasswordHasher passwordHasher, ITokenService tokenService, IUserRepository userRepository)
     {
         _passwordHasher = passwordHasher;
         _tokenService = tokenService;
-        _dataStore = dataStore;
         _userRepository = userRepository;
     }
     public async Task<UserLoginResponse> CreateUser(CreateUserRequest request)
@@ -41,7 +39,7 @@ public class UserService : IUserService
             Username = request.Username,
             Email = request.Email,
             PasswordHash = _passwordHasher.Hash(request.Password),
-            CreatedAt = DateTimeOffset.UtcNow
+            CreatedAt = request.CreatedAt.ToUniversalTime()
         };
         
         var user = await _userRepository.CreateUser(createUser);
@@ -55,7 +53,7 @@ public class UserService : IUserService
             Id = user.Id,
             Username = user.Username,
             Email = user.Email,
-            CreatedAt = user.CreatedAt,
+            CreatedAt = user.CreatedAt.ToString("O"),
             AccessToken = _tokenService.Create(user.Username)
         };
         
@@ -66,7 +64,7 @@ public class UserService : IUserService
         return response;
     }
     
-    public async Task<UserLoginResponse> LoginUser(CreateUserRequest request)
+    public async Task<UserLoginResponse> LoginUser(LoginUserRequest request)
     {
         const string message = "Login failed try again";
         
@@ -87,21 +85,22 @@ public class UserService : IUserService
             Id = user.Id,
             Username = user.Username,
             Email = user.Email,
-            CreatedAt = user.CreatedAt,
+            CreatedAt = user.CreatedAt.ToString("O"),
             AccessToken = _tokenService.Create(user.Username)
         };
         return response;
     }
 
-    public async Task<IEnumerable<UserResponse>> GetAllUsers()
+    public async Task<IEnumerable<UsersResponse>> GetAllUsers()
     {
         var userList = await _userRepository.GetAllUsers();
 
-        return userList.Select(u => new UserResponse
+        return userList.Select(u => new UsersResponse
         {
             Id = u.Id,
             Username = u.Username,
-            Email = u.Email
+            Email = u.Email,
+            CreatedAt = u.CreatedAt.ToString("O")
         });
     }
     //refresh-token
