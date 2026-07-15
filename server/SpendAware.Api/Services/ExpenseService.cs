@@ -10,8 +10,7 @@ public interface IExpenseService
     Task<ExpenseResponse> CreateExpense(ExpenseRequest request);
     Task<ExpenseResponse> UpdateExpense(UpdateExpenseRequest update);
     Task<bool> DeleteExpense(int id);
-    Task<IEnumerable<ExpenseResponse>> LoadCurrentMonthExpenseList(LoadExpenseListRequest request);
-    // Task<IEnumerable<ExpenseResponse>> LoadExpenseListHistoryByMonth(LoadExpenseListRequest request);
+    Task<IEnumerable<ExpenseResponse>> LoadExpenseList(LoadExpenseListRequest request);
 }
 
 public class ExpenseService : IExpenseService
@@ -60,16 +59,24 @@ public class ExpenseService : IExpenseService
             Place = update.Place,
             Description = update.Description,
             Amount = update.Amount,
-            CreatedAt = update.CreatedAt,
-            UpdatedAt = update.UpdatedAt
+            CreatedAt = update.CreatedAt.ToUniversalTime(),
+            UpdatedAt = update.UpdatedAt.ToUniversalTime()
         };
         
         var status = await _expenseRepository.UpdateAndGetExpense(expense) ?? throw new Exception(message);
 
-        return status;
+        var response = new ExpenseResponse
+        {
+            Id = status.Id,
+            Place = status.Place,
+            Description = status.Description,
+            Amount = status.Amount,
+            CreatedAt = status.CreatedAt.ToString("O"),
+        };
+
+        return response;
     }
     
-    // //delete
     public async Task<bool> DeleteExpense(int id)
     {
         const string message = "could not delete expense";
@@ -83,8 +90,7 @@ public class ExpenseService : IExpenseService
         return status;
     }
     
-    //getAll
-    public async Task<IEnumerable<ExpenseResponse>> LoadCurrentMonthExpenseList(LoadExpenseListRequest request)
+    public async Task<IEnumerable<ExpenseResponse>> LoadExpenseList(LoadExpenseListRequest request)
     {
         const string message = "could not retrieve expenses";
 
@@ -95,7 +101,7 @@ public class ExpenseService : IExpenseService
             EndDate = request.EndDate.ToUniversalTime(),
         };
         
-        var expenseList = await _expenseRepository.GetCurrentMonthExpenseList(loadExpense) ?? throw new Exception(message);
+        var expenseList = await _expenseRepository.GetExpenseList(loadExpense) ?? throw new Exception(message);
 
         return expenseList.Select(e => new ExpenseResponse
         {
@@ -106,20 +112,4 @@ public class ExpenseService : IExpenseService
             CreatedAt = e.CreatedAt.ToString("O"),
         });
     }
-
-    // public async Task<IEnumerable<ExpenseResponse>> LoadExpenseListHistoryByMonth(LoadExpenseListRequest request)
-    // {
-    //     const string message = "Could not get monthly history";
-    //
-    //     var monthlyExpenseList = await _expenseRepository.GetExpenseListHistoryByMonth(request);
-    //         
-    //     return monthlyExpenseList.Select(e => new ExpenseResponse
-    //     {
-    //         Id = e.Id,
-    //         Place = e.Place,
-    //         Description = e.Description,
-    //         Amount = e.Amount,
-    //         CreatedAt = e.CreatedAt
-    //     });
-    // }
 }

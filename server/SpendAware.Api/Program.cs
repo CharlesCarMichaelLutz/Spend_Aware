@@ -130,11 +130,11 @@ app.MapPost("expenses", async (IExpenseService service, [FromBody] ExpenseReques
     }
 });
 
-app.MapPost("expenses/update", async (IExpenseService service, [FromBody] LoadExpenseListRequest request) =>
+app.MapPost("expenses/load", async (IExpenseService service, [FromBody] LoadExpenseListRequest request) =>
 {
     try
     {
-        var response = await service.LoadCurrentMonthExpenseList(request);
+        var response = await service.LoadExpenseList(request);
         return Results.Ok(response);
     }
     catch (Exception ex)
@@ -142,19 +142,6 @@ app.MapPost("expenses/update", async (IExpenseService service, [FromBody] LoadEx
         return Results.BadRequest(ex.Message);
     }
 });
-
-// app.MapGet("expenses", async (IExpenseService service, [FromBody] LoadExpenseListRequest request) =>
-// {
-//     try
-//     {
-//         var response = await service.LoadCurrentMonthExpenseList(request);
-//         return Results.Ok(response);
-//     }
-//     catch (Exception ex)
-//     {
-//         return Results.BadRequest(ex.Message);
-//     }
-// });
 
 app.MapPut("expenses", async (IExpenseService service, [FromBody] UpdateExpenseRequest request) =>
 {

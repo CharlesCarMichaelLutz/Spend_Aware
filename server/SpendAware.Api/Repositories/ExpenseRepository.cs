@@ -9,17 +9,13 @@ namespace SpendAware.Api.Repositories;
 public interface IExpenseRepository
 {
     Task<Expense?> SaveAndGetExpense(Expense request);
-    Task<ExpenseResponse> UpdateAndGetExpense(UpdateExpense updatedExpense);
+    Task<Expense> UpdateAndGetExpense(UpdateExpense updatedExpense);
     Task<bool> DeleteExpenseById(int id);
-    Task<IEnumerable<Expense>> GetCurrentMonthExpenseList(LoadExpense request);
-    // Task<IEnumerable<ExpenseResponse>> GetExpenseListHistoryByMonth(LoadExpenseListRequest request);
-    // Task<List<ExpenseResponse>> GetCurrentMonthExpenseList(LoadExpenseListRequest request);
-
+    Task<IEnumerable<Expense>> GetExpenseList(LoadExpense request);
 }
 
 public class ExpenseRepository : IExpenseRepository
 {
-    //create db connection  interface
     private readonly IPostgresSqlConnectionFactory _connectionFactory;
     
     public ExpenseRepository(IPostgresSqlConnectionFactory connectionFactory)
@@ -40,7 +36,7 @@ public class ExpenseRepository : IExpenseRepository
         return await connection.QuerySingleOrDefaultAsync<Expense>(sql, expense); 
     }
 
-    public async Task<ExpenseResponse> UpdateAndGetExpense(UpdateExpense updatedExpense)
+    public async Task<Expense> UpdateAndGetExpense(UpdateExpense updatedExpense)
     {
         using var connection = await _connectionFactory.CreateConnectionAsync();
         const string sql =
@@ -52,7 +48,7 @@ public class ExpenseRepository : IExpenseRepository
                 RETURNING  id, place, description, amount, created_at, updated_at
             """;
 
-        return await connection.QuerySingleOrDefaultAsync<ExpenseResponse>(sql, updatedExpense);
+        return await connection.QuerySingleOrDefaultAsync<Expense>(sql, updatedExpense);
     }
 
     public async Task<bool> DeleteExpenseById(int id)
@@ -68,7 +64,7 @@ public class ExpenseRepository : IExpenseRepository
         return result > 0;
     }
     
-    public async Task<IEnumerable<Expense>> GetCurrentMonthExpenseList(LoadExpense request)
+    public async Task<IEnumerable<Expense>> GetExpenseList(LoadExpense request)
     { 
         using var connection = await _connectionFactory.CreateConnectionAsync();
         const string sql =
@@ -77,25 +73,6 @@ public class ExpenseRepository : IExpenseRepository
                 FROM expenses
                 WHERE user_id = @UserId AND created_at BETWEEN @StartDate AND @EndDate
             """;
-        // var parameters = new
-        // {
-        //     UserId = request.UserId,
-        //     StartDate = request.StartDate,
-        //     EndDate = request.EndDate
-        // };
-        // return await connection.QueryAsync<Expense>(sql, parameters);
         return await connection.QueryAsync<Expense>(sql, new { UserId = request.UserId, StartDate = request.StartDate, EndDate = request.EndDate });
     }
-    
-    // public async Task<IEnumerable<ExpenseResponse>> GetExpenseListHistoryByMonth(LoadExpenseListRequest request)
-    // {
-    //     using var connection = await _connectionFactory.CreateConnectionAsync();
-    //     const string sql =
-    //         """
-    //             SELECT id, place, description, amount, created_at
-    //             FROM expenses
-    //             WHERE user_id = @UserId, created_at = @CreatedAt BETWEEN @StartDate AND @EndDate
-    //         """;
-    //     return await connection.QueryAsync<ExpenseResponse>(sql, new { user_id = request.UserId, StartDate = request.StartDate, EndDate = request.EndDate });
-    // }
 }
