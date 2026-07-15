@@ -11,7 +11,7 @@ public interface IExpenseRepository
     Task<Expense?> SaveAndGetExpense(Expense request);
     Task<ExpenseResponse> UpdateAndGetExpense(UpdateExpense updatedExpense);
     Task<bool> DeleteExpenseById(int id);
-    Task<IEnumerable<ExpenseResponse>> GetCurrentMonthExpenseList(LoadExpenseListRequest request);
+    Task<IEnumerable<Expense>> GetCurrentMonthExpenseList(LoadExpense request);
     // Task<IEnumerable<ExpenseResponse>> GetExpenseListHistoryByMonth(LoadExpenseListRequest request);
     // Task<List<ExpenseResponse>> GetCurrentMonthExpenseList(LoadExpenseListRequest request);
 
@@ -68,16 +68,23 @@ public class ExpenseRepository : IExpenseRepository
         return result > 0;
     }
     
-    public async Task<IEnumerable<ExpenseResponse>> GetCurrentMonthExpenseList(LoadExpenseListRequest request)
+    public async Task<IEnumerable<Expense>> GetCurrentMonthExpenseList(LoadExpense request)
     { 
         using var connection = await _connectionFactory.CreateConnectionAsync();
         const string sql =
             """
-                SELECT id, place, description, amount, created_at, updated_at 
+                SELECT id, place, description, amount, created_at
                 FROM expenses
-                WHERE user_id = @UserId, created_at = CreatedAt BETWEEN @StartDate AND @EndDate
+                WHERE user_id = @UserId AND created_at BETWEEN @StartDate AND @EndDate
             """;
-        return await connection.QueryAsync<ExpenseResponse>(sql, new { user_id = request.UserId, StartDate = request.StartDate, EndDate = request.EndDate });
+        // var parameters = new
+        // {
+        //     UserId = request.UserId,
+        //     StartDate = request.StartDate,
+        //     EndDate = request.EndDate
+        // };
+        // return await connection.QueryAsync<Expense>(sql, parameters);
+        return await connection.QueryAsync<Expense>(sql, new { UserId = request.UserId, StartDate = request.StartDate, EndDate = request.EndDate });
     }
     
     // public async Task<IEnumerable<ExpenseResponse>> GetExpenseListHistoryByMonth(LoadExpenseListRequest request)

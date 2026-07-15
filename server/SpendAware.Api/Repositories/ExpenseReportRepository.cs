@@ -11,7 +11,7 @@ public interface IExpenseReportRepository
     Task<IEnumerable<UserResponse>> GetUsersForReport();
     // Task<IEnumerable<Expense>> GetExpensesByDate(LoadExpenseListRequest request);
     // Task<List<ExpenseResponse>> GetExpensesByDate(int userId, DateTime start, DateTime end);
-    Task<IEnumerable<ExpenseResponse>> GetExpensesByDate(int userId, DateTime start, DateTime end);
+    Task<IEnumerable<ExpenseResponse>> GetExpensesByDate(int userId, DateTimeOffset start, DateTimeOffset end);
 }
 
 public class ExpenseReportRepository : IExpenseReportRepository
@@ -34,7 +34,7 @@ public class ExpenseReportRepository : IExpenseReportRepository
         return await connection.QueryAsync<UserResponse>(sql);
     }
 
-    public async Task<IEnumerable<ExpenseResponse>> GetExpensesByDate(int userId, DateTime start, DateTime end)
+    public async Task<IEnumerable<ExpenseResponse>> GetExpensesByDate(int userId, DateTimeOffset start, DateTimeOffset end)
     {
         using var connection = await _connectionFactory.CreateConnectionAsync();
         const string sql =

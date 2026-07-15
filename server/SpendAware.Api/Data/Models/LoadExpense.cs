@@ -1,6 +1,6 @@
-namespace SpendAware.Api.Data.Requests;
+namespace SpendAware.Api.Data.Models;
 
-public class LoadExpenseListRequest
+public class LoadExpense
 {
     public int UserId { get; set; }
     public DateTimeOffset StartDate { get; set; }

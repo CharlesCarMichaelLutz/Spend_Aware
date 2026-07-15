@@ -1,4 +1,4 @@
-namespace SpendAware.Api.Data.Responses;
+namespace SpendAware.Api.Services;
 
 public class UsersResponse
 {

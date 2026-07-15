@@ -35,8 +35,8 @@ public class ExpenseReportService : IExpenseReportService
     {
         // DateTime start = new DateTime(2026, 5, 1);
         // DateTime end = new DateTime(2026, 5, 31);
-        DateTime start = request.StartDate;
-        DateTime end = request.StartDate;
+        DateTimeOffset start = request.StartDate.ToUniversalTime();
+        DateTimeOffset end = request.StartDate.ToUniversalTime();
 
         // var userList = _dataStore.GetUsersForReport();
         var userList = await _expenseReportRepository.GetUsersForReport();

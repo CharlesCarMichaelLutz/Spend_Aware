@@ -87,8 +87,15 @@ public class ExpenseService : IExpenseService
     public async Task<IEnumerable<ExpenseResponse>> LoadCurrentMonthExpenseList(LoadExpenseListRequest request)
     {
         const string message = "could not retrieve expenses";
+
+        var loadExpense = new LoadExpense
+        {
+            UserId = request.UserId,
+            StartDate = request.StartDate.ToUniversalTime(),
+            EndDate = request.EndDate.ToUniversalTime(),
+        };
         
-        var expenseList = await _expenseRepository.GetCurrentMonthExpenseList(request) ?? throw new Exception(message);
+        var expenseList = await _expenseRepository.GetCurrentMonthExpenseList(loadExpense) ?? throw new Exception(message);
 
         return expenseList.Select(e => new ExpenseResponse
         {
@@ -96,8 +103,7 @@ public class ExpenseService : IExpenseService
             Place = e.Place,
             Description = e.Description,
             Amount = e.Amount,
-            CreatedAt = e.CreatedAt,
-            UpdatedAt = e.UpdatedAt
+            CreatedAt = e.CreatedAt.ToString("O"),
         });
     }
 
