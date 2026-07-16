@@ -38,14 +38,12 @@ services.AddScoped<IPostgresSqlConnectionFactory>(_ =>
     new  PostgresSqlConnectionFactory(config.GetValue<string>("ConnectionStrings:Spend_Aware")!));
 
 //Services
-
 services.AddScoped<IUserService, UserService>();
 services.AddScoped<IUserRepository, UserRepository>();
 services.AddScoped<IExpenseService, ExpenseService>();
 services.AddScoped<IExpenseRepository, ExpenseRepository>();
 services.AddScoped<IExpenseReportService, ExpenseReportService>();
 services.AddScoped<IExpenseReportRepository, ExpenseReportRepository>();
-// services.AddSingleton<IDataStore, DataStore>();
 
 //Infrastructure
 services.AddSingleton<IPasswordHasher, PasswordHasher>();
@@ -117,11 +115,11 @@ app.MapGet("users", async (IUserService service) =>
     return Results.Ok(response);
 });
 
-app.MapPost("expenses", async (IExpenseService service, [FromBody] ExpenseRequest expense) =>
+app.MapPost("expenses/load", async (IExpenseService service, [FromBody] LoadExpenseListRequest request) =>
 {
     try
     {
-        var response = await service.CreateExpense(expense);
+        var response = await service.LoadExpenseList(request);
         return Results.Ok(response);
     }
     catch (Exception ex)
@@ -130,11 +128,11 @@ app.MapPost("expenses", async (IExpenseService service, [FromBody] ExpenseReques
     }
 });
 
-app.MapPost("expenses/load", async (IExpenseService service, [FromBody] LoadExpenseListRequest request) =>
+app.MapPost("expenses", async (IExpenseService service, [FromBody] ExpenseRequest expense) =>
 {
     try
     {
-        var response = await service.LoadExpenseList(request);
+        var response = await service.CreateExpense(expense);
         return Results.Ok(response);
     }
     catch (Exception ex)
@@ -169,21 +167,21 @@ app.MapDelete("expenses", async (IExpenseService service, [FromBody] int id) =>
     }
 });
 
-app.MapGet("automated-report", async (IExpenseReportService service, [FromBody] LoadExpenseListRequest request) =>
+app.MapPost("report/automated", async (IExpenseReportService service, [FromBody] ReportListRequest request) =>
 {
     var response = await service.GetMonthlyReport(request);
     return Results.Ok(response);
 });
 
-app.MapPost("report/year", async (IExpenseReportService service, [FromBody] int id) =>
+app.MapPost("report/year", async (IExpenseReportService service, [FromBody] LoadExpenseListRequest request) =>
 {
-    var stream = await service.GetAllExpensesByYear(id);
+    var stream = await service.GetAllExpensesByYear(request);
     return Results.File(stream, "application/pdf", "test.pdf");
 });
 
-app.MapPost("report/month", async (IExpenseReportService service, [FromBody] int id) =>
+app.MapPost("report/month", async (IExpenseReportService service, [FromBody] LoadExpenseListRequest request) =>
 {
-    var stream = await service.GetAllExpensesByMonth(id);
+    var stream = await service.GetAllExpensesByMonth(request);
     return Results.File(stream, "application/pdf", "test.pdf");
 });
 

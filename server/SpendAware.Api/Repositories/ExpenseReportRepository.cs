@@ -41,9 +41,9 @@ public class ExpenseReportRepository : IExpenseReportRepository
             """
                 SELECT id, place, description, amount, created_at, updated_at 
                 FROM expenses
-                WHERE user_id = @UserId, created_at = CreatedAt BETWEEN @StartDate AND @EndDate
+                WHERE user_id = @UserId AND created_at BETWEEN @StartDate AND @EndDate
             """;
-        return await connection.QueryAsync<ExpenseResponse>(sql, new { user_id = userId, StartDate = start, EndDate = end });
+        return await connection.QueryAsync<ExpenseResponse>(sql, new { UserId = userId, StartDate = start, EndDate = end });
         
     }
 
