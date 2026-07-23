@@ -36,6 +36,7 @@ services.AddOpenApi();
 
 services.AddScoped<IPostgresSqlConnectionFactory>(_ => 
     new  PostgresSqlConnectionFactory(config.GetValue<string>("ConnectionStrings:Spend_Aware")!));
+services.AddScoped<PostgresDBInitializer>();
 
 //Services
 services.AddScoped<IUserService, UserService>();
@@ -74,6 +75,8 @@ using (var scope = app.Services.CreateScope())
 {
     var pdfGenerator  = scope.ServiceProvider.GetRequiredService<IPdfGenerator>();
     pdfGenerator.CreatePdf();
+    var initializer = scope.ServiceProvider.GetRequiredService<PostgresDBInitializer>();
+    await initializer.InitializeAsync();
 }
 
 app.UseCors("SpendAware");
