@@ -10,12 +10,8 @@ namespace SpendAware.Api.Infrastructure;
 public interface IPdfGenerator
 {
     void CreateMonthlyAutomatedPdfReports(List<UserExpenseReport> reports);
-    // MemoryStream CreatePdfByYear(List<Expense> expenseList);
     MemoryStream CreatePdfByYear(IEnumerable<ExpenseResponse> expenseList);
-    
-    // MemoryStream CreatePdfByMonth(List<Expense> expenseList);
     MemoryStream CreatePdfByMonth(IEnumerable<ExpenseResponse> expenseList);
-    
     void CreatePdf();
 }
 

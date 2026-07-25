@@ -11,22 +11,13 @@ public interface IMailService
 
 public class MailService : IMailService
 {
-    // private readonly string _smtpHost;
-    // private readonly int _smtpPort;
-
-    // public MailService(IConfiguration config)
-    // {
-    //     _smtpHost = config["Smtp:Host"] ?? "mailpit";
-    //     _smtpPort = int.Parse(config["Smtp:Port"] ?? "1025");
-    // }
-    
     //iterate over with each user an expense list then send
     public async Task SendEmail(List<UserExpenseReport> reports)
     {
         foreach (var u in reports)
         {
             //dynamic variables for each user
-            string reportMonth = "May";
+            string reportMonth = "July";
             string reportYear = "2026";
             string currencySymbol = "$";
             
@@ -53,11 +44,10 @@ public class MailService : IMailService
             message.Body = bb.ToMessageBody();
 
             //start email relay server and send
-            using var smtp = new SmtpClient();
+            using var smtp = new  SmtpClient();
             await smtp.ConnectAsync("localhost", 1025);
-            // await smtp.ConnectAsync(_smtpHost, _smtpPort);
             await smtp.SendAsync(message);
-            await smtp.DisconnectAsync(true);
+            Console.WriteLine("Email sent");
         }
     }
 }

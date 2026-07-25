@@ -1,16 +1,12 @@
-using SpendAware.Api.Data.Models;
 using SpendAware.Api.Data.Responses;
 using SpendAware.Api.Database;
 using Dapper;
-using SpendAware.Api.Data.Requests;
 
 namespace SpendAware.Api.Repositories;
 
 public interface IExpenseReportRepository
 {
     Task<IEnumerable<UserResponse>> GetUsersForReport();
-    // Task<IEnumerable<Expense>> GetExpensesByDate(LoadExpenseListRequest request);
-    // Task<List<ExpenseResponse>> GetExpensesByDate(int userId, DateTime start, DateTime end);
     Task<IEnumerable<ExpenseResponse>> GetExpensesByDate(int userId, DateTimeOffset start, DateTimeOffset end);
 }
 
@@ -31,6 +27,7 @@ public class ExpenseReportRepository : IExpenseReportRepository
                 SELECT id,  username, email
                 FROM users
             """;
+        
         return await connection.QueryAsync<UserResponse>(sql);
     }
 
@@ -46,5 +43,4 @@ public class ExpenseReportRepository : IExpenseReportRepository
         return await connection.QueryAsync<ExpenseResponse>(sql, new { UserId = userId, StartDate = start, EndDate = end });
         
     }
-
 }
