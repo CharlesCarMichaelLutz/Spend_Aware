@@ -1,7 +1,9 @@
 import { useState, useEffect, useRef } from "react";
-import { baseURL } from "../api/base.ts"
+import { baseApi } from "../api/base.ts"
+import { type User } from "../types/types.tsx"
 
 export default function LoginForm({ setIsLandingModalOpen }) {
+    const [auth, setAuth] = useState<User>({});
     const [loginForm, setLoginForm] = useState<object>({
         username: "",
         email: "",
@@ -27,26 +29,20 @@ export default function LoginForm({ setIsLandingModalOpen }) {
 
     async function handleLoginFormSubmit(e) {
         e.preventDefault()
-
         try{
-            const response = await baseURL.post("login", {
-                Username : loginForm.email,
+            const response = await baseApi.post<User>("login", {
+                Username : loginForm.username,
                 Email: loginForm.email,
                 Password: loginForm.password,
             });
-            
-            if(!response.ok) {
-                throw new Error("Failed to fetch user");
-            }
+
+            clearLoginForm()
             
             if (response.status === 200) {
                 //open modal
+                setAuth(response.data);
+                console.log("login response:", response)
             }
-            setAuth(response.data);
-            
-            // setIsLoggedIn(true);
-            clearLoginForm()
-            
         } catch(error) {
             console.error(error)
         }

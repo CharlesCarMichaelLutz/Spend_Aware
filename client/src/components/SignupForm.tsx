@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import Select from 'react-select';
-import { baseURL } from "../api/base.ts"
+import { baseApi}  from "../api/base.ts"
 
 type SignupFormProps = {
     email: string
@@ -76,7 +76,7 @@ export default function SignupForm({ setIsLandingModalOpen }) {
         e.preventDefault()
         
         try {
-            const response = await baseURL.post("register", {
+            const response = await baseApi.post("register", {
                 Email: signupForm.email,
                 Password: signupForm.password,
                 Username: signupForm.username,

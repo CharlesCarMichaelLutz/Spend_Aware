@@ -1,7 +1,12 @@
 import { useState, useEffect, useRef } from "react";
-import { baseURL } from "../api/base.ts"
+import { baseApi } from "../api/base.ts"
+import { type User } from "../types/types.tsx"
 
 export default function GuestForm({ setIsLandingModalOpen })  {
+    //that' what needs to be saved in Zustand
+    // const { setAuth } useStore()
+    const [auth, setAuth] = useState<User>({});
+    
     const [guestForm, setGuestForm] = useState<object>({
         username: "",
         email: "",
@@ -27,31 +32,23 @@ export default function GuestForm({ setIsLandingModalOpen })  {
 
     async function handleGuestFormSubmit(e) {
         e.preventDefault()
-
-        // const payload = { ...guestForm }
         try{
-            const response = await baseURL.post("login", {
+            const response = await baseApi.post<User>("login", {
                 Username : import.meta.env.VITE_API_Guest_Username,
                 Email: import.meta.env.VITE_API_Guest_Email,
-                Password: VITE_API_Guest_Password,
+                Password: import.meta.env.VITE_API_Guest_Password,
             });
-
-            if(!response.ok) {
-                throw new Error("Failed to fetch user");
-            }
-
+            
+            clearGuestForm()
+            
             if (response.status === 200) {
                 //open modal
+                setAuth(response.data)
+                console.log("guest response: ", response)
             }
-            setAuth(response.data);
-
-            // setIsLoggedIn(true);
-            clearGuestForm()
-
         } catch(error) {
             console.error(error)
         }
-        
     }
 
     return (

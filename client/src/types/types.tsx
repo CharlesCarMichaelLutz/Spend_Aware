@@ -7,11 +7,20 @@
 // }
 
 export type User = {
+    accessToken: string
+    createdAt: string
+    email: string;
     id: number;
     username: string;
-    email: string;
-    created_at: string;
 }
+
+// export interface User {
+//     accessToken: string
+//     createdAt: string
+//     email: string;
+//     id: number;
+//     username: string;
+// }
 
 export type Expense = {
     id: number;
