@@ -41,9 +41,11 @@ export default function LoginForm({ setIsLandingModalOpen }) {
             if (response.status === 200) {
                 //open modal
                 setAuth(response.data);
+                setIsLandingModalOpen(true);
                 console.log("login response:", response)
             }
         } catch(error) {
+            //render the error on the LoginForm container
             console.error(error)
         }
     }
@@ -75,7 +77,9 @@ export default function LoginForm({ setIsLandingModalOpen }) {
                 required
             />
             {/*login modal*/}
-            <button type="submit" onClick={() => setIsLandingModalOpen(true)}>Submit</button>
+            <button type="submit">
+                Login
+            </button>
         </form>
     )
 }

@@ -20,6 +20,7 @@ export default function SignupForm({ setIsLandingModalOpen }) {
         language: "",
         currency: ""
     })
+    const [auth, setAuth] = useState<SignupFormProps>({});
     
     function clearSignupForm() {
         setSignupForm({
@@ -76,7 +77,7 @@ export default function SignupForm({ setIsLandingModalOpen }) {
         e.preventDefault()
         
         try {
-            const response = await baseApi.post("register", {
+            const response = await baseApi.post<SignupFormProps>("register", {
                 Email: signupForm.email,
                 Password: signupForm.password,
                 Username: signupForm.username,
@@ -84,18 +85,13 @@ export default function SignupForm({ setIsLandingModalOpen }) {
                 Language: signupForm.language.value,
                 Currency: signupForm.currency.value,
             });
-
-            if(!response.ok) {
-                throw new Error("Failed to fetch user");
-            }
+            clearSignupForm()
 
             if (response.status === 200) {
                 //open modal
+                setAuth(response.data)
+                setIsLandingModalOpen(true)
             }
-            setAuth(response.data);
-
-            // setIsLoggedIn(true);
-            clearSignupForm()
             
         } catch(error) {
             console.error(error);
@@ -151,7 +147,7 @@ export default function SignupForm({ setIsLandingModalOpen }) {
                 }
             />
             {/*signup modal*/}
-            <button type="submit" onClick={() => setIsLandingModalOpen(true)}>Submit</button>
+            <button type="submit" >Register</button>
         </form>
     )
 }
