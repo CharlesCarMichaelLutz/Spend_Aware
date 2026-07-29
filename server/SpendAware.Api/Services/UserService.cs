@@ -7,8 +7,8 @@ using SpendAware.Api.Repositories;
 namespace SpendAware.Api.Services;
 public interface IUserService
 {
-    Task<UserLoginResponse> CreateUser(CreateUserRequest request);
-    Task<UserLoginResponse> LoginUser(LoginUserRequest request);
+    Task<CreateUserLoginResponse> CreateUser(CreateUserRequest request);
+    Task<CreateUserLoginResponse> LoginUser(LoginUserRequest request);
     Task<IEnumerable<UsersResponse>> GetAllUsers();
 }
 public class UserService : IUserService
@@ -23,7 +23,7 @@ public class UserService : IUserService
         _tokenService = tokenService;
         _userRepository = userRepository;
     }
-    public async Task<UserLoginResponse> CreateUser(CreateUserRequest request)
+    public async Task<CreateUserLoginResponse> CreateUser(CreateUserRequest request)
     {
         const string message = "Failed to create user try again";
         
@@ -33,12 +33,14 @@ public class UserService : IUserService
         {
             throw new Exception(message);
         }
-
-        var createUser = new User
+        
+        var createUser = new CreateUser()
         {
             Username = request.Username,
             Email = request.Email,
             PasswordHash = _passwordHasher.Hash(request.Password),
+            Language = request.Language,
+            Currency = request.Currency,
             CreatedAt = request.CreatedAt.ToUniversalTime()
         };
         
@@ -48,12 +50,14 @@ public class UserService : IUserService
 
         //validate and confirm user email by code
 
-        var response = new UserLoginResponse
+        var response = new CreateUserLoginResponse
         {
             Id = user.Id,
             Username = user.Username,
             Email = user.Email,
             CreatedAt = user.CreatedAt.ToString("O"),
+            Language = user.Language,
+            Currency = user.Currency,
             AccessToken = _tokenService.Create(user.Username)
         };
         
@@ -64,7 +68,7 @@ public class UserService : IUserService
         return response;
     }
     
-    public async Task<UserLoginResponse> LoginUser(LoginUserRequest request)
+    public async Task<CreateUserLoginResponse> LoginUser(LoginUserRequest request)
     {
         const string message = "Login failed try again";
         
@@ -80,12 +84,14 @@ public class UserService : IUserService
         //validate and confirm user email by code
         // create/save/send Refresh Token as httponly cookie
         
-        var response = new UserLoginResponse
+        var response = new CreateUserLoginResponse
         {
             Id = user.Id,
             Username = user.Username,
             Email = user.Email,
             CreatedAt = user.CreatedAt.ToString("O"),
+            Language = user.Language,
+            Currency = user.Currency,
             AccessToken = _tokenService.Create(user.Username)
         };
         return response;

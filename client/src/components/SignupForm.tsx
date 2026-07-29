@@ -81,7 +81,7 @@ export default function SignupForm({ setIsLandingModalOpen }) {
                 Email: signupForm.email,
                 Password: signupForm.password,
                 Username: signupForm.username,
-                Created_at: new Date().toISOString(),
+                CreatedAt: new Date().toISOString(),
                 Language: signupForm.language.value,
                 Currency: signupForm.currency.value,
             });

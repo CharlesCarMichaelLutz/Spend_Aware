@@ -56,7 +56,6 @@ services.AddCors(options =>
 {
     options.AddPolicy("SpendAware", policy =>
     {
-        // policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
         policy
             .WithOrigins("http://localhost:5173")
             .AllowAnyHeader()
@@ -65,16 +64,6 @@ services.AddCors(options =>
     });
 });
 
-// services.AddCors(options =>
-// {
-//     options.AddPolicy("ReactAppPolicy", builder =>
-//     {
-//         builder.WithOrigins("https://rabbit-chat.azurewebsites.net")
-//             .AllowAnyHeader()
-//             .AllowAnyMethod()
-//             .AllowCredentials();
-//     });
-// });
 
 var app = builder.Build();
 

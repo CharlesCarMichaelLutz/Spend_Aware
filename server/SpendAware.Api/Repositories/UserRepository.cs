@@ -9,8 +9,8 @@ namespace SpendAware.Api.Repositories;
 public interface IUserRepository
 {
     Task<string?> CheckEmail(string email);
-    Task<User?> CreateUser(User user);
-    Task<User?> GetUserById(string username);
+    Task<RegisteredUser?> CreateUser(CreateUser user);
+    Task<LoggedInUser?> GetUserById(string username);
     Task<IEnumerable<UserResponse>> GetAllUsers();
 }
 
@@ -35,29 +35,98 @@ public class UserRepository : IUserRepository
         return await connection.QuerySingleOrDefaultAsync<string>(sql, new { email = email});
     }
     
-    public async Task<User?> CreateUser(User user)
+    // public async Task<User?> CreateUser(User user)
+    // {
+    //     using var connection = await _connectionFactory.CreateConnectionAsync();
+    //     const string sql =
+    //         """
+    //             INSERT INTO users 
+    //                 (username, password_hash, email, created_date)
+    //             VALUES (@Username, @PasswordHash, @Email, @CreatedAt)
+    //             RETURNING id, username, email, created_date AS CreatedAt
+    //         """;
+    //     return await connection.QuerySingleOrDefaultAsync<User>(sql, user); 
+    // }
+    public async Task<RegisteredUser?> CreateUser(CreateUser user)
     {
         using var connection = await _connectionFactory.CreateConnectionAsync();
-        const string sql =
+        const string insert_user =
             """
                 INSERT INTO users 
                     (username, password_hash, email, created_date)
                 VALUES (@Username, @PasswordHash, @Email, @CreatedAt)
-                RETURNING id, username, email, created_date AS CreatedAt
+                RETURNING id
             """;
-        return await connection.QuerySingleOrDefaultAsync<User>(sql, user); 
+        const string insert_user_preferences =
+            """
+                INSERT INTO user_preferences
+                    (user_id, language_code, currency_code)
+                VALUES (@UserId, @Language, @Currency)
+            """;
+        using var transaction = connection.BeginTransaction();
+        try
+        {
+            var userId = await connection.ExecuteScalarAsync<int>(insert_user, user, transaction);
+            await connection.ExecuteAsync(
+                insert_user_preferences,
+                new
+                {
+                    UserId = userId,
+                    user.Language,
+                    user.Currency
+                },
+                transaction
+            );
+            transaction.Commit();
+
+            return new RegisteredUser
+            {
+                Id = userId,
+                Username = user.Username,
+                Email = user.Email,
+                CreatedAt = user.CreatedAt,
+                Language = user.Language,
+                Currency = user.Currency
+            };
+        }
+        catch
+        {
+            transaction.Rollback();
+            throw;
+        }
     }
     
-    public async Task<User?> GetUserById(string username)
+    // public async Task<User?> GetUserById(string username)
+    // {
+    //     using var connection = await _connectionFactory.CreateConnectionAsync();
+    //     const string sql =
+    //         """
+    //             SELECT id, username, email, password_hash, created_date AS CreatedAt
+    //             FROM users 
+    //             WHERE username = @Username
+    //         """;
+    //     return await connection.QuerySingleOrDefaultAsync<User>(sql, new {username = username });
+    // }
+    
+    public async Task<LoggedInUser?> GetUserById(string username)
     {
         using var connection = await _connectionFactory.CreateConnectionAsync();
         const string sql =
             """
-                SELECT id, username, email, password_hash, created_date AS CreatedAt
-                FROM users 
-                WHERE username = @Username
+                SELECT 
+                    u.id, 
+                    u.username, 
+                    u.email, 
+                    u.created_date AS CreatedAt, 
+                    u.password_hash, 
+                    p.language_code AS Language, 
+                    p.currency_code AS Currency
+                FROM users u 
+                JOIN  user_preferences p
+                ON u.id = p.user_id
+                WHERE u.username = @Username
             """;
-        return await connection.QuerySingleOrDefaultAsync<User>(sql, new {username = username });
+        return await connection.QuerySingleOrDefaultAsync<LoggedInUser>(sql, new {username = username });
     }
     
     public async Task<IEnumerable<UserResponse>> GetAllUsers()
