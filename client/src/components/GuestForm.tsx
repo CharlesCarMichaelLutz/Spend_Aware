@@ -2,10 +2,14 @@ import { useState, useEffect, useRef } from "react";
 import { baseApi } from "../api/base.ts"
 import { type User } from "../types/types.tsx"
 import { useNavigate } from "react-router"
+// import { useStore } from "../store/useStore.ts"
+// import { authorizeUser } from "../store/useStore.ts"
 
 export default function GuestForm()  {
     //that' what needs to be saved in Zustand
     // const { setAuth } useStore()
+    // const user = useStore( state => state.auth)
+    // const { authorizeUser } = useStore()
     const [auth, setAuth] = useState<User>({});
     const navigate = useNavigate()
     //
@@ -46,6 +50,8 @@ export default function GuestForm()  {
             if (response.status === 200) {
                 //open modal
                 setAuth(response.data)
+                // set({auth: response.data })
+                // authorizeUser(response.data)
                 console.log("guest response: ", response)
                 navigate("/dashboard")
             }

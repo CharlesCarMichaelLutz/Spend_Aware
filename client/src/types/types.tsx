@@ -14,6 +14,16 @@ export type User = {
     username: string;
 }
 
+export type UserResponse = {
+    accessToken: string
+    createdAt: string
+    email: string;
+    id: number;
+    username: string
+    language: string
+    currency: string
+}
+
 // export interface User {
 //     accessToken: string
 //     createdAt: string

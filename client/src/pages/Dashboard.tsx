@@ -3,15 +3,22 @@ import type { User, Expense } from "../types/types"
 // import { Paginate } from "../components/Paginate"
 import { baseApi } from "../api/base"
 import { ExpenseItem } from "../components/ExpenseItem"
+import { useStore } from "../store/useStore.ts"
 
 export function Dashboard() {
+    // const { auth } = useStore()
+    const auth  = useStore( state => state.auth)
+    console.log("zustand user: ", auth);
+    
     // const id = 1;
     // const id = 2;
     const id = 3;
     
     const [expenseList, setExpenseList] = useState<Expense[]>([]);
     const [user, setUser] = useState<User | null>(null);
-    
+
+    // const showUserInfo = useStore.getState().auth;
+
     const expenseRefs = {
         user_id: id,
         created_at: useRef(""),

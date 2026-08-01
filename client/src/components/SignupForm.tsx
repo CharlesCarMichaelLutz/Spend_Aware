@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import Select from 'react-select';
 import { baseApi}  from "../api/base.ts"
+import { useStore } from "../store/useStore.ts"
+import { authorizeUser } from "../store/useStore.ts"
 
 type SignupFormProps = {
     email: string
@@ -20,7 +22,8 @@ export default function SignupForm({ setIsLandingModalOpen }) {
         language: "",
         currency: ""
     })
-    const [auth, setAuth] = useState<SignupFormProps>({});
+    // const [auth, setAuth] = useState<SignupFormProps>({});
+    const { authorizedUser } = useStore()
     
     function clearSignupForm() {
         setSignupForm({
@@ -89,7 +92,8 @@ export default function SignupForm({ setIsLandingModalOpen }) {
 
             if (response.status === 200) {
                 //open modal
-                setAuth(response.data)
+                // setAuth(response.data)
+                authorizeUser(response.data)
                 setIsLandingModalOpen(true)
             }
             

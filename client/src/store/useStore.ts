@@ -1,20 +1,23 @@
-import zustand from "zustand";
+import { create } from "zustand";
 
+type AuthState = {
+    accessToken: string
+    createdAt: string
+    email: string;
+    id: number;
+    username: string
+    language: string
+    currency: string
+}
 
-//register calls api with
-//username
-//email
-//password
-//timestamp
-//createdAt
-//langauge
-//currency
+export const useStore = create<AuthState>(() => {
+    return {
+        auth: {}
+    }
+})
 
-
-//login call api with
-//email
-//password
-
-//guest calls api with
-//email
-//password
+export function authorizeUser(responseObject) {
+    // useStore.setState(u => ({ auth: u.auth }))
+    // useStore.setState(u => ({ auth: responseObject }))
+    useStore.setState({ auth: responseObject })
+}
