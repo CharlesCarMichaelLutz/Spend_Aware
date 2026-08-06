@@ -1,17 +1,39 @@
 using MailKit.Net.Smtp;
 using MimeKit;
 using SpendAware.Api.Data.Models;
+using SpendAware.Api.Data.Responses;
 
 namespace SpendAware.Api.Infrastructure;
 
 public interface IMailService
 {
     Task SendEmail(List<UserExpenseReport> reports);
+    Task SendVerificationEmail(VerifyEmailResponse verify);
 }
 
 public class MailService : IMailService
 {
-    //iterate over with each user an expense list then send
+    public async Task SendVerificationEmail(VerifyEmailResponse verify)
+    {
+                var message = new MimeMessage();
+                var from = new MailboxAddress("SpendAware", "Team@SpendAware.net");
+                message.From.Add(from);
+                var to = new MailboxAddress($"{verify.Username}", $"{verify.Email}");
+                
+                message.To.Add(to);
+                message.Subject = "Confirm your email address";
+                
+                var bb = new BodyBuilder();
+                bb.HtmlBody =
+                    $"<p>Hello {verify.Username},</p>\n  \n<p>\nThanks for signing up for Spend Aware, your solution for personal finance! <br>Your email confirmation code is {verify.EmailCode}. Enter the code on the home page.   \n</p>\n  \n<p>Best,  \nSpendAware Team\n</p>\n</div>";
+                message.Body = bb.ToMessageBody();
+
+                //start email relay server and send
+                using var smtp = new  SmtpClient();
+                await smtp.ConnectAsync("localhost", 1025);
+                await smtp.SendAsync(message);
+                Console.WriteLine("Email sent");
+    }
     public async Task SendEmail(List<UserExpenseReport> reports)
     {
         foreach (var u in reports)

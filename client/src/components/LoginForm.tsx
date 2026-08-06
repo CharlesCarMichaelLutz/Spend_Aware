@@ -1,12 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 import { baseApi } from "../api/base.ts"
 import { type User } from "../types/types.tsx"
-import { useStore } from "../store/useStore.ts"
 import { authorizeUser } from "../store/useStore.ts"
 
 export default function LoginForm({ setIsLandingModalOpen }) {
-    // const [auth, setAuth] = useState<User>({});
-    const { authorizedUser } = useStore()
     
     const [loginForm, setLoginForm] = useState<object>({
         username: "",
@@ -43,9 +40,8 @@ export default function LoginForm({ setIsLandingModalOpen }) {
             clearLoginForm()
             
             if (response.status === 200) {
-                //open modal
-                // setAuth(response.data);
                 authorizeUser(response.data);
+                //open modal
                 setIsLandingModalOpen(true);
                 console.log("login response:", response)
             }

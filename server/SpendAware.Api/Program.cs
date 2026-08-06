@@ -119,6 +119,19 @@ app.MapPost("login", async (IUserService service, [FromBody] LoginUserRequest us
     }
 });
 
+app.MapPost("verify-email", async (IUserService service, [FromBody] ConfirmEmailRequest request) =>
+{
+    try
+    {
+        var response = await service.VerifyEmail(request);
+        return Results.Ok(response);
+    }
+    catch (Exception ex)
+    {
+        return Results.BadRequest(ex.Message);
+    }
+});
+
 app.MapGet("users", async (IUserService service) =>
 {
     var response = await service.GetAllUsers();
