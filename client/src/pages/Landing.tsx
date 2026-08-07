@@ -5,11 +5,14 @@ import SignupForm from "../components/SignupForm";
 import LoginForm from "../components/LoginForm";
 import GuestForm from "../components/GuestForm";
 import { useNavigate } from "react-router";
+import { authorizeUser } from "../store/useStore.ts"
+import { baseApi } from "../api/base.ts"
 
 export function Landing() {
     const [selectedRadioButton, setSelectedRadioButton] = useState("login");
     const [isLandingModalOpen, setIsLandingModalOpen] = useState<boolean>(false)
     const [isVerified, setIsVerified] = useState<boolean>(false)
+    const [userId, setUserId] = useState<number>(0)
     const navigate = useNavigate();
 
     const [modalForm, setModalForm] = useState<object>({
@@ -24,20 +27,21 @@ export function Landing() {
         })
     }
     
-    function handleEmailVerification(e) {
+    async function handleEmailVerification(e) {
         e.preventDefault()
         e.stopPropagation()
         try{
-            // const response = await baseApi.post<User>("verify-email", {
-            //     UserId: "", 
-            //     Code: "",
-            // });
+            const response = await baseApi.post("verify-email", {
+                UserId: userId, 
+                EmailCode: modalForm.code.toString(),
+            });
 
             clearModalForm()
 
-            // if (response.status === 200) {
-                if (200 === 200) {
+            if (response.status === 200) {
+                // if (200 === 200) {
                 //naviaget to dashboard
+                authorizeUser(response.data)
                 setIsVerified(true)
                 navigate("/dashboard")
             }
@@ -72,7 +76,7 @@ export function Landing() {
                             />
                         </div>
                         {selectedRadioButton === "signup"
-                            ? <SignupForm  setIsLandingModalOpen={setIsLandingModalOpen}/>
+                            ? <SignupForm  setIsLandingModalOpen={setIsLandingModalOpen} setUserId={setUserId} />
                             : selectedRadioButton === "login"
                                 ? <LoginForm setIsLandingModalOpen={setIsLandingModalOpen}/>
                                 : <GuestForm />

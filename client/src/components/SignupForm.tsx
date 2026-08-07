@@ -12,7 +12,7 @@ type SignupFormProps = {
     currency: string
 }
 
-export default function SignupForm({ setIsLandingModalOpen }) {
+export default function SignupForm({ setIsLandingModalOpen, setUserId }: SignupFormProps) {
     const [signupForm, setSignupForm] = useState<SignupFormProps>({
         email: "",
         password: "",
@@ -89,7 +89,8 @@ export default function SignupForm({ setIsLandingModalOpen }) {
 
             if (response.status === 200) {
                 //open modal
-                authorizeUser(response.data)
+                // authorizeUser(response.data)
+                setUserId(response.data)
                 setIsLandingModalOpen(true)
             }
             
