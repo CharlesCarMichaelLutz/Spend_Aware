@@ -8,9 +8,13 @@ using SpendAware.Api.Infrastructure;
 using SpendAware.Api.Repositories;
 
 namespace SpendAware.Api.Services;
+
+public record UserResponse(int UserId);
+
 public interface IUserService
 {
-    Task<int> CreateUser(CreateUserRequest request);
+    // Task<int> CreateUser(CreateUserRequest request);
+    Task<UserResponse> CreateUser(CreateUserRequest request);
     Task<CreateUserLoginResponse> VerifyEmail(ConfirmEmailRequest request);
     Task<CreateUserLoginResponse> LoginUser(LoginUserRequest request);
     Task<IEnumerable<UsersResponse>> GetAllUsers();
@@ -36,7 +40,10 @@ public class UserService : IUserService
         _mailService = mailService;
     }
 
-    public async Task<int> CreateUser(CreateUserRequest request)
+    // public record UserResponse(int UserId);
+
+    // public async Task<int> CreateUser(CreateUserRequest request)
+    public async Task<UserResponse> CreateUser(CreateUserRequest request)
     {
         //validate incoming request
 
@@ -92,7 +99,9 @@ public class UserService : IUserService
 
             if (saveEmailToken)
             {
-                return user.Id;
+                var response = new UserResponse(user.Id);
+                // return user.Id;
+                return response;
             }
         }
         throw new Exception(message);

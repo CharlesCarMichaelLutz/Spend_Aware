@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import Select from 'react-select';
 import { baseApi}  from "../api/base.ts"
 import { authorizeUser } from "../store/useStore.ts"
+import { type UserResponse } from "../types/types.tsx"
 
 type SignupFormProps = {
     email: string
@@ -85,12 +86,12 @@ export default function SignupForm({ setIsLandingModalOpen, setUserId }: SignupF
                 Language: signupForm.language.value,
                 Currency: signupForm.currency.value,
             });
+
             clearSignupForm()
 
             if (response.status === 200) {
-                //open modal
-                // authorizeUser(response.data)
-                setUserId(response.data)
+                console.log("signup Id: ", response)
+                setUserId<UserResponse>(response.data.userId)
                 setIsLandingModalOpen(true)
             }
             

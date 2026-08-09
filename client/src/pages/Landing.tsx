@@ -1,52 +1,79 @@
 import { LandingModal } from "./LandingModal"
 import {useEffect, useState} from "react";
-import LoginRadioButtons from "../components/LoginRadioButtons";
 import SignupForm from "../components/SignupForm";
 import LoginForm from "../components/LoginForm";
-import GuestForm from "../components/GuestForm";
 import { useNavigate } from "react-router";
 import { authorizeUser } from "../store/useStore.ts"
 import { baseApi } from "../api/base.ts"
+import { type User } from "../types/types.tsx"
+import { type UserResponse } from "../types/types.tsx"
+import { type VerifyEmail } from "../types/types.tsx"
+
 
 export function Landing() {
-    const [selectedRadioButton, setSelectedRadioButton] = useState("login");
     const [isLandingModalOpen, setIsLandingModalOpen] = useState<boolean>(false)
     const [isVerified, setIsVerified] = useState<boolean>(false)
-    const [userId, setUserId] = useState<number>(0)
+    const [userId, setUserId] = useState<UserResponse>(0)
     const navigate = useNavigate();
+    const [loginValue, setLoginValue] = useState("")
 
     const [modalForm, setModalForm] = useState<object>({
-        userId: "",
         code: "",
     })
 
     function clearModalForm() {
         setModalForm({
-            userId: "",
             code: "",
         })
+    }
+
+    function handleVerifyFormChange(e) {
+        const { value } = e.target
+        
+        const parseValue = value.split('').filter(x => x >= '0' && x <= '9' ).join('')
+        setModalForm((prev) => ({
+            ...prev,
+            code: parseValue
+        }))
+    }
+    
+    async function handleGuestFormSubmit() {
+        try{
+            const response = await baseApi.post<User>("login", {
+                Username : import.meta.env.VITE_API_Guest_Username,
+                Email: import.meta.env.VITE_API_Guest_Email,
+                Password: import.meta.env.VITE_API_Guest_Password,
+            });
+            
+            setLoginValue("")
+
+            if (response.status === 200) {
+                authorizeUser(response.data)
+                console.log("guest response: ", response)
+                navigate("/dashboard")
+            }
+        } catch(error) {
+            console.error(error)
+        }
     }
     
     async function handleEmailVerification(e) {
         e.preventDefault()
         e.stopPropagation()
         try{
-            const response = await baseApi.post("verify-email", {
+            const response = await baseApi.post<VerifyEmail>("verify-email", {
                 UserId: userId, 
-                EmailCode: modalForm.code.toString(),
+                EmailCode: modalForm.code,
             });
 
             clearModalForm()
 
             if (response.status === 200) {
-                // if (200 === 200) {
-                //naviaget to dashboard
                 authorizeUser(response.data)
                 setIsVerified(true)
                 navigate("/dashboard")
             }
         } catch(error) {
-            //render the error on modal
             console.error(error)
         }
     }
@@ -69,18 +96,21 @@ export function Landing() {
                 </div>
                  <div className="landing-right">
                     <section className="login">
-                        <div className="btn-group">
-                            < LoginRadioButtons
-                                selectedRadioButton={selectedRadioButton}
-                                setSelectedRadioButton={setSelectedRadioButton}
-                            />
+                        <div className="login-form-container">
+                            { loginValue === "" ?
+                                <>
+                                    <button className="login-button" onClick={handleGuestFormSubmit}> Guest</button>
+                                    <button className="login-button" onClick={() => setLoginValue("register")}> Register</button>
+                                    <button className="login-button" onClick={() => setLoginValue("login")}> Login</button>
+                                </>
+                                : loginValue === "register" 
+                                    ? <SignupForm 
+                                        setIsLandingModalOpen={setIsLandingModalOpen} 
+                                        setUserId={setUserId} 
+                                    /> 
+                                    : <LoginForm /> 
+                            }
                         </div>
-                        {selectedRadioButton === "signup"
-                            ? <SignupForm  setIsLandingModalOpen={setIsLandingModalOpen} setUserId={setUserId} />
-                            : selectedRadioButton === "login"
-                                ? <LoginForm setIsLandingModalOpen={setIsLandingModalOpen}/>
-                                : <GuestForm />
-                        }
                     </section>
                      <LandingModal 
                          isOpen={isLandingModalOpen} 
@@ -88,17 +118,16 @@ export function Landing() {
                      >
                          <button onClick={() => setIsLandingModalOpen(false)}>Close</button>
                          <h3>We sent a code to</h3>
-                         {/*<h4><em>{auth.email}</em></h4>*/}
                          <h4><em>test@test.com</em></h4>
                          <p>Enter it below to verify:</p>
-                         {/*<form onSubmit={handleEmailVerification}>*/}
                          <form onSubmit={handleEmailVerification}>
                              <label htmlFor="verification_code">Verification code</label>
                              <input 
-                                 type="text" 
+                                 type="number"
                                  id="verification_code"
-                                 // value={modalForm.code}
-                                 onChange={(e) => setModalForm({ ...modalForm, name: e.target.value })}
+                                 value={modalForm.code}
+                                 onChange={handleVerifyFormChange}
+                                 
                              />
                              <button type="submit">Verify</button>
                          </form>
