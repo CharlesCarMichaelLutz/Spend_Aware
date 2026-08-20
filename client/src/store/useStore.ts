@@ -12,12 +12,10 @@ type AuthState = {
 
 export const useStore = create<AuthState>(() => {
     return {
-        auth: {}
+        auth: {},
     }
 })
 
 export function authorizeUser(responseObject) {
-    // useStore.setState(u => ({ auth: u.auth }))
-    // useStore.setState(u => ({ auth: responseObject }))
     useStore.setState({ auth: responseObject })
 }

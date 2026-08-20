@@ -1,34 +1,29 @@
 import { Outlet, NavLink } from "react-router"
 import { useEffect, useState } from "react";
 import type { YearEntry } from "../types/types"
+import { useStore } from "../store/useStore.ts"
 
 export function AppLayout() {
     const [isCollapsed, setIsCollapsed] = useState(false);
     const [yearList, setYearList] = useState([]);
-    const id = 3;
+    const user = useStore(state => state.auth);
+    console.log("user", user);
 
     function toggleSidebar() {
         setIsCollapsed(prev => !prev);
     }
 
+    //change this to use auth object from Zustand store, then create year date list
     useEffect(() => {
-        async function getUserAndCalculate(): Promise<void> {
-            try {
-                const response = await fetch(`http://localhost:8000/users/${id}`);
-
-                if (!response.ok) {
-                    throw new Error("Failed to fetch user");
-                }
-
-                const data = await response.json();
-                console.log("user:", data);
-
-                const createdDateStr = data.created_at;
-                const startDate = new Date(createdDateStr);
-                const timeRightNow = new Date();
-
-                const items = []
+        function loadDate() {
+            const userCreatedDate = user.createdAt;
                 
+            const startDate = new Date(userCreatedDate);
+            const timeRightNow = new Date();
+
+            const items = []
+            console.log("items", items);
+
                 let current = new Date(startDate.getFullYear(), startDate.getMonth());
 
                 while (current <= timeRightNow) {
@@ -43,15 +38,10 @@ export function AppLayout() {
 
                     current.setFullYear(current.getFullYear() + 1);
                 }
-
                 setYearList(items);
-            } catch (err) {
-                console.error("Failed to fetch user data:", err);
-            }
         }
-
-        getUserAndCalculate()
-    }, [id]);
+        loadDate()
+    }, [user]);
 
     return (
         <>
