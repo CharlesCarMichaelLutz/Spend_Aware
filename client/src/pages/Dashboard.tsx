@@ -6,21 +6,13 @@ import { ExpenseItem } from "../components/ExpenseItem"
 import { useStore } from "../store/useStore.ts"
 
 export function Dashboard() {
-    // const { auth } = useStore()
-    const auth  = useStore( state => state.auth)
-    console.log("zustand user: ", auth);
-    
-    // const id = 1;
-    // const id = 2;
-    const id = 3;
+    const user  = useStore( state => state.auth)
+    console.log("zustand user: ", user);
     
     const [expenseList, setExpenseList] = useState<Expense[]>([]);
-    const [user, setUser] = useState<User | null>(null);
-
-    // const showUserInfo = useStore.getState().auth;
 
     const expenseRefs = {
-        user_id: id,
+        user_id: user.id,
         created_at: useRef(""),
         description: useRef(""),
         place: useRef(""),
@@ -61,55 +53,40 @@ export function Dashboard() {
         }
     }
     
-    useEffect(() => {
-        if(!user) return; 
-            //use the year and month to get expenses for that user from data source
-            async function getExpensesByUserId(start: Date, end: Date, id: number):Promise<void> {
-                try {
-                    const startStr = start.toISOString().split('T')[0];
-                    const endStr = end.toISOString().split('T')[0];
-                    
-                    const response = await fetch(`http://localhost:8000/expenses?user_id=${id}&created_at_gt=${startStr}&created_at_lte=${endStr}`)
-    
-                    if(!response.ok) {
-                        throw new Error("Failed to fetch expenses");
-                    }
-    
-                    const data = await response.json();
-
-                    setExpenseList(data || [])
-                }
-                catch(err) {
-                    console.error(err);
-                }
-        }
-        getExpensesByUserId(firstDay, lastDay, id);
-    }, [user])
-
-    useEffect(() => {
-        async function getUserById(id: number):Promise<void> {
-            try {
-                const response = await fetch(`http://localhost:8000/users/${id}`)
-
-                if(!response.ok) {
-                    throw new Error("Failed to fetch user");
-                }
-
-                const userData: User = await response.json();
-                setUser({userData})
-            }
-            catch(err) {
-                console.error(err);
-            }
-        }
-        getUserById(id)
-    },[id])
-    
-    //filter current month by Date constructor
     const now = new Date();
     const year = now.getFullYear()
     const firstDay = new Date(year, now.getMonth(), 1)
     const lastDay = new Date(year, now.getMonth() + 1, 1)
+    
+    type ExpenseListProps = {
+        start : string
+        end : string
+        id : number
+    }
+    // get expenses for the current month with axios and useEffect initially then implement with loader
+    useEffect(() => {
+        if(!user) return; 
+            async function getCurrentMonthExpenseList(start: Date, end: Date, id: number):Promise<void> {
+                try {
+                    const startStr = start.toISOString().split('T')[0];
+                    const endStr = end.toISOString().split('T')[0];
+
+                    const response = await baseApi.post<ExpenseListProps>("expenses/load", {
+                        UserId: user.id,
+                        StartDate: startStr,
+                        EndDate: endStr,
+                    })
+                    
+                    if (response.status === 200) {
+                        setExpenseList(response.data || [])
+                        console.log("expense list: ", response)
+                    }
+                } catch (err) {
+                    console.error(err);
+                }
+            }
+                getCurrentMonthExpenseList(firstDay, lastDay, user.id);
+    }, [user])
     
     return (
         <>

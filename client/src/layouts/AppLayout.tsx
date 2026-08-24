@@ -50,7 +50,9 @@ export function AppLayout() {
                     <div className="sidebar-container">
                         <div className="sidebar-user">
                             <img height={60} width={40} className="user-identicon"/>
-                            <h2 className="sidebar-username">UserFive</h2>
+                            {/*<h2 className="sidebar-username">UserFive</h2>*/}
+                            <h2 className="sidebar-username">{user.username}</h2>
+                            
                         </div>
                         <div className="sidebar-menu">
                             <nav>
