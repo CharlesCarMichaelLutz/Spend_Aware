@@ -1,5 +1,5 @@
 import {useEffect, useState, useRef } from "react";
-import type { User, Expense } from "../types/types"
+import { type Expense } from "../types/types"
 // import { Paginate } from "../components/Paginate"
 import { baseApi } from "../api/base"
 import { ExpenseItem } from "../components/ExpenseItem"
@@ -10,44 +10,52 @@ export function Dashboard() {
     console.log("zustand user: ", user);
     
     const [expenseList, setExpenseList] = useState<Expense[]>([]);
+    
+    function clearExpenseRefs() {
+        expenseRefs.created_at.current.value = "";
+        expenseRefs.description.current.value = "";
+        expenseRefs.place.current.value = "";
+        expenseRefs.amount.current.value = "";
+    }
 
     const expenseRefs = {
-        user_id: user.id,
         created_at: useRef(""),
         description: useRef(""),
         place: useRef(""),
         amount: useRef("")
     }
 
-    function clearExpenseRecord() {
-        setExpenseRecord({})
+    type CreateExpenseProps = {
+        user_id : number
+        created_at : string
+        description : string
+        place: string
+        amount: number
     }
-    
-    async function createExpense() {
+
+    async function createExpense(e) {
+        e.preventDefault()
         const currentExpense = {
-            user_id: id,
-            created_at: expenseRefs.created_at.current.value,
+            user_id: user.id,
+            created_at: new Date().toISOString(),
             description: expenseRefs.description.current.value,
             place: expenseRefs.place.current.value,
             amount: expenseRefs.amount.current.value
         }
         try{
-            const response = await fetch(`http://localhost:8000/expenses`, { 
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(currentExpense),
+                const response = await baseApi.post<Expense>("expenses", {
+                UserId: user.id,
+                Place: currentExpense.place,
+                Description: currentExpense.description,
+                Amount: currentExpense.amount,
+                CreatedAt: currentExpense.created_at, 
             })
-
-            if(!response.ok) {
-                throw new Error("Failed to create expense");
+            console.log("exp res :",response)
+            
+            if (response.status === 200) {
+                setExpenseList(list => [...list, response.data])
+                clearExpenseRefs()
             }
-            
-            const currentExpenseResponse = await response.json();
-            
-            setExpenseList((list) => [...list, currentExpenseResponse]);
-            clearExpenseRecord();
         } catch (error) {
             console.log(error);
         }
@@ -71,7 +79,7 @@ export function Dashboard() {
                     const startStr = start.toISOString().split('T')[0];
                     const endStr = end.toISOString().split('T')[0];
 
-                    const response = await baseApi.post<ExpenseListProps>("expenses/load", {
+                        const response = await baseApi.post<Expense>("expenses/load", {
                         UserId: user.id,
                         StartDate: startStr,
                         EndDate: endStr,
@@ -79,14 +87,15 @@ export function Dashboard() {
                     
                     if (response.status === 200) {
                         setExpenseList(response.data || [])
-                        console.log("expense list: ", response)
+                        console.log("load expense list: ", response)
                     }
                 } catch (err) {
                     console.error(err);
                 }
             }
                 getCurrentMonthExpenseList(firstDay, lastDay, user.id);
-    }, [user])
+    // }, [user])
+}, [])
     
     return (
         <>
