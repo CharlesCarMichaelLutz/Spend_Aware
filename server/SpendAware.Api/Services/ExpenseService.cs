@@ -9,7 +9,7 @@ public interface IExpenseService
 {
     Task<ExpenseResponse> CreateExpense(ExpenseRequest request);
     Task<ExpenseResponse> UpdateExpense(UpdateExpenseRequest update);
-    Task<bool> DeleteExpense(int id);
+    Task<ExpenseId> DeleteExpense(int id);
     Task<IEnumerable<ExpenseResponse>> LoadExpenseList(LoadExpenseListRequest request);
 }
 
@@ -77,17 +77,16 @@ public class ExpenseService : IExpenseService
         return response;
     }
     
-    public async Task<bool> DeleteExpense(int id)
+    public async Task<ExpenseId> DeleteExpense(int id)
     {
         const string message = "could not delete expense";
         var status = await _expenseRepository.DeleteExpenseById(id);
-
-        if (!status)
+        
+        var deletedExpenseId = new ExpenseId
         {
-            throw new Exception(message);
-        }
-
-        return status;
+            Id = status
+        };
+        return deletedExpenseId;
     }
     
     public async Task<IEnumerable<ExpenseResponse>> LoadExpenseList(LoadExpenseListRequest request)

@@ -1,8 +1,6 @@
 using SpendAware.Api.Data.Models;
-using SpendAware.Api.Data.Responses;
 using SpendAware.Api.Database;
 using Dapper;
-using SpendAware.Api.Data.Requests;
 
 namespace SpendAware.Api.Repositories;
 
@@ -10,7 +8,7 @@ public interface IExpenseRepository
 {
     Task<Expense?> SaveAndGetExpense(Expense request);
     Task<Expense> UpdateAndGetExpense(UpdateExpense updatedExpense);
-    Task<bool> DeleteExpenseById(int id);
+    Task<int> DeleteExpenseById(int id);
     Task<IEnumerable<Expense>> GetExpenseList(LoadExpense request);
 }
 
@@ -50,20 +48,19 @@ public class ExpenseRepository : IExpenseRepository
 
         return await connection.QuerySingleOrDefaultAsync<Expense>(sql, updatedExpense);
     }
-
-    public async Task<bool> DeleteExpenseById(int id)
+    
+    public async Task<int> DeleteExpenseById(int id)
     {
         using var connection = await _connectionFactory.CreateConnectionAsync();
         const string sql =
             """
                 DELETE FROM expenses
                 WHERE id = @Id
+                RETURNING id
             """;
-        var result = await connection.ExecuteAsync(sql, new { Id = id });
-        
-        return result > 0;
+        return await connection.QuerySingleOrDefaultAsync<int>(sql, new { Id = id });
     }
-    
+
     public async Task<IEnumerable<Expense>> GetExpenseList(LoadExpense request)
     { 
         using var connection = await _connectionFactory.CreateConnectionAsync();
@@ -72,6 +69,7 @@ public class ExpenseRepository : IExpenseRepository
                 SELECT id, place, description, amount, created_at
                 FROM expenses
                 WHERE user_id = @UserId AND created_at BETWEEN @StartDate AND @EndDate
+                ORDER BY id
             """;
         return await connection.QueryAsync<Expense>(sql, new { UserId = request.UserId, StartDate = request.StartDate, EndDate = request.EndDate });
     }

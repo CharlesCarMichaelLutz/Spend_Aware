@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using SpendAware.Api.Data.Requests;
+using SpendAware.Api.Data.Responses;
 using SpendAware.Api.Database;
 using SpendAware.Api.Infrastructure;
 using SpendAware.Api.Repositories;
@@ -177,7 +178,7 @@ app.MapPut("expenses", async (IExpenseService service, [FromBody] UpdateExpenseR
     }
 });
 
-app.MapDelete("expenses", async (IExpenseService service, [FromBody] int id) =>
+app.MapDelete("expenses/{id:int}", async (int id, IExpenseService service) =>
 {
     try
     {
