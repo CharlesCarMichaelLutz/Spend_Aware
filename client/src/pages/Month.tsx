@@ -3,6 +3,7 @@ import { useStore } from "../store/useStore.ts"
 import { type Expense } from "../types/types"
 import { baseApi } from "../api/base"
 import { useState, useEffect } from "react";
+import { format, parseISO } from "date-fns";
 
 export function Month() {
     const { year, month } = useParams()
@@ -52,9 +53,6 @@ export function Month() {
             const end = last.toISOString().split('T')[0];
             
             try {
-                console.log("past month load request :", user.id,  begin, end);
-                
-                
                 const response = await baseApi.post<Expense>("expenses/load", {
                     UserId: user.id,
                     StartDate: begin,
@@ -72,12 +70,6 @@ export function Month() {
         }
         fetchExpenses()
     }, [month])
-    
-    // console.log("year : ", year)
-    // console.log("type :", typeof year)
-    //
-    // console.log("month : ", month)
-    // console.log("type :", typeof month)
     
     return (
         <>
@@ -100,7 +92,7 @@ export function Month() {
                         <tbody>
                         {expenseList.length > 0 ? expenseList.map(expense => (
                             <tr key={expense.id}>
-                                <td>{expense.created_at}</td>
+                                <td>{format(parseISO(expense.createdAt), "MM-dd-yyyy")}</td>
                                 <td>{expense.place}</td>
                                 <td>{expense.description}</td>
                                 <td>{expense.amount}</td>

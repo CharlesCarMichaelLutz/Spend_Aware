@@ -13,8 +13,6 @@ export function ExpenseItem({ id, user_id, createdAt, description, place, amount
     const amountRef = useRef(amount)
     
     const formatDate = format(parseISO(createdAt), "yyyy-MM-dd")
-
-    // console.log("created_at string :", createdAt)
     
     async function updateExpense(id) {
         setIsSaving(true);
@@ -35,7 +33,6 @@ export function ExpenseItem({ id, user_id, createdAt, description, place, amount
                 CreatedAt: createdAt,
                 UpdatedAt: new Date().toISOString(),
             })
-            // console.log("update response :", response)
             
             if(response.status === 200){
                 setExpenseList((list) =>
@@ -59,7 +56,6 @@ export function ExpenseItem({ id, user_id, createdAt, description, place, amount
         setIsSaving(true);
         try{
             const response = await baseApi.delete<ExpenseId>(`expenses/${id}`)
-            // console.log("deleted response :", response)
 
             if(response.status === 200) {
                 setExpenseList((list) =>

@@ -13,7 +13,6 @@ export function AppLayout() {
         setIsCollapsed(prev => !prev);
     }
 
-    //change this to use auth object from Zustand store, then create year date list
     useEffect(() => {
         function loadDate() {
             const userCreatedDate = user.createdAt;
@@ -50,7 +49,6 @@ export function AppLayout() {
                     <div className="sidebar-container">
                         <div className="sidebar-user">
                             <img height={60} width={40} className="user-identicon"/>
-                            {/*<h2 className="sidebar-username">UserFive</h2>*/}
                             <h2 className="sidebar-username">{user.username}</h2>
                             
                         </div>
@@ -60,8 +58,7 @@ export function AppLayout() {
                                 <ul>
                                     {yearList.map((year) => (
                                         <li key={year}>
-                                            {/*<NavLink to={`/dashboard/${year}`}>{year}</NavLink>*/}
-                                            <NavLink to={{ pathname: `/dashboard/${year}`, state:{auth: user} }}>{year}</NavLink>
+                                            <NavLink to={`/dashboard/${year}`}>{year}</NavLink>
                                         </li>
                                     ))}
                                 </ul>

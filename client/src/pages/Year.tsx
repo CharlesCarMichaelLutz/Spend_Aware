@@ -3,9 +3,6 @@ import { Outlet, useParams, NavLink } from "react-router";
 export function Year() {
     const { year } = useParams()
     
-    // console.log("selected year:", year)
-    // console.log("type :", typeof year)
-    
     //disable the card and button for months before the user signup date
     //disable the card and  buttons for months in the future 
     
@@ -29,22 +26,19 @@ export function Year() {
   
   return (
       <>
-        <div className="year-wrapper">
-          <div className="year-title-wrapper">
-              <h3 className="year-title">Year:{year}</h3>
-            <button>Get Report</button>
+          <div className="year-wrapper">
+              <div className="year-title-wrapper">
+                  <h3 className="year-title">Year:{year}</h3>
+                  <button>Get Report</button>
+              </div>
+              <div className="month-cards-grid">
+                  {months.map(month => (
+                          <NavLink className="month-card" to={`/dashboard/${year}/${month}`}>
+                              {month}
+                          </NavLink>
+                  ))}
+                </div>
           </div>
-            <div className="month-cards-grid">
-                {months.map(month => (
-                    <div key={month} className="month-card">
-                        <NavLink to={`/dashboard/${year}/${month}`}>
-                        {/*    <NavLink to={{ pathname: `/dashboard/${year}/${month}`, state:{ auth: auth}}}>*/}
-                            {month}
-                        </NavLink>
-                    </div>
-                ))}
-            </div>
-        </div>
           <div>
               < Outlet />
           </div>

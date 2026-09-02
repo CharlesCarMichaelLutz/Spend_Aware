@@ -395,6 +395,15 @@ main {
   padding: 2rem;
 }
 
+/*.month-card {*/
+/*  border: 1px solid #777;*/
+/*  background-color: white;*/
+/*  border-radius: 0.25rem;*/
+/*  display: flex;*/
+/*  align-items: center;*/
+/*  justify-content: center;*/
+/*}*/
+
 .month-card {
   border: 1px solid #777;
   background-color: white;
@@ -402,6 +411,12 @@ main {
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
+}
+
+.card-link {
+  position: absolute;
+  
 }
 
 /* Month */
