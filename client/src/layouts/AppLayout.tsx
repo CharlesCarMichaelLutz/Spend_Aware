@@ -60,7 +60,8 @@ export function AppLayout() {
                                 <ul>
                                     {yearList.map((year) => (
                                         <li key={year}>
-                                            <NavLink to={`/dashboard/${year}`}>{year}</NavLink>
+                                            {/*<NavLink to={`/dashboard/${year}`}>{year}</NavLink>*/}
+                                            <NavLink to={{ pathname: `/dashboard/${year}`, state:{auth: user} }}>{year}</NavLink>
                                         </li>
                                     ))}
                                 </ul>

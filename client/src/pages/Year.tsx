@@ -1,8 +1,16 @@
-// import { getYearData } from "../api/years"
 import { Outlet, useParams, NavLink } from "react-router";
 
 export function Year() {
     const { year } = useParams()
+    
+    // console.log("selected year:", year)
+    // console.log("type :", typeof year)
+    
+    //disable the card and button for months before the user signup date
+    //disable the card and  buttons for months in the future 
+    
+    //if the user clicks on the current month redirect to dashboard component 
+    // which shows the current month
     
   const months : string[] = [
       "January",
@@ -30,6 +38,7 @@ export function Year() {
                 {months.map(month => (
                     <div key={month} className="month-card">
                         <NavLink to={`/dashboard/${year}/${month}`}>
+                        {/*    <NavLink to={{ pathname: `/dashboard/${year}/${month}`, state:{ auth: auth}}}>*/}
                             {month}
                         </NavLink>
                     </div>

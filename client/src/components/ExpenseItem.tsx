@@ -46,6 +46,8 @@ export function ExpenseItem({ id, user_id, createdAt, description, place, amount
             }
         } catch (error) {
             console.log(error);
+        } finally {
+            setIsSaving(false)
         }
     }
     
@@ -67,6 +69,8 @@ export function ExpenseItem({ id, user_id, createdAt, description, place, amount
             }
         } catch (error) {
             console.log(error);
+        }finally {
+            setIsSaving(false)
         }
     }
 

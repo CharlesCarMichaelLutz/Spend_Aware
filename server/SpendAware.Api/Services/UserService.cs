@@ -147,6 +147,13 @@ public class UserService : IUserService
             throw new Exception(message);
         }
         
+        //need to change the users table and add verified column before implementing  
+            
+        // if (!verified || !user.verified)
+        // {
+        //     throw new Exception(message);
+        // }
+        
         // create/save/send Refresh Token as httponly cookie
         
         var response = new CreateUserLoginResponse

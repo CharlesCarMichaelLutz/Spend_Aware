@@ -82,6 +82,37 @@ public class UserRepository : IUserRepository
             throw;
         }
     }
+    
+    //need to change the users table and add verified column before implementing  
+    // public async Task<bool> ConfirmEmailToken(ConfirmEmailRequest request)
+    // {
+    //     using var connection = await _connectionFactory.CreateConnectionAsync();
+    //     const string sql1 =
+    //         """
+    //             SELECT COUNT(1) 
+    //             FROM  email_verification_tokens
+    //             WHERE user_id = @UserId 
+    //             AND email_code = @EmailCode 
+    //             AND expires_at > Now()
+    //         """;
+    //     var result1 = await connection.QuerySingleOrDefaultAsync<int>(sql1, new {UserId = request.UserId, EmailCode = request.EmailCode});
+    //
+    //     if (result1 > 0)
+    //     {
+    //         const string sql2 =
+    //             """
+    //                 UPDATE users
+    //                 SET  verified = true
+    //                 WHERE user_id = @UserId
+    //             """;
+    //         var result2 = await connection.QuerySingleOrDefaultAsync<int>(sql2, new { UserId = request.UserId });
+    //
+    //         return result2 > 0;
+    //     }
+    //     
+    //     // return result > 0;
+    //     return false;
+    // }
 
     public async Task<bool> SaveEmailToken(EmailToken token)
     {
@@ -134,7 +165,6 @@ public class UserRepository : IUserRepository
         
         return result > 0;
     }
-    
     public async Task<LoggedInUser?> GetUserById(string username)
     {
         using var connection = await _connectionFactory.CreateConnectionAsync();

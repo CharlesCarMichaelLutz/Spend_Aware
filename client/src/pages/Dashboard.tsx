@@ -64,8 +64,9 @@ export function Dashboard() {
     
     const now = new Date();
     const year = now.getFullYear()
-    const firstDay = new Date(year, now.getMonth(), 1)
-    const lastDay = new Date(year, now.getMonth() + 1, 1)
+    const firstDay = new Date(year, now.getMonth(), 2)
+    const lastDay = new Date(year, now.getMonth() + 1, 2)
+    
     
     type ExpenseListProps = {
         start : string
@@ -79,6 +80,8 @@ export function Dashboard() {
                 try {
                     const startStr = start.toISOString().split('T')[0];
                     const endStr = end.toISOString().split('T')[0];
+                    
+                    console.log("current month load request :", user.id,  startStr, endStr);
 
                         const response = await baseApi.post<Expense>("expenses/load", {
                         UserId: user.id,
