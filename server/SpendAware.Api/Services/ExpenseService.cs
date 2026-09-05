@@ -10,7 +10,8 @@ public interface IExpenseService
     Task<ExpenseResponse> CreateExpense(ExpenseRequest request);
     Task<ExpenseResponse> UpdateExpense(UpdateExpenseRequest update);
     Task<ExpenseId> DeleteExpense(int id);
-    Task<IEnumerable<ExpenseResponse>> LoadExpenseList(LoadExpenseListRequest request);
+    // Task<IEnumerable<ExpenseResponse>> LoadExpenseList(LoadExpenseListRequest request);
+    Task<PagedResponse<ExpenseResponse>> LoadExpenseList(LoadExpenseListRequest request);
 }
 
 public class ExpenseService : IExpenseService
@@ -89,7 +90,31 @@ public class ExpenseService : IExpenseService
         return deletedExpenseId;
     }
     
-    public async Task<IEnumerable<ExpenseResponse>> LoadExpenseList(LoadExpenseListRequest request)
+    // public async Task<IEnumerable<ExpenseResponse>> LoadExpenseList(LoadExpenseListRequest request)
+    // {
+    //     const string message = "could not retrieve expenses";
+    //
+    //     var loadExpense = new LoadExpense
+    //     {
+    //         UserId = request.UserId,
+    //         StartDate = request.StartDate.ToUniversalTime(),
+    //         EndDate = request.EndDate.ToUniversalTime(),
+    //     };
+    //     
+    //     var expenseList = await _expenseRepository.GetExpenseList(loadExpense) ?? throw new Exception(message);
+    //
+    //     return expenseList.Select(e => new ExpenseResponse
+    //     {
+    //         Id = e.Id,
+    //         Place = e.Place,
+    //         Description = e.Description,
+    //         Amount = e.Amount,
+    //         CreatedAt = e.CreatedAt.ToString("O"),
+    //     });
+    // }
+    
+    // public async Task<IEnumerable<ExpenseResponse>> LoadExpenseList(LoadExpenseListRequest request)
+    public async Task<PagedResponse<ExpenseResponse>> LoadExpenseList(LoadExpenseListRequest request)
     {
         const string message = "could not retrieve expenses";
 
@@ -98,11 +123,26 @@ public class ExpenseService : IExpenseService
             UserId = request.UserId,
             StartDate = request.StartDate.ToUniversalTime(),
             EndDate = request.EndDate.ToUniversalTime(),
+            Page =  request.Page,
+            PageSize = request.PageSize
         };
         
-        var expenseList = await _expenseRepository.GetExpenseList(loadExpense) ?? throw new Exception(message);
+        // var expenseList = await _expenseRepository.GetExpenseList(loadExpense) ?? throw new Exception(message);
+        //
+        // return expenseList.Select(e => new ExpenseResponse
+        // {
+        //     Id = e.Id,
+        //     Place = e.Place,
+        //     Description = e.Description,
+        //     Amount = e.Amount,
+        //     CreatedAt = e.CreatedAt.ToString("O"),
+        // });
+        
+        var response = await _expenseRepository.GetExpenseList(loadExpense) ?? throw new Exception(message);
+        
+        // var response = await _expenseRepository.GetExpenseList() 
 
-        return expenseList.Select(e => new ExpenseResponse
+        var listed =  response.Data.Select(e => new ExpenseResponse
         {
             Id = e.Id,
             Place = e.Place,
@@ -110,5 +150,12 @@ public class ExpenseService : IExpenseService
             Amount = e.Amount,
             CreatedAt = e.CreatedAt.ToString("O"),
         });
+
+        return new PagedResponse<ExpenseResponse>
+        {
+            Data = listed,
+            TotalCount = response.TotalCount
+        };
+
     }
 }

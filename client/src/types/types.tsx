@@ -51,6 +51,11 @@ export type Expense = {
     updated_at: string;
 }
 
+export type ExpenseResponse = {
+    expenses: Expense[]
+    totalCount: number
+}
+
 // export type YearEntry = { 
 //     year: number; months: string[] 
 // }

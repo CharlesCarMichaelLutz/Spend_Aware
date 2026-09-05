@@ -139,6 +139,19 @@ app.MapGet("users", async (IUserService service) =>
     return Results.Ok(response);
 });
 
+// app.MapPost("expenses/load", async (IExpenseService service, [FromBody] LoadExpenseListRequest request) =>
+// {
+//     try
+//     {
+//         var response = await service.LoadExpenseList(request);
+//         return Results.Ok(response);
+//     }
+//     catch (Exception ex)
+//     {
+//         return Results.BadRequest(ex.Message);
+//     }
+// });
+
 app.MapPost("expenses/load", async (IExpenseService service, [FromBody] LoadExpenseListRequest request) =>
 {
     try

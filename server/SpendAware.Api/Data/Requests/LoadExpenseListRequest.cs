@@ -1,8 +1,16 @@
 namespace SpendAware.Api.Data.Requests;
 
+// public class LoadExpenseListRequest
+// {
+//     public int UserId { get; set; }
+//     public DateTimeOffset StartDate { get; set; }
+//     public DateTimeOffset EndDate { get; set; }
+// }
 public class LoadExpenseListRequest
 {
     public int UserId { get; set; }
     public DateTimeOffset StartDate { get; set; }
     public DateTimeOffset EndDate { get; set; }
+    public int Page { get; set; }
+    public int PageSize { get; set; }
 }

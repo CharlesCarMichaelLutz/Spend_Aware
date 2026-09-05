@@ -1,14 +1,14 @@
-import ReactPaginate from "react-paginate";
+import ReactPaginateModule from "react-paginate"
+const ReactPaginate = ReactPaginateModule.default
 
-export function Paginate({ pageCount }) {
-    function handlePageChange(selectedItem: {selected: number}) {
-        setCurrentPage(selectedItem.selected);
-    }
-    
+export default function Paginate({ totalPages, handlePageClick }) {
     return (
-       <ReactPaginate
-           pageCount={pageCount}
-           onPageChange={handlePageChange}
-       />
-    )
+        <ReactPaginate
+            pageCount={totalPages}
+            onPageChange={handlePageClick}
+            previousLabel="Previous"
+            nextLabel="Next"
+        />
+    );
 }
+

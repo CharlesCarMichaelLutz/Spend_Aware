@@ -1,6 +1,8 @@
 import {useEffect, useState, useRef } from "react";
 import { type Expense } from "../types/types"
+import { type ExpenseResponse } from "../types/types"
 // import { Paginate } from "../components/Paginate"
+import Paginate from "../components/Paginate"
 import { baseApi } from "../api/base"
 import { ExpenseItem } from "../components/ExpenseItem"
 import { useStore } from "../store/useStore.ts"
@@ -9,8 +11,15 @@ import { format, parseISO } from "date-fns"
 export function Dashboard() {
     const user  = useStore( state => state.auth)
     console.log("zustand user: ", user);
-    
     const [expenseList, setExpenseList] = useState<Expense[]>([]);
+    
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(0);
+    const [expensesPerPage, setExpensesPerPage] = useState(10);
+
+    const handlePageClick = (page: number) => {
+        setCurrentPage(page)
+    }
     
     function clearExpenseRefs() {
         expenseRefs.created_at.current.value = "";
@@ -45,11 +54,11 @@ export function Dashboard() {
         }
         try{
                 const response = await baseApi.post<Expense>("expenses", {
-                UserId: user.id,
-                Place: currentExpense.place,
-                Description: currentExpense.description,
-                Amount: currentExpense.amount,
-                CreatedAt: currentExpense.created_at, 
+                    UserId: user.id,
+                    Place: currentExpense.place,
+                    Description: currentExpense.description,
+                    Amount: currentExpense.amount,
+                    CreatedAt: currentExpense.created_at, 
             })
             console.log("exp res :",response)
             
@@ -74,32 +83,67 @@ export function Dashboard() {
         id : number
     }
     // get expenses for the current month with axios and useEffect initially then implement with loader
-    useEffect(() => {
-        if(!user) return; 
-            async function getCurrentMonthExpenseList(start: Date, end: Date, id: number):Promise<void> {
-                try {
-                    const startStr = start.toISOString().split('T')[0];
-                    const endStr = end.toISOString().split('T')[0];
-                    
-                    console.log("current month load request :", user.id,  startStr, endStr);
+//     useEffect(() => {
+//         if(!user) return; 
+//             async function getCurrentMonthExpenseList(start: Date, end: Date, id: number):Promise<void> {
+//                 try {
+//                     const startStr = start.toISOString().split('T')[0];
+//                     const endStr = end.toISOString().split('T')[0];
+//                    
+//                     console.log("current month load request :", user.id,  startStr, endStr);
+//
+//                         const response = await baseApi.post<Expense>("expenses/load", {
+//                         UserId: user.id,
+//                         StartDate: startStr,
+//                         EndDate: endStr,
+//                     })
+//                    
+//                     if (response.status === 200) {
+//                         setExpenseList(response.data || [])
+//                         console.log("load expense list: ", response)
+//                     }
+//                 } catch (err) {
+//                     console.error(err);
+//                 }
+//             }
+//                 getCurrentMonthExpenseList(firstDay, lastDay, user.id);
+//     // }, [user])
+// }, [])
 
-                        const response = await baseApi.post<Expense>("expenses/load", {
-                        UserId: user.id,
-                        StartDate: startStr,
-                        EndDate: endStr,
-                    })
-                    
-                    if (response.status === 200) {
-                        setExpenseList(response.data || [])
-                        console.log("load expense list: ", response)
-                    }
-                } catch (err) {
-                    console.error(err);
+    useEffect(() => {
+        if(!user) return;
+            async function getCurrentMonthExpenseList(start: Date, end: Date, id: number, currPage: number, expPerPage: number):Promise<void> {
+            
+            try {
+                const startStr = start.toISOString().split('T')[0];
+                const endStr = end.toISOString().split('T')[0];
+
+                console.log("current month load request :", user.id,  startStr, endStr);
+
+                const response = await baseApi.post<ExpenseResponse>("expenses/load", {
+                    UserId: user.id,
+                    StartDate: startStr,
+                    EndDate: endStr,
+                    Page: currPage,
+                    PageSize: expPerPage,
+                })
+                
+                console.log("paginated res :", response)
+
+                if (response.status === 200) {
+                    // setExpenseList(response.data || [])
+                    setExpenseList(response.data.data || [])
+                    setTotalPages(response.data.totalCount)
+                    console.log("load expense list: ", response)
                 }
+            } catch (err) {
+                console.error(err);
             }
-                getCurrentMonthExpenseList(firstDay, lastDay, user.id);
-    // }, [user])
-}, [])
+        }
+        getCurrentMonthExpenseList(firstDay, lastDay, user.id, currentPage, expensesPerPage);
+        // }, [user])
+    }, [currentPage])
+// }, [currentPage, expensesPerPage])
     
     return (
         <>
@@ -168,7 +212,11 @@ export function Dashboard() {
                     </table>
                 </div>
                 <div className="dashboard-bottom">Pagination Bar</div>
-                {/*<Paginate className="dashboard-bottom" />*/}
+                    <Paginate
+                        // className="dashboard-bottom" 
+                        pageCount={totalPages}
+                        handlePageClick={handlePageClick}
+                    />
             </section>
         </>
     )
