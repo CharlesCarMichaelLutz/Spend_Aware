@@ -43,8 +43,44 @@ export function Dashboard() {
         amount: number
     }
 
-    async function createExpense(e) {
-        e.preventDefault()
+    // async function createExpense(e) {
+    //     e.preventDefault()
+    //     const currentExpense = {
+    //         user_id: user.id,
+    //         created_at: new Date().toISOString(),
+    //         description: expenseRefs.description.current.value,
+    //         place: expenseRefs.place.current.value,
+    //         amount: expenseRefs.amount.current.value
+    //     }
+    //     try{
+    //             const response = await baseApi.post<Expense>("expenses", {
+    //                 UserId: user.id,
+    //                 Place: currentExpense.place,
+    //                 Description: currentExpense.description,
+    //                 Amount: currentExpense.amount,
+    //                 CreatedAt: currentExpense.created_at, 
+    //         })
+    //         console.log("exp res :",response)
+    //        
+    //         if (response.status === 200) {
+    //             // setExpenseList(list => [...list, response.data])
+    //             // setExpenseList(list => [...list, response.data.record])
+    //             setExpenseList(list => [response.data.record, ...list])
+    //             setTotalPages(response.data.totalCount)
+    //             clearExpenseRefs()
+    //         }
+    //     } catch (error) {
+    //         console.log(error);
+    //     }
+    // }
+
+    // async function createExpense(e) {
+    //     async function createExpense(event: React.MouseEvent, number: currPage, number: expPerPage ) {
+            async function createExpense(event: React.MouseEvent, currPage: number, expPerPage: number ) {
+        
+        // e.preventDefault()
+            event.preventDefault()
+            
         const currentExpense = {
             user_id: user.id,
             created_at: new Date().toISOString(),
@@ -53,17 +89,25 @@ export function Dashboard() {
             amount: expenseRefs.amount.current.value
         }
         try{
-                const response = await baseApi.post<Expense>("expenses", {
-                    UserId: user.id,
-                    Place: currentExpense.place,
-                    Description: currentExpense.description,
-                    Amount: currentExpense.amount,
-                    CreatedAt: currentExpense.created_at, 
-            })
-            console.log("exp res :",response)
             
+            // const response = await baseApi.post<Expense>("expenses", {
+                const response = await baseApi.post<ExpenseResponse>("expenses", {
+                UserId: user.id,
+                Place: currentExpense.place,
+                Description: currentExpense.description,
+                Amount: currentExpense.amount,
+                CreatedAt: currentExpense.created_at,
+                Page: currPage,
+                PageSize: expPerPage,
+            })
+            console.log("create exp res list :",response)
+
             if (response.status === 200) {
-                setExpenseList(list => [...list, response.data])
+                // setExpenseList(list => [...list, response.data])
+                // setExpenseList(list => [...list, response.data.record])
+                // setExpenseList(list => [response.data.record, ...list])
+                setExpenseList(response.data.data || [])
+                setTotalPages(response.data.totalCount)
                 clearExpenseRefs()
             }
         } catch (error) {
@@ -118,7 +162,7 @@ export function Dashboard() {
                 const startStr = start.toISOString().split('T')[0];
                 const endStr = end.toISOString().split('T')[0];
 
-                console.log("current month load request :", user.id,  startStr, endStr);
+                // console.log("current month load request :", user.id,  startStr, endStr);
 
                 const response = await baseApi.post<ExpenseResponse>("expenses/load", {
                     UserId: user.id,
@@ -128,13 +172,13 @@ export function Dashboard() {
                     PageSize: expPerPage,
                 })
                 
-                console.log("paginated res :", response)
+                console.log("initial load res :", response)
 
                 if (response.status === 200) {
                     // setExpenseList(response.data || [])
                     setExpenseList(response.data.data || [])
                     setTotalPages(response.data.totalCount)
-                    console.log("load expense list: ", response)
+                    // console.log("load expense list: ", response)
                 }
             } catch (err) {
                 console.error(err);
@@ -149,7 +193,8 @@ export function Dashboard() {
         <>
             <section className="dashboard">
                 <div className="dashboard-top">
-                    <form onSubmit={createExpense}>
+                    {/*<form onSubmit={createExpense}>*/}
+                        <form onSubmit={(e) => createExpense(e, currentPage, expensesPerPage)}>
                         <label >Date:</label>
                         <input
                             type="date"

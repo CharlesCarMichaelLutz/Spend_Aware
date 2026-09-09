@@ -7,7 +7,7 @@ namespace SpendAware.Api.Services;
 
 public interface IExpenseService
 {
-    Task<ExpenseResponse> CreateExpense(ExpenseRequest request);
+    Task<PagedResponse<ExpenseResponse>> CreateExpense(ExpenseRequest request);
     Task<ExpenseResponse> UpdateExpense(UpdateExpenseRequest update);
     Task<ExpenseId> DeleteExpense(int id);
     // Task<IEnumerable<ExpenseResponse>> LoadExpenseList(LoadExpenseListRequest request);
@@ -23,31 +23,37 @@ public class ExpenseService : IExpenseService
         _expenseRepository = expenseRepository;
     }
     
-    public async Task<ExpenseResponse> CreateExpense(ExpenseRequest request)
+    public async Task<PagedResponse<ExpenseResponse>> CreateExpense(ExpenseRequest request)
     {
         const string message = "Expense was not created";
-        
-        var expense = new Expense()
+
+        var expense = new PaginatedExpense
         {
             UserId = request.UserId,
-            Place =  request.Place,
+            Place = request.Place,
             Description = request.Description,
             Amount = request.Amount,
-            CreatedAt = request.CreatedAt.ToUniversalTime()
+            CreatedAt = request.CreatedAt.ToUniversalTime(),
+            Page = request.Page,
+            PageSize = request.PageSize
         };
         
-        var status = await _expenseRepository.SaveAndGetExpense(expense) ?? throw new Exception(message);
-
-        var response = new ExpenseResponse
+        var response = await _expenseRepository.SaveAndGetExpense(expense) ?? throw new Exception(message);
+        
+        var listed =  response.Data.Select(e => new ExpenseResponse
         {
-            Id = status.Id,
-            Place = status.Place,
-            Description = status.Description,
-            Amount = status.Amount,
-            CreatedAt = status.CreatedAt.ToString("O"),
+            Id = e.Id,
+            Place = e.Place,
+            Description = e.Description,
+            Amount = e.Amount,
+            CreatedAt = e.CreatedAt.ToString("O"),
+        });
+
+        return new PagedResponse<ExpenseResponse>
+        {
+            Data = listed,
+            TotalCount = response.TotalCount
         };
-        
-        return response;
     }
     
     public async Task<ExpenseResponse> UpdateExpense(UpdateExpenseRequest update)
@@ -113,7 +119,6 @@ public class ExpenseService : IExpenseService
     //     });
     // }
     
-    // public async Task<IEnumerable<ExpenseResponse>> LoadExpenseList(LoadExpenseListRequest request)
     public async Task<PagedResponse<ExpenseResponse>> LoadExpenseList(LoadExpenseListRequest request)
     {
         const string message = "could not retrieve expenses";
@@ -126,21 +131,7 @@ public class ExpenseService : IExpenseService
             Page =  request.Page,
             PageSize = request.PageSize
         };
-        
-        // var expenseList = await _expenseRepository.GetExpenseList(loadExpense) ?? throw new Exception(message);
-        //
-        // return expenseList.Select(e => new ExpenseResponse
-        // {
-        //     Id = e.Id,
-        //     Place = e.Place,
-        //     Description = e.Description,
-        //     Amount = e.Amount,
-        //     CreatedAt = e.CreatedAt.ToString("O"),
-        // });
-        
         var response = await _expenseRepository.GetExpenseList(loadExpense) ?? throw new Exception(message);
-        
-        // var response = await _expenseRepository.GetExpenseList() 
 
         var listed =  response.Data.Select(e => new ExpenseResponse
         {

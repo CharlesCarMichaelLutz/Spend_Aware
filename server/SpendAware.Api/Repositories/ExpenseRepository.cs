@@ -7,12 +7,12 @@ namespace SpendAware.Api.Repositories;
 
 public interface IExpenseRepository
 {
-    Task<Expense?> SaveAndGetExpense(Expense request);
+    // Task<Expense?> SaveAndGetExpense(Expense request);
+    Task<PagedResponse<Expense>> SaveAndGetExpense(PaginatedExpense expense);
     Task<Expense> UpdateAndGetExpense(UpdateExpense updatedExpense);
     Task<int> DeleteExpenseById(int id);
     // Task<IEnumerable<Expense>> GetExpenseList(LoadExpense request);
     Task<PagedResponse<Expense>> GetExpenseList(LoadExpense request);
-
 }
 
 public class ExpenseRepository : IExpenseRepository
@@ -24,7 +24,22 @@ public class ExpenseRepository : IExpenseRepository
         _connectionFactory = connectionFactory;
     }
 
-    public async Task<Expense?> SaveAndGetExpense(Expense expense)
+    // public async Task<Expense?> SaveAndGetExpense(Expense expense)
+    // {
+    //     using var connection = await _connectionFactory.CreateConnectionAsync();
+    //     const string sql =
+    //         """
+    //           INSERT INTO expenses
+    //               (user_id, place, description, amount, created_at)
+    //           VALUES (@UserId, @Place, @Description, @Amount, @CreatedAt)
+    //           RETURNING id, place, description, amount, created_at
+    //         """;
+    //     return await connection.QuerySingleOrDefaultAsync<Expense>(sql, expense); 
+    // }
+    
+    //when a new expense gets added to the page need to return the list of updated 10 records
+    //so the page stays in sync on the client
+    public async Task<PagedResponse<Expense>> SaveAndGetExpense(PaginatedExpense expense)
     {
         using var connection = await _connectionFactory.CreateConnectionAsync();
         const string sql =
@@ -34,7 +49,35 @@ public class ExpenseRepository : IExpenseRepository
               VALUES (@UserId, @Place, @Description, @Amount, @CreatedAt)
               RETURNING id, place, description, amount, created_at
             """;
-        return await connection.QuerySingleOrDefaultAsync<Expense>(sql, expense); 
+        await connection.ExecuteAsync(sql, expense);
+        
+        const string recordCountSql = """SELECT COUNT(*) FROM expenses WHERE user_id = @UserId""";
+        var totalCount = await connection.ExecuteScalarAsync<int>(recordCountSql, new { UserId = expense.UserId });
+        
+        const string datasSql =
+            """
+                SELECT id, place, description, amount, created_at
+                FROM expenses
+                WHERE user_id = @UserId
+                ORDER BY id DESC
+                OFFSET @Offset 
+                LIMIT @PageSize
+            """;
+        
+        var parameters = new
+        {
+            UserId = expense.UserId,
+            PageSize = expense.PageSize,
+            Offset = (expense.Page - 1) * expense.PageSize,
+        };
+        
+        var expenseList = await connection.QueryAsync<Expense>(datasSql, parameters);
+
+        return new PagedResponse<Expense>
+        {
+            Data = expenseList,
+            TotalCount = totalCount,
+        };
     }
 
     public async Task<Expense> UpdateAndGetExpense(UpdateExpense updatedExpense)
@@ -83,7 +126,7 @@ public class ExpenseRepository : IExpenseRepository
                 SELECT id, place, description, amount, created_at
                 FROM expenses
                 WHERE user_id = @UserId AND created_at BETWEEN @StartDate AND @EndDate
-                ORDER BY id
+                ORDER BY id DESC
                 OFFSET @Offset 
                 LIMIT @PageSize
             """;
