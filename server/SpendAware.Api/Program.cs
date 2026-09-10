@@ -139,19 +139,6 @@ app.MapGet("users", async (IUserService service) =>
     return Results.Ok(response);
 });
 
-// app.MapPost("expenses/load", async (IExpenseService service, [FromBody] LoadExpenseListRequest request) =>
-// {
-//     try
-//     {
-//         var response = await service.LoadExpenseList(request);
-//         return Results.Ok(response);
-//     }
-//     catch (Exception ex)
-//     {
-//         return Results.BadRequest(ex.Message);
-//     }
-// });
-
 app.MapPost("expenses/load", async (IExpenseService service, [FromBody] LoadExpenseListRequest request) =>
 {
     try
@@ -191,11 +178,24 @@ app.MapPut("expenses", async (IExpenseService service, [FromBody] UpdateExpenseR
     }
 });
 
-app.MapDelete("expenses/{id:int}", async (int id, IExpenseService service) =>
+// app.MapDelete("expenses/{id:int}", async (int id, IExpenseService service) =>
+// {
+//     try
+//     {
+//         var response = await service.DeleteExpense(id);
+//         return Results.Ok(response);
+//     }
+//     catch (Exception ex)
+//     {
+//         return Results.BadRequest(ex.Message);
+//     }
+// });
+
+app.MapPost("expenses/delete", async ( IExpenseService service, [FromBody] DeleteRequest request) =>
 {
     try
     {
-        var response = await service.DeleteExpense(id);
+        var response = await service.DeleteExpense(request);
         return Results.Ok(response);
     }
     catch (Exception ex)

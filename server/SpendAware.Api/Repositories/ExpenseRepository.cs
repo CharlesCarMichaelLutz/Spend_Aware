@@ -1,17 +1,17 @@
 using SpendAware.Api.Data.Models;
 using SpendAware.Api.Database;
 using Dapper;
+using SpendAware.Api.Data.Requests;
 using SpendAware.Api.Data.Responses;
 
 namespace SpendAware.Api.Repositories;
 
 public interface IExpenseRepository
 {
-    // Task<Expense?> SaveAndGetExpense(Expense request);
     Task<PagedResponse<Expense>> SaveAndGetExpense(PaginatedExpense expense);
     Task<Expense> UpdateAndGetExpense(UpdateExpense updatedExpense);
-    Task<int> DeleteExpenseById(int id);
-    // Task<IEnumerable<Expense>> GetExpenseList(LoadExpense request);
+    // Task<int> DeleteExpenseById(int id);
+    Task<PagedResponse<Expense>> DeleteExpenseById(DeleteRequest delete);
     Task<PagedResponse<Expense>> GetExpenseList(LoadExpense request);
 }
 
@@ -23,19 +23,6 @@ public class ExpenseRepository : IExpenseRepository
     {
         _connectionFactory = connectionFactory;
     }
-
-    // public async Task<Expense?> SaveAndGetExpense(Expense expense)
-    // {
-    //     using var connection = await _connectionFactory.CreateConnectionAsync();
-    //     const string sql =
-    //         """
-    //           INSERT INTO expenses
-    //               (user_id, place, description, amount, created_at)
-    //           VALUES (@UserId, @Place, @Description, @Amount, @CreatedAt)
-    //           RETURNING id, place, description, amount, created_at
-    //         """;
-    //     return await connection.QuerySingleOrDefaultAsync<Expense>(sql, expense); 
-    // }
     
     //when a new expense gets added to the page need to return the list of updated 10 records
     //so the page stays in sync on the client
@@ -95,7 +82,19 @@ public class ExpenseRepository : IExpenseRepository
         return await connection.QuerySingleOrDefaultAsync<Expense>(sql, updatedExpense);
     }
     
-    public async Task<int> DeleteExpenseById(int id)
+    // public async Task<int> DeleteExpenseById(int id)
+    // {
+    //     using var connection = await _connectionFactory.CreateConnectionAsync();
+    //     const string sql =
+    //         """
+    //             DELETE FROM expenses
+    //             WHERE id = @Id
+    //             RETURNING id
+    //         """;
+    //     return await connection.QuerySingleOrDefaultAsync<int>(sql, new { Id = id });
+    // }
+    
+    public async Task<PagedResponse<Expense>> DeleteExpenseById(DeleteRequest delete)
     {
         using var connection = await _connectionFactory.CreateConnectionAsync();
         const string sql =
@@ -104,21 +103,37 @@ public class ExpenseRepository : IExpenseRepository
                 WHERE id = @Id
                 RETURNING id
             """;
-        return await connection.QuerySingleOrDefaultAsync<int>(sql, new { Id = id });
+        await connection.ExecuteAsync(sql, new { Id = delete.Id });
+        
+        const string recordCountSql = """SELECT COUNT(*) FROM expenses WHERE user_id = @UserId""";
+        var totalCount = await connection.ExecuteScalarAsync<int>(recordCountSql, new { UserId = delete.UserId });
+        
+        const string datasSql =
+            """
+                SELECT id, place, description, amount, created_at
+                FROM expenses
+                WHERE user_id = @UserId
+                ORDER BY id DESC
+                OFFSET @Offset 
+                LIMIT @PageSize
+            """;
+        
+        var parameters = new
+        {
+            UserId = delete.UserId,
+            PageSize = delete.PageSize,
+            Offset = (delete.Page - 1) * delete.PageSize,
+        };
+        
+        var expenseList = await connection.QueryAsync<Expense>(datasSql, parameters);
+        
+        return new PagedResponse<Expense>
+        {
+            Data = expenseList,
+            TotalCount = totalCount,
+        };
     }
 
-    // public async Task<IEnumerable<Expense>> GetExpenseList(LoadExpense request)
-    // { 
-    //     using var connection = await _connectionFactory.CreateConnectionAsync();
-    //     const string sql =
-    //         """
-    //             SELECT id, place, description, amount, created_at
-    //             FROM expenses
-    //             WHERE user_id = @UserId AND created_at BETWEEN @StartDate AND @EndDate
-    //             ORDER BY id
-    //         """;
-    //     return await connection.QueryAsync<Expense>(sql, new { UserId = request.UserId, StartDate = request.StartDate, EndDate = request.EndDate });
-    // }
     public async Task<PagedResponse<Expense>> GetExpenseList(LoadExpense request)
     {
         const string datasSql =

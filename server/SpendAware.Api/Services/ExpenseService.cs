@@ -9,8 +9,8 @@ public interface IExpenseService
 {
     Task<PagedResponse<ExpenseResponse>> CreateExpense(ExpenseRequest request);
     Task<ExpenseResponse> UpdateExpense(UpdateExpenseRequest update);
-    Task<ExpenseId> DeleteExpense(int id);
-    // Task<IEnumerable<ExpenseResponse>> LoadExpenseList(LoadExpenseListRequest request);
+    // Task<ExpenseId> DeleteExpense(int id);
+    Task<PagedResponse<ExpenseResponse>> DeleteExpense(DeleteRequest delete);
     Task<PagedResponse<ExpenseResponse>> LoadExpenseList(LoadExpenseListRequest request);
 }
 
@@ -84,40 +84,38 @@ public class ExpenseService : IExpenseService
         return response;
     }
     
-    public async Task<ExpenseId> DeleteExpense(int id)
+    // public async Task<ExpenseId> DeleteExpense(int id)
+    // {
+    //     const string message = "could not delete expense";
+    //     var status = await _expenseRepository.DeleteExpenseById(id);
+    //     
+    //     var deletedExpenseId = new ExpenseId
+    //     {
+    //         Id = status
+    //     };
+    //     return deletedExpenseId;
+    // }
+    
+    public async Task<PagedResponse<ExpenseResponse>> DeleteExpense(DeleteRequest delete)
     {
         const string message = "could not delete expense";
-        var status = await _expenseRepository.DeleteExpenseById(id);
+        var status = await _expenseRepository.DeleteExpenseById(delete);
         
-        var deletedExpenseId = new ExpenseId
+        var listed =  status.Data.Select(e => new ExpenseResponse
         {
-            Id = status
+            Id = e.Id,
+            Place = e.Place,
+            Description = e.Description,
+            Amount = e.Amount,
+            CreatedAt = e.CreatedAt.ToString("O"),
+        });
+
+        return new PagedResponse<ExpenseResponse>
+        {
+            Data = listed,
+            TotalCount = status.TotalCount
         };
-        return deletedExpenseId;
     }
-    
-    // public async Task<IEnumerable<ExpenseResponse>> LoadExpenseList(LoadExpenseListRequest request)
-    // {
-    //     const string message = "could not retrieve expenses";
-    //
-    //     var loadExpense = new LoadExpense
-    //     {
-    //         UserId = request.UserId,
-    //         StartDate = request.StartDate.ToUniversalTime(),
-    //         EndDate = request.EndDate.ToUniversalTime(),
-    //     };
-    //     
-    //     var expenseList = await _expenseRepository.GetExpenseList(loadExpense) ?? throw new Exception(message);
-    //
-    //     return expenseList.Select(e => new ExpenseResponse
-    //     {
-    //         Id = e.Id,
-    //         Place = e.Place,
-    //         Description = e.Description,
-    //         Amount = e.Amount,
-    //         CreatedAt = e.CreatedAt.ToString("O"),
-    //     });
-    // }
     
     public async Task<PagedResponse<ExpenseResponse>> LoadExpenseList(LoadExpenseListRequest request)
     {
@@ -147,6 +145,5 @@ public class ExpenseService : IExpenseService
             Data = listed,
             TotalCount = response.TotalCount
         };
-
     }
 }
