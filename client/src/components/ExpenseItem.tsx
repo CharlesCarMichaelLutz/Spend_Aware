@@ -4,9 +4,7 @@ import type { Expense } from "../types/types"
 import { format, parseISO } from "date-fns"
 import type { ExpenseResponse } from "../types/types"
 
-// export function ExpenseItem({id, user_id, createdAt, description, place, amount, setExpenseList, currentPage, expensesPerPage, setTotalPages, isSaving, setIsSaving, deleteExpense }) {
-    export function ExpenseItem({id, user_id, createdAt, description, place, amount, setExpenseList, currentPage, expensesPerPage, setPageCount, isSaving, setIsSaving, deleteExpense }) {
-
+export function ExpenseItem({id, user_id, createdAt, description, place, amount, setExpenseList, currentPage, expensesPerPage, setPageCount, isSaving, setIsSaving, deleteExpense }) {
     const [isEditing, setIsEditing] = useState(false);
     const descriptionRef = useRef(description)
     const placeRef = useRef(place)
@@ -73,8 +71,6 @@ import type { ExpenseResponse } from "../types/types"
                     </td>
                     <td>
                         <button disabled={isSaving} onClick={() => deleteExpense(id, currentPage, expensesPerPage)}>Delete</button>
-                        {/*<button disabled={isSaving} onClick={() => deleteExpense(id, currentPage, postsPerPage)}>Delete</button>*/}
-                        
                     </td>
                 </>
             )}

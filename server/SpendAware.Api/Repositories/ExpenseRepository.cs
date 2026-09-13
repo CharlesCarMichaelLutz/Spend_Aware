@@ -10,7 +10,6 @@ public interface IExpenseRepository
 {
     Task<PagedResponse<Expense>> SaveAndGetExpense(PaginatedExpense expense);
     Task<Expense> UpdateAndGetExpense(UpdateExpense updatedExpense);
-    // Task<int> DeleteExpenseById(int id);
     Task<PagedResponse<Expense>> DeleteExpenseById(DeleteRequest delete);
     Task<PagedResponse<Expense>> GetExpenseList(LoadExpense request);
 }
@@ -81,18 +80,6 @@ public class ExpenseRepository : IExpenseRepository
 
         return await connection.QuerySingleOrDefaultAsync<Expense>(sql, updatedExpense);
     }
-    
-    // public async Task<int> DeleteExpenseById(int id)
-    // {
-    //     using var connection = await _connectionFactory.CreateConnectionAsync();
-    //     const string sql =
-    //         """
-    //             DELETE FROM expenses
-    //             WHERE id = @Id
-    //             RETURNING id
-    //         """;
-    //     return await connection.QuerySingleOrDefaultAsync<int>(sql, new { Id = id });
-    // }
     
     public async Task<PagedResponse<Expense>> DeleteExpenseById(DeleteRequest delete)
     {

@@ -178,19 +178,6 @@ app.MapPut("expenses", async (IExpenseService service, [FromBody] UpdateExpenseR
     }
 });
 
-// app.MapDelete("expenses/{id:int}", async (int id, IExpenseService service) =>
-// {
-//     try
-//     {
-//         var response = await service.DeleteExpense(id);
-//         return Results.Ok(response);
-//     }
-//     catch (Exception ex)
-//     {
-//         return Results.BadRequest(ex.Message);
-//     }
-// });
-
 app.MapPost("expenses/delete", async ( IExpenseService service, [FromBody] DeleteRequest request) =>
 {
     try

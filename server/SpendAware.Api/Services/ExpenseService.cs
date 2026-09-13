@@ -9,7 +9,6 @@ public interface IExpenseService
 {
     Task<PagedResponse<ExpenseResponse>> CreateExpense(ExpenseRequest request);
     Task<ExpenseResponse> UpdateExpense(UpdateExpenseRequest update);
-    // Task<ExpenseId> DeleteExpense(int id);
     Task<PagedResponse<ExpenseResponse>> DeleteExpense(DeleteRequest delete);
     Task<PagedResponse<ExpenseResponse>> LoadExpenseList(LoadExpenseListRequest request);
 }
@@ -83,18 +82,6 @@ public class ExpenseService : IExpenseService
 
         return response;
     }
-    
-    // public async Task<ExpenseId> DeleteExpense(int id)
-    // {
-    //     const string message = "could not delete expense";
-    //     var status = await _expenseRepository.DeleteExpenseById(id);
-    //     
-    //     var deletedExpenseId = new ExpenseId
-    //     {
-    //         Id = status
-    //     };
-    //     return deletedExpenseId;
-    // }
     
     public async Task<PagedResponse<ExpenseResponse>> DeleteExpense(DeleteRequest delete)
     {
