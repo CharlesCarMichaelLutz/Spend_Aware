@@ -4,11 +4,10 @@ import type { Expense } from "../types/types"
 import { format, parseISO } from "date-fns"
 import type { ExpenseResponse } from "../types/types"
 
-export function ExpenseItem({ id, user_id, createdAt, description, place, amount, setExpenseList, currentPage, expensesPerPage, setTotalPages, isSaving, setIsSaving, deleteExpense }) {
+// export function ExpenseItem({id, user_id, createdAt, description, place, amount, setExpenseList, currentPage, expensesPerPage, setTotalPages, isSaving, setIsSaving, deleteExpense }) {
+    export function ExpenseItem({id, user_id, createdAt, description, place, amount, setExpenseList, currentPage, expensesPerPage, setPageCount, isSaving, setIsSaving, deleteExpense }) {
 
     const [isEditing, setIsEditing] = useState(false);
-    // const [isSaving, setIsSaving] = useState(false);
-    
     const descriptionRef = useRef(description)
     const placeRef = useRef(place)
     const amountRef = useRef(amount)
@@ -52,28 +51,6 @@ export function ExpenseItem({ id, user_id, createdAt, description, place, amount
     type ExpenseId = {
         id: number
     }
-    
-    // async function deleteExpense(id) {
-    //     setIsSaving(true);
-    //     try{
-    //         const response = await baseApi.delete<ExpenseId>(`expenses/${id}`)
-    //
-    //         if(response.status === 200) {
-    //             setExpenseList((list) =>
-    //                 list.filter((expense) => expense.id !== response.data.id)
-    //             )
-    //             setIsSaving(false);
-    //         }
-    //     } catch (error) {
-    //         console.log(error);
-    //     }finally {
-    //         setIsSaving(false)
-    //     }
-    // }
-
-
-    // async function deleteExpense(id: number) {
-
 
     return (
         <tr>
@@ -95,8 +72,8 @@ export function ExpenseItem({ id, user_id, createdAt, description, place, amount
                         <button onClick={ () => setIsEditing(true)}>Edit</button>
                     </td>
                     <td>
-                        {/*<button disabled={isSaving} onClick={() => deleteExpense(id)}>Delete</button>*/}
                         <button disabled={isSaving} onClick={() => deleteExpense(id, currentPage, expensesPerPage)}>Delete</button>
+                        {/*<button disabled={isSaving} onClick={() => deleteExpense(id, currentPage, postsPerPage)}>Delete</button>*/}
                         
                     </td>
                 </>
