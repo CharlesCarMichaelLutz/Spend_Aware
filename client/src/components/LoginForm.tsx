@@ -4,7 +4,7 @@ import { type User } from "../types/types.tsx"
 import { authorizeUser } from "../store/useStore.ts"
 import { useNavigate } from "react-router"
 
-export default function LoginForm({ setIsLandingModalOpen }) {
+export default function LoginForm() {
     const navigate = useNavigate();
     
     const [loginForm, setLoginForm] = useState<object>({
@@ -43,8 +43,6 @@ export default function LoginForm({ setIsLandingModalOpen }) {
             
             if (response.status === 200) {
                 authorizeUser(response.data);
-                //open modal
-                // setIsLandingModalOpen(true);
                 navigate("/dashboard")
                 console.log("login response:", response)
             }
@@ -81,7 +79,6 @@ export default function LoginForm({ setIsLandingModalOpen }) {
                 onChange={handleLoginFormChange}
                 required
             />
-            {/*login modal*/}
             <button type="submit">
                 Login
             </button>
