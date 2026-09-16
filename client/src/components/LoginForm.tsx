@@ -56,6 +56,7 @@ export default function LoginForm({ setIsLandingModalOpen }) {
 
     return (
         <form className="login-form" onSubmit={handleLoginFormSubmit}>
+            <h3 className="login-text">Login</h3>
             <label htmlFor="username">Username</label>
             <input
                 type="username"

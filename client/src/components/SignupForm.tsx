@@ -13,7 +13,9 @@ type SignupFormProps = {
     currency: string
 }
 
-export default function SignupForm({ setIsLandingModalOpen, setUserId }: SignupFormProps) {
+// export default function SignupForm({ setIsLandingModalOpen, setUserId }: SignupFormProps) {
+    export default function SignupForm({ setIsLandingModalOpen, setUserId }) {
+    
     const [signupForm, setSignupForm] = useState<SignupFormProps>({
         email: "",
         password: "",
@@ -79,6 +81,8 @@ export default function SignupForm({ setIsLandingModalOpen, setUserId }: SignupF
         
         try {
             const response = await baseApi.post<SignupFormProps>("register", {
+            //     const response = await baseApi.post<UserResponse>("register", {
+                
                 Email: signupForm.email,
                 Password: signupForm.password,
                 Username: signupForm.username,
@@ -91,7 +95,9 @@ export default function SignupForm({ setIsLandingModalOpen, setUserId }: SignupF
 
             if (response.status === 200) {
                 console.log("signup Id: ", response)
-                setUserId<UserResponse>(response.data.userId)
+                // setUserId<UserResponse>(response.data.userId)
+                setUserId(response.data.userId)
+                
                 setIsLandingModalOpen(true)
             }
             
@@ -102,6 +108,7 @@ export default function SignupForm({ setIsLandingModalOpen, setUserId }: SignupF
     
     return (
         <form className="login-form" onSubmit={handleSignupFormSubmit}>
+            <h3 className="login-text">Create Account</h3>
             <label htmlFor="email">Email</label>
             <input 
                 type="email" 
