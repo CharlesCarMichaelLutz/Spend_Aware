@@ -70,7 +70,6 @@ export function Dashboard() {
         }
     }
 
-
     const now = new Date();
     const year = now.getFullYear()
     const firstDay = new Date(year, now.getMonth(), 2)
