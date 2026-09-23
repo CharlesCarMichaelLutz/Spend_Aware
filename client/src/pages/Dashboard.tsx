@@ -214,7 +214,6 @@ export function Dashboard() {
                 </div>
                 <div className="dashboard-bottom">
                     <Paginate
-                        // className="dashboard-bottom" 
                         pageCount={pageCount}
                         onPageChange={handlePageClick}
                     />

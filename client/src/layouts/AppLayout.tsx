@@ -1,7 +1,8 @@
 import { Outlet, NavLink } from "react-router"
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import type { YearEntry } from "../types/types"
 import { useStore } from "../store/useStore.ts"
+import { minidenticon } from "minidenticons"
 
 export function AppLayout() {
     const [isCollapsed, setIsCollapsed] = useState(false);
@@ -42,15 +43,29 @@ export function AppLayout() {
         loadDate()
     }, [user]);
 
+    const MinidenticonImg = ({ username, saturation, lightness, ...props }) => {
+        const svgURI = useMemo(
+            () =>
+                "data:image/svg+xml;utf8," +
+                encodeURIComponent(minidenticon(username, saturation, lightness)),
+            [username, saturation, lightness],
+        );
+        return <img src={svgURI} alt={username} {...props} />;
+    };
+
     return (
         <>
             <div className="app-layout-container">
                 <aside className={`sidebar ${isCollapsed ? "collapsed" : ""}`}>
                     <div className="sidebar-container">
                         <div className="sidebar-user">
-                            <img height={60} width={40} className="user-identicon"/>
+                            <MinidenticonImg
+                                username={user.username}
+                                height="100"
+                                width="100"
+                                className="user-identicon"
+                            />
                             <h2 className="sidebar-username">{user.username}</h2>
-                            
                         </div>
                         <div className="sidebar-menu">
                             <nav>
