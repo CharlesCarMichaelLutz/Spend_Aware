@@ -190,26 +190,22 @@ export function Dashboard() {
                         </tr>
                         </thead>
                         <tbody>
-                        {expenseList.map((expense) => {
-                            return <ExpenseItem
-                                key={expense.id}
-                                {...expense}
-                                setExpenseList={setExpenseList}
-                                currentPage={currentPage}
-                                expensesPerPage={expensesPerPage}
-                                isSaving={isSaving}
-                                setIsSaving={setIsSaving}
-                                deleteExpense={deleteExpense}
-                            />
-                        })}
+                            {expenseList.map((expense) => {
+                                return <ExpenseItem
+                                    key={expense.id}
+                                    {...expense}
+                                    setExpenseList={setExpenseList}
+                                    currentPage={currentPage}
+                                    expensesPerPage={expensesPerPage}
+                                    isSaving={isSaving}
+                                    setIsSaving={setIsSaving}
+                                    deleteExpense={deleteExpense}
+                                />
+                            })}
+                            {/*{Array.from({*/}
+                            {/*    length: Math.max(0, expensesPerPage - expenseList.length)})}*/}
+
                         </tbody>
-                        <tfoot>
-                        <tr>
-                            <th>Month Name</th>
-                            <th>Total</th>
-                            <th>Amount</th>
-                        </tr>
-                        </tfoot>
                     </table>
                 </div>
                 <div className="dashboard-bottom">

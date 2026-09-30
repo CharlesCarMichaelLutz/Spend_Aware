@@ -80,12 +80,6 @@ export function Year() {
     );
 }
 
-// only want to get the months the user has an expense for not empty ones so cards are rendered correctly
-
-//query API for expenses from passed in year
-//filter response array of expenses for months
-//create new array with months
-//render months as cards on Year page 
 
 
 
