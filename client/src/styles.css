@@ -19,22 +19,18 @@ body {
   display: flex;
 }
 
-/*Body text, table data, descriptions*/
 .text-regular {
     font-weight: 400;
 }
 
-/*Column headers, category labels, emphasized rows*/
 .text-medium {
     font-weight: 500;
 }
 
-/*Section headers, totals, active navigation*/
 .text-semi-bold {
     font-weight: 600;
 }
 
-/*Page titles, grand totals (optional — 600 often suffices)*/
 .text-bold {
     font-weight: 700;
 }
@@ -112,7 +108,6 @@ body {
     justify-content: center;
 }
 
-/* Hide the actual radio inputs */
 .btn-group input[type="radio"] {
   position: absolute;
   opacity: 0;
@@ -120,7 +115,6 @@ body {
   height: 0;
 }
 
-/* Style the labels as buttons */
 .btn-group label {
   display: inline-block;
   padding: 0.5rem 1rem;
@@ -134,18 +128,15 @@ body {
   margin: 0;
 }
 
-/* Remove left border for all except the first button */
 .btn-group label:not(:first-of-type) {
   border-left: none;
 }
 
-/* Hover state */
 .btn-group label:hover {
   background-color: #e2e6ea;
   color: #0056b3;
 }
 
-/* Checked/active state - the + selector needs input immediately before label */
 .btn-group input[type="radio"]:checked + label {
   background-color: #007bff;
   color: #ffffff;
@@ -153,7 +144,6 @@ body {
   box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
 }
 
-/* Focus state for accessibility */
 .btn-group input[type="radio"]:focus + label {
   outline: 2px solid #80bdff;
   outline-offset: -2px;
@@ -161,7 +151,6 @@ body {
   z-index: 2;
 }
 
-/* Rounded corners for first and last items */
 .btn-group label:first-of-type {
   border-top-left-radius: 0.25rem;
   border-bottom-left-radius: 0.25rem;
@@ -256,7 +245,7 @@ body {
 
 .right-panel {
   border: 2px dotted orange;
-  flex: 8;
+  flex: 9;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -323,38 +312,58 @@ main {
 
 .dashboard-top {
   flex: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.dashboard-top form {
+  flex: 2;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin: 1rem 0 1rem 0;
+  width: 250px;
+}
+
+.dashboard-top form input{
+ width: 100%;
+}
+
+.dashboard-top form button{
+  margin: 0 auto;
+  width: 50%;
+}
+
+.form-group-dashboard {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 1rem;
 }
 
 .dashboard-middle {
+  /*border: 2px dotted green;*/
   flex: 5;
   height: 100%;
-  /*border: 2px dotted green;*/
   min-height: 0;
 }
 
 .dashboard-middle table {
-  /*width: 100%;*/
-  /*border-collapse: collapse;*/
-  /*!*border: 2px solid purple;*!*/
-  /*table-layout: fixed;*/
-
-  /*width: 100%;*/
-  /*height: 100%;*/
-  /*border-collapse: collapse;*/
-
+  /*border: 2px solid purple;*/
   width: 100%;
   table-layout: fixed;
   border-collapse: collapse;
 }
 
 .dashboard-middle thead tr {
- /*height: 50px;*/
-  height: 47px;
+  height: 41.4px;
 }
 
 .dashboard-middle tbody tr {
-  /*height: 50px;*/
-  height: 47px;
+  height: 41.4px;
 }
 
 .dashboard-middle th,
@@ -389,8 +398,6 @@ main {
   align-items: center;
   width: 90%;
   padding-bottom: 1rem;
-
-
 }
 
 .year-title {
@@ -412,15 +419,6 @@ main {
   padding: 2rem;
 }
 
-/*.month-card {*/
-/*  border: 1px solid #777;*/
-/*  background-color: white;*/
-/*  border-radius: 0.25rem;*/
-/*  display: flex;*/
-/*  align-items: center;*/
-/*  justify-content: center;*/
-/*}*/
-
 .month-card:link, .month-card:visited {
   border: 1px solid #777;
   background-color: white;
@@ -430,7 +428,6 @@ main {
   align-items: center;
   justify-content: center;
   text-decoration: none;
-  /*position: relative;*/
 }
 
 .disabled-month-card:link, .disabled-month-card:visited {
@@ -452,92 +449,55 @@ main {
 
 /* Month */
 
-/*.month-wrapper {*/
-/*  border: 5px solid purple;*/
-/*  width: 100%;*/
-/*  height: 100vh;*/
-/*  display: flex;*/
-/*  align-items: center;*/
-/*  justify-content: center;*/
-/*  flex-direction: column;*/
-/*}*/
+/*construction*/
 
 .month-wrapper {
+  border: 2px dotted purple;
+  flex: 1;
   display: flex;
   flex-direction: column;
-  flex: 1;
+  width: 100%;
+  overflow-y: auto;
+  min-height: 0;
 }
-
-/*.month-title-wrapper {*/
-/*  !*border: 5px solid darkblue;*!*/
-/*  !*flex: 1;*!*/
-/*  !*display: flex;*!*/
-/*  !*flex-direction: row;*!*/
-/*  !*justify-content: space-between;*!*/
-/*  !*align-items: center;*!*/
-/*  !*width: 100%;*!*/
-/*  !*!*padding-bottom: 1rem;*!*!*/
-/*  !*flex-shrink: 0;*!*/
-/*}*/
 
 .month-title-wrapper {
-  border: 2px dotted purple;
   flex: 1;
   display: flex;
+  flex-direction: row;
   align-items: center;
-  justify-content: center;
   justify-content: space-between;
-  padding-bottom: 1rem;
-  flex-shrink: 0;
+  padding: 0 3rem 0 3rem;
 }
-
-.month-title {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  /*padding-left: 6rem;*/
-}
-
-/*.month-table-wrapper {*/
-/*  border: 2px solid #777;*/
-/*  flex: 9;*/
-/*  display: flex;*/
-/*  align-items: flex-start;*/
-/*  justify-content: center;*/
-/*  width: 100%;*/
-/*  border-radius: 0.25rem;*/
-/*}*/
 
 .month-table-wrapper {
-  /*border: 2px solid #777;*/
-  flex: 9;
-  display: flex;
-  overflow: auto;
+  /*border: 2px dotted green;*/
+  flex: 5;
   height: 100%;
-  flex-direction: column;
+  min-height: 0;
 }
 
-.month-table-wrapper > table {
+.month-table-wrapper table {
   width: 100%;
-  flex: 1;
+  table-layout: fixed;
+  border-collapse: collapse;
 }
 
-.month-table-wrapper > table > tr {
-  height: 50px;
+.month-table-wrapper thead tr {
+  height: 54px;
 }
 
-.dashboard-bottom {
-  border: 2px dotted purple;
-  flex: 1;
-  flex-shrink: 0;
+.month-table-wrapper tbody tr {
+  height: 54px;
+}
+
+.month-table-wrapper th,
+.month-table-wrapper td {
+  text-align: center;
 }
 
 .month-pagination {
-  border: 2px solid #777;
   flex: 1;
-  display: flex;
-  width: 100%;
-  flex-shrink: 0;
 }
 
 table {

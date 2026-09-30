@@ -143,14 +143,14 @@ export function Dashboard() {
             <section className="dashboard">
                 <div className="dashboard-top">
                             <form onSubmit={(e) => createExpense(e, currentPage, expensesPerPage)}>
-                        <label >Date:</label>
+                        <label >Date</label>
                         <input
                             type="date"
                             name="date"
                             ref={expenseRefs.created_at}
                             required
                         />
-                        <label >Place:</label>
+                        <label >Place</label>
                         <input
                             type="text"
                             name="place"
@@ -158,7 +158,7 @@ export function Dashboard() {
                             placeholder='enter place'
                             required
                         />
-                        <label >Description:</label>
+                        <label >Description</label>
                         <input
                             type="text"
                             name="description"
@@ -166,7 +166,7 @@ export function Dashboard() {
                             placeholder='enter description'
                             required
                         />
-                        <label >Amount:</label>
+                        <label >Amount</label>
                         <input
                             type="number"
                             name="amount"
@@ -202,9 +202,6 @@ export function Dashboard() {
                                     deleteExpense={deleteExpense}
                                 />
                             })}
-                            {/*{Array.from({*/}
-                            {/*    length: Math.max(0, expensesPerPage - expenseList.length)})}*/}
-
                         </tbody>
                     </table>
                 </div>
