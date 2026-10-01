@@ -3,6 +3,9 @@ import { useEffect, useState, useMemo } from "react";
 import type { YearEntry } from "../types/types"
 import { useStore } from "../store/useStore.ts"
 import { minidenticon } from "minidenticons"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faDollarSign, faEuroSign, faSterlingSign, faYenSign  } from "@fortawesome/free-solid-svg-icons"
+import { faBitcoin, faEthereum } from "@fortawesome/free-brands-svg-icons"
 
 export function AppLayout() {
     const [isCollapsed, setIsCollapsed] = useState(false);
@@ -90,15 +93,21 @@ export function AppLayout() {
                         </div>
                         <div className="header-middle">
                             <div className="currency-group">
-                                <img height={40} width={34} className="currency-image" />
-                                <img height={40} width={34} className="currency-image" />
-                                <img height={40} width={34} className="currency-image" />
+                                {/*<img height={40} width={34} className="currency-image" />*/}
+                                {/*<img height={40} width={34} className="currency-image" />*/}
+                                {/*<img height={40} width={34} className="currency-image" />*/}
+                                < FontAwesomeIcon icon={faBitcoin} />
+                                < FontAwesomeIcon icon={faDollarSign} />
+                                < FontAwesomeIcon icon={faEthereum} />
                             </div>
                             <h1>Spend Aware</h1>
                             <div className="currency-group">
-                                <img height={40} width={34} className="currency-image" />
-                                <img height={40} width={34} className="currency-image" />
-                                <img height={40} width={34} className="currency-image" />
+                                {/*<img height={40} width={34} className="currency-image" />*/}
+                                {/*<img height={40} width={34} className="currency-image" />*/}
+                                {/*<img height={40} width={34} className="currency-image" />*/}
+                                < FontAwesomeIcon icon={faEuroSign} />
+                                < FontAwesomeIcon icon={faSterlingSign} />
+                                < FontAwesomeIcon icon={faYenSign} />
                             </div>
                         </div>
                         <div className="header-right">
