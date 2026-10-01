@@ -66,8 +66,6 @@ public class UserService : IUserService
             Username = request.Username,
             Email = request.Email,
             PasswordHash = _passwordHasher.Hash(request.Password),
-            Language = request.Language,
-            Currency = request.Currency,
             CreatedAt = request.CreatedAt.ToUniversalTime()
         };
         
@@ -125,8 +123,6 @@ public class UserService : IUserService
                 Username = user.Username,
                 Email = user.Email,
                 CreatedAt = user.CreatedAt.ToString("O"),
-                Language = user.Language,
-                Currency = user.Currency,
                 AccessToken = _tokenService.Create(user.Username)
             };
             return response;
@@ -138,7 +134,7 @@ public class UserService : IUserService
     {
         const string message = "Login failed try again";
         
-        var user = await _userRepository.GetUserById(request.Username) ?? throw new Exception(message);
+        var user = await _userRepository.GetUserByUsername(request.Username) ?? throw new Exception(message);
 
         bool verified = _passwordHasher.Verify(request.Password, user.PasswordHash);
 
@@ -162,8 +158,6 @@ public class UserService : IUserService
             Username = user.Username,
             Email = user.Email,
             CreatedAt = user.CreatedAt.ToString("O"),
-            Language = user.Language,
-            Currency = user.Currency,
             AccessToken = _tokenService.Create(user.Username)
         };
         return response;

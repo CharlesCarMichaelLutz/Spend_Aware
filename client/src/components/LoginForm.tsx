@@ -63,19 +63,19 @@ export default function LoginForm() {
                 onChange={handleLoginFormChange}
                 required
             />
-            <label htmlFor="email">Email</label>
-            <input
-                type="email"
-                id="email"
-                value={loginForm.email}
-                onChange={handleLoginFormChange}
-                required
-            />
             <label htmlFor="password">Password</label>
             <input
                 type="password"
                 id="password"
                 value={loginForm.password}
+                onChange={handleLoginFormChange}
+                required
+            />
+            <label htmlFor="email">Email</label>
+            <input
+                type="email"
+                id="email"
+                value={loginForm.email}
                 onChange={handleLoginFormChange}
                 required
             />

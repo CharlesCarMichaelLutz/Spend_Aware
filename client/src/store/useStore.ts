@@ -6,8 +6,8 @@ type AuthState = {
     email: string;
     id: number;
     username: string
-    language: string
-    currency: string
+    // language: string
+    // currency: string
 }
 
 export const useStore = create<AuthState>(() => {
