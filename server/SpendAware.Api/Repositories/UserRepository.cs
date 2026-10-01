@@ -36,54 +36,6 @@ public class UserRepository : IUserRepository
             """;
         return await connection.QuerySingleOrDefaultAsync<string>(sql, new { email = email});
     }
-    
-    //adjust to omit user preferences
-    // public async Task<RegisteredUser> CreateUser(CreateUser user)
-    // {
-    //     using var connection = await _connectionFactory.CreateConnectionAsync();
-    //     const string insert_user =
-    //         """
-    //             INSERT INTO users 
-    //                 (username, password_hash, email, created_date)
-    //             VALUES (@Username, @PasswordHash, @Email, @CreatedAt)
-    //             RETURNING id
-    //         """;
-    //     const string insert_user_preferences =
-    //         """
-    //             INSERT INTO user_preferences
-    //                 (user_id, language_code, currency_code)
-    //             VALUES (@UserId, @Language, @Currency)
-    //         """;
-    //     using var transaction = connection.BeginTransaction();
-    //     try
-    //     {
-    //         var userId = await connection.ExecuteScalarAsync<int>(insert_user, user, transaction);
-    //         await connection.ExecuteAsync(
-    //             insert_user_preferences,
-    //             new
-    //             {
-    //                 UserId = userId,
-    //                 user.Language,
-    //                 user.Currency
-    //             },
-    //             transaction
-    //         );
-    //         transaction.Commit();
-    //
-    //         return new RegisteredUser
-    //         {
-    //             Id = userId,
-    //             Email = user.Email,
-    //             Username = user.Username
-    //         };
-    //     }
-    //     catch
-    //     {
-    //         transaction.Rollback();
-    //         throw;
-    //     }
-    // }
-    
     public async Task<RegisteredUser> CreateUser(CreateUser user)
     {
         using var connection = await _connectionFactory.CreateConnectionAsync();
@@ -143,29 +95,6 @@ public class UserRepository : IUserRepository
         return result > 0;
     }
     
-    //adjust to omit language code and currency code 
-    // public async Task<LoggedInUser?> GetUser(int id)
-    // {
-    //     using var connection = await _connectionFactory.CreateConnectionAsync();
-    //     const string squeal =
-    //         """
-    //             SELECT 
-    //                 u.id, 
-    //                 u.username, 
-    //                 u.email, 
-    //                 u.created_date AS CreatedAt, 
-    //                 u.password_hash, 
-    //                 p.language_code AS Language, 
-    //                 p.currency_code AS Currency
-    //             FROM users u 
-    //             JOIN  user_preferences p
-    //             ON u.id = p.user_id
-    //             WHERE u.id = @Id
-    //         """;
-    //
-    //     return await connection.QuerySingleOrDefaultAsync<LoggedInUser>(squeal, new {id = id });
-    // }
-    
     public async Task<LoggedInUser?> GetUser(int id)
     {
         using var connection = await _connectionFactory.CreateConnectionAsync();
@@ -195,30 +124,6 @@ public class UserRepository : IUserRepository
         
         return result > 0;
     }
-    
-    //adjust to omit language and currency
-    // public async Task<LoggedInUser?> GetUserById(string username)
-    // {
-    //     using var connection = await _connectionFactory.CreateConnectionAsync();
-    //     const string sql =
-    //         """
-    //             SELECT 
-    //                 u.id, 
-    //                 u.username, 
-    //                 u.email, 
-    //                 u.created_date AS CreatedAt, 
-    //                 u.password_hash, 
-    //                 p.language_code AS Language, 
-    //                 p.currency_code AS Currency
-    //             FROM users u 
-    //             JOIN  user_preferences p
-    //             ON u.id = p.user_id
-    //             WHERE u.username = @Username
-    //         """;
-    //     
-    //     return await connection.QuerySingleOrDefaultAsync<LoggedInUser>(sql, new {username = username });
-    // }
-    
     public async Task<LoggedInUser?> GetUserByUsername(string username)
     {
         using var connection = await _connectionFactory.CreateConnectionAsync();
