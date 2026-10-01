@@ -1,16 +1,21 @@
-import { Outlet, NavLink } from "react-router"
+// import { Outlet, NavLink } from "react-router"
+import { Outlet, NavLink, useLocation } from "react-router"
 import { useEffect, useState, useMemo } from "react";
 import type { YearEntry } from "../types/types"
-import { useStore } from "../store/useStore.ts"
+// import { useStore } from "../store/useStore.ts"
+import { useStore, authorizeUser } from "../store/useStore.ts"
 import { minidenticon } from "minidenticons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faDollarSign, faEuroSign, faSterlingSign, faYenSign  } from "@fortawesome/free-solid-svg-icons"
 import { faBitcoin, faEthereum } from "@fortawesome/free-brands-svg-icons"
+import { useNavigate } from "react-router"
 
 export function AppLayout() {
     const [isCollapsed, setIsCollapsed] = useState(false);
     const [yearList, setYearList] = useState([]);
     const user = useStore(state => state.auth);
+    const location = useLocation();
+    const navigate = useNavigate();
     console.log("user", user);
 
     function toggleSidebar() {
@@ -55,6 +60,11 @@ export function AppLayout() {
         );
         return <img src={svgURI} alt={username} {...props} />;
     };
+    
+    function handleLogout() {
+        authorizeUser({});
+        navigate("/")
+    }
 
     return (
         <>
@@ -93,29 +103,24 @@ export function AppLayout() {
                         </div>
                         <div className="header-middle">
                             <div className="currency-group">
-                                {/*<img height={40} width={34} className="currency-image" />*/}
-                                {/*<img height={40} width={34} className="currency-image" />*/}
-                                {/*<img height={40} width={34} className="currency-image" />*/}
                                 < FontAwesomeIcon icon={faBitcoin} />
                                 < FontAwesomeIcon icon={faDollarSign} />
                                 < FontAwesomeIcon icon={faEthereum} />
                             </div>
                             <h1>Spend Aware</h1>
                             <div className="currency-group">
-                                {/*<img height={40} width={34} className="currency-image" />*/}
-                                {/*<img height={40} width={34} className="currency-image" />*/}
-                                {/*<img height={40} width={34} className="currency-image" />*/}
                                 < FontAwesomeIcon icon={faEuroSign} />
                                 < FontAwesomeIcon icon={faSterlingSign} />
                                 < FontAwesomeIcon icon={faYenSign} />
                             </div>
                         </div>
                         <div className="header-right">
-                            <button>logout</button>
+                            <button onClick={handleLogout}>logout</button>
                         </div>
                     </header>
                     <main>
-                        <Outlet />
+                        {/*<Outlet />*/}
+                        <Outlet key={location.key}/>
                     </main>
                 </div>
             </div>

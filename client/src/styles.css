@@ -82,6 +82,11 @@ body {
   border-radius:0.3rem;
 }
 
+.login-text {
+  margin: 0 auto;
+  padding-top: 1rem;
+}
+
 .login-form {
     display: flex;
     flex-direction: column;
@@ -94,11 +99,17 @@ body {
   flex-direction: column;
   gap: 1rem;
   /*position: fixed;*/
+  padding: 0 1.5rem 0 1.5rem;
 }
 
 .login-button {
   cursor: pointer;
   margin-top: 1rem;
+}
+
+.toggle-container {
+  margin: 0 auto;
+  padding: 1rem 0 1rem 0;
 }
 
 .btn-group {
