@@ -52,7 +52,7 @@ public class UserService : IUserService
         //     
         // }
         
-        const string message = "Failed to create user try again";
+        const string message = "Failed to create account try again";
         
         var checkUserEmail = await _userRepository.CheckEmail(request.Email);
 
@@ -66,6 +66,7 @@ public class UserService : IUserService
             Username = request.Username,
             Email = request.Email,
             PasswordHash = _passwordHasher.Hash(request.Password),
+            IsVerified = false,
             CreatedAt = request.CreatedAt.ToUniversalTime()
         };
         
@@ -151,16 +152,32 @@ public class UserService : IUserService
         // }
         
         // create/save/send Refresh Token as httponly cookie
-        
-        var response = new CreateUserLoginResponse
+
+        if (user.IsVerified)
         {
-            Id = user.Id,
-            Username = user.Username,
-            Email = user.Email,
-            CreatedAt = user.CreatedAt.ToString("O"),
-            AccessToken = _tokenService.Create(user.Username)
-        };
-        return response;
+            var response = new CreateUserLoginResponse
+            {
+                Id = user.Id,
+                Username = user.Username,
+                Email = user.Email,
+                // IsVerified = user.IsVerified,
+                CreatedAt = user.CreatedAt.ToString("O"),
+                AccessToken = _tokenService.Create(user.Username)
+            };
+            return response;
+        }
+        
+        // var response = new CreateUserLoginResponse
+        // {
+        //     Id = user.Id,
+        //     Username = user.Username,
+        //     Email = user.Email,
+        //     CreatedAt = user.CreatedAt.ToString("O"),
+        //     AccessToken = _tokenService.Create(user.Username)
+        // };
+        // return response;
+        throw new Exception(message);
+        
     }
 
     public async Task<IEnumerable<UsersResponse>> GetAllUsers()

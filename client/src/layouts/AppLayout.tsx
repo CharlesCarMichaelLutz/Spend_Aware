@@ -1,5 +1,4 @@
-// import { Outlet, NavLink } from "react-router"
-import { Outlet, NavLink, useLocation } from "react-router"
+import { Outlet, NavLink } from "react-router"
 import { useEffect, useState, useMemo } from "react";
 import type { YearEntry } from "../types/types"
 // import { useStore } from "../store/useStore.ts"
@@ -14,7 +13,6 @@ export function AppLayout() {
     const [isCollapsed, setIsCollapsed] = useState(false);
     const [yearList, setYearList] = useState([]);
     const user = useStore(state => state.auth);
-    const location = useLocation();
     const navigate = useNavigate();
     console.log("user", user);
 
@@ -119,8 +117,7 @@ export function AppLayout() {
                         </div>
                     </header>
                     <main>
-                        {/*<Outlet />*/}
-                        <Outlet key={location.key}/>
+                        <Outlet />
                     </main>
                 </div>
             </div>

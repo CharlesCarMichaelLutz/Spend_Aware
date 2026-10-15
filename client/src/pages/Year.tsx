@@ -1,4 +1,5 @@
 import { Outlet, useParams, NavLink } from "react-router";
+
 import { useStore } from "../store/useStore.ts"
 
 export function Year() {
@@ -60,8 +61,8 @@ export function Year() {
                         const disabled = isMonthDisabled(year, month, signupDate)
                         
                         return disabled ? (
-                                <NavLink key={month} className="disabled-month-card" onClick={(e) => e.preventDefault()}
-                                         to={`/dashboard/${year}/${month}`}>
+                                // <NavLink key={month} className="disabled-month-card" onClick={(e) => e.preventDefault()}>
+                            <NavLink key={month} className="disabled-month-card" to={`/dashboard/${year}/${month}`}>
                                     {month}
                                 </NavLink>
                             ) :
