@@ -13,7 +13,6 @@ public record UserResponse(int UserId);
 
 public interface IUserService
 {
-    // Task<int> CreateUser(CreateUserRequest request);
     Task<UserResponse> CreateUser(CreateUserRequest request);
     Task<CreateUserLoginResponse> VerifyEmail(ConfirmEmailRequest request);
     Task<CreateUserLoginResponse> LoginUser(LoginUserRequest request);
@@ -42,7 +41,6 @@ public class UserService : IUserService
 
     // public record UserResponse(int UserId);
 
-    // public async Task<int> CreateUser(CreateUserRequest request)
     public async Task<UserResponse> CreateUser(CreateUserRequest request)
     {
         //validate incoming request
@@ -99,7 +97,6 @@ public class UserService : IUserService
             if (saveEmailToken)
             {
                 var response = new UserResponse(user.Id);
-                // return user.Id;
                 return response;
             }
         }
@@ -144,13 +141,6 @@ public class UserService : IUserService
             throw new Exception(message);
         }
         
-        //need to change the users table and add verified column before implementing  
-            
-        // if (!verified || !user.verified)
-        // {
-        //     throw new Exception(message);
-        // }
-        
         // create/save/send Refresh Token as httponly cookie
 
         if (user.IsVerified)
@@ -160,24 +150,13 @@ public class UserService : IUserService
                 Id = user.Id,
                 Username = user.Username,
                 Email = user.Email,
-                // IsVerified = user.IsVerified,
                 CreatedAt = user.CreatedAt.ToString("O"),
                 AccessToken = _tokenService.Create(user.Username)
             };
             return response;
         }
-        
-        // var response = new CreateUserLoginResponse
-        // {
-        //     Id = user.Id,
-        //     Username = user.Username,
-        //     Email = user.Email,
-        //     CreatedAt = user.CreatedAt.ToString("O"),
-        //     AccessToken = _tokenService.Create(user.Username)
-        // };
-        // return response;
+
         throw new Exception(message);
-        
     }
 
     public async Task<IEnumerable<UsersResponse>> GetAllUsers()

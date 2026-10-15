@@ -6,7 +6,5 @@ public class CreateUser
     public string Email { get; set; }
     public string PasswordHash { get; set; }
     public bool IsVerified { get; set; }
-    // public string Language { get; set; }
-    // public string Currency { get; set; }
     public DateTimeOffset CreatedAt { get; set; }
 }

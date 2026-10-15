@@ -39,14 +39,6 @@ public class UserRepository : IUserRepository
     public async Task<RegisteredUser> CreateUser(CreateUser user)
     {
         using var connection = await _connectionFactory.CreateConnectionAsync();
-        // const string insert_user =
-        //     """
-        //         INSERT INTO users 
-        //             (username, password_hash, email, created_date)
-        //         VALUES (@Username, @PasswordHash, @Email, @CreatedAt)
-        //         RETURNING id, username, email
-        //     """;
-        
         const string insert_user =
             """
                 INSERT INTO users 
@@ -85,24 +77,6 @@ public class UserRepository : IUserRepository
 
         return await connection.QuerySingleOrDefaultAsync<LoggedInUser>(sql, new {id = id });
     }
-    
-    // public async Task<bool> ConfirmEmailToken(ConfirmEmailRequest request)
-    // {
-    //     using var connection = await _connectionFactory.CreateConnectionAsync();
-    //     const string sql =
-    //         """
-    //             SELECT COUNT(1) 
-    //             FROM  email_verification_tokens
-    //             WHERE user_id = @UserId 
-    //             AND email_code = @EmailCode 
-    //             AND expires_at > Now()
-    //         """;
-    //     var result = await connection.QuerySingleOrDefaultAsync<int>(sql, new {UserId = request.UserId, EmailCode = request.EmailCode});
-    //     
-    //     return result > 0;
-    // }
-    
-    //need to change the users table and add verified column before implementing  
     public async Task<bool> ConfirmEmailToken(ConfirmEmailRequest request)
     {
         using var connection = await _connectionFactory.CreateConnectionAsync();
@@ -124,25 +98,16 @@ public class UserRepository : IUserRepository
                     SET  is_verified = true
                     WHERE id = @UserId
                 """;
-            // var result2 = await connection.QuerySingleOrDefaultAsync<int>(sql2, new { UserId = request.UserId });
             var result2 = await connection.ExecuteAsync(sql2, new { UserId = request.UserId });
                 
             return result2 > 0;
         }
         
-        // return result > 0;
         return false;
     }
     public async Task<LoggedInUser?> GetUserByUsername(string username)
     {
         using var connection = await _connectionFactory.CreateConnectionAsync();
-        // const string sql =
-        //     """
-        //         SELECT id, username, email, created_date AS CreatedAt, password_hash 
-        //         FROM users  
-        //         WHERE username = @Username
-        //     """;
-        
         const string sql =
             """
                 SELECT id, username, email, created_date AS CreatedAt, password_hash, is_verified 
