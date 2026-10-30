@@ -8,7 +8,8 @@ namespace SpendAware.Api.Repositories;
 
 public interface IExpenseRepository
 {
-    Task<PagedResponse<Expense>> SaveAndGetExpense(PaginatedExpense expense);
+    // Task<PagedResponse<Expense>> SaveAndGetExpense(PaginatedExpense expense);
+    Task<bool> SaveExpense(ExpenseRequest expense);
     Task<Expense> UpdateAndGetExpense(UpdateExpense updatedExpense);
     Task<PagedResponse<Expense>> DeleteExpenseById(DeleteRequest delete);
     Task<PagedResponse<Expense>> GetExpenseList(LoadExpense request);
@@ -25,7 +26,48 @@ public class ExpenseRepository : IExpenseRepository
     
     //when a new expense gets added to the page need to return the list of updated 10 records
     //so the page stays in sync on the client
-    public async Task<PagedResponse<Expense>> SaveAndGetExpense(PaginatedExpense expense)
+    // public async Task<PagedResponse<Expense>> SaveAndGetExpense(PaginatedExpense expense)
+    // {
+    //     using var connection = await _connectionFactory.CreateConnectionAsync();
+    //     const string sql =
+    //         """
+    //           INSERT INTO expenses
+    //               (user_id, place, description, amount, created_at)
+    //           VALUES (@UserId, @Place, @Description, @Amount, @CreatedAt)
+    //           RETURNING id, place, description, amount, created_at
+    //         """;
+    //     await connection.ExecuteAsync(sql, expense);
+    //     
+    //     const string recordCountSql = """SELECT COUNT(*) FROM expenses WHERE user_id = @UserId""";
+    //     var totalCount = await connection.ExecuteScalarAsync<int>(recordCountSql, new { UserId = expense.UserId });
+    //     
+    //     const string datasSql =
+    //         """
+    //             SELECT id, place, description, amount, created_at
+    //             FROM expenses
+    //             WHERE user_id = @UserId
+    //             ORDER BY id DESC
+    //             OFFSET @Offset 
+    //             LIMIT @PageSize
+    //         """;
+    //     
+    //     var parameters = new
+    //     {
+    //         UserId = expense.UserId,
+    //         PageSize = expense.PageSize,
+    //         Offset = (expense.Page - 1) * expense.PageSize,
+    //     };
+    //     
+    //     var expenseList = await connection.QueryAsync<Expense>(datasSql, parameters);
+    //
+    //     return new PagedResponse<Expense>
+    //     {
+    //         Data = expenseList,
+    //         TotalCount = totalCount,
+    //     };
+    // }
+    
+    public async Task<bool> SaveExpense(ExpenseRequest expense)
     {
         using var connection = await _connectionFactory.CreateConnectionAsync();
         const string sql =
@@ -33,37 +75,10 @@ public class ExpenseRepository : IExpenseRepository
               INSERT INTO expenses
                   (user_id, place, description, amount, created_at)
               VALUES (@UserId, @Place, @Description, @Amount, @CreatedAt)
-              RETURNING id, place, description, amount, created_at
             """;
-        await connection.ExecuteAsync(sql, expense);
+        var result = await connection.ExecuteAsync(sql, expense);
         
-        const string recordCountSql = """SELECT COUNT(*) FROM expenses WHERE user_id = @UserId""";
-        var totalCount = await connection.ExecuteScalarAsync<int>(recordCountSql, new { UserId = expense.UserId });
-        
-        const string datasSql =
-            """
-                SELECT id, place, description, amount, created_at
-                FROM expenses
-                WHERE user_id = @UserId
-                ORDER BY id DESC
-                OFFSET @Offset 
-                LIMIT @PageSize
-            """;
-        
-        var parameters = new
-        {
-            UserId = expense.UserId,
-            PageSize = expense.PageSize,
-            Offset = (expense.Page - 1) * expense.PageSize,
-        };
-        
-        var expenseList = await connection.QueryAsync<Expense>(datasSql, parameters);
-
-        return new PagedResponse<Expense>
-        {
-            Data = expenseList,
-            TotalCount = totalCount,
-        };
+        return result > 0;
     }
 
     public async Task<Expense> UpdateAndGetExpense(UpdateExpense updatedExpense)

@@ -88,14 +88,12 @@ export function Dashboard() {
             const startStr = start.toISOString().split('T')[0];
             const endStr = end.toISOString().split('T')[0];
             
-            const response1 = await baseApi.post<ExpenseResponse>("expenses", {
+            const response1 = await baseApi.post<boolean>("expenses", {
                 UserId: user.id,
                 Place: currentExpense.place,
                 Description: currentExpense.description,
                 Amount: currentExpense.amount,
                 CreatedAt: currentExpense.created_at,
-                Page: currPage + 1,
-                PageSize: expPerPage,
             })
             console.log("create exp res list :",response1)
             
