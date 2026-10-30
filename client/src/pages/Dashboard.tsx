@@ -11,6 +11,8 @@ export function Dashboard() {
     const user  = useStore( state => state.auth)
     console.log("zustand user: ", user);
     const [isSaving, setIsSaving] = useState(false);
+    
+    const today = new Date().toISOString().split('T')[0]
 
     const [expenseList, setExpenseList] = useState<Expense[]>([]);
     const [pageCount, setPageCount] = useState(0);
@@ -35,18 +37,58 @@ export function Dashboard() {
         amount: useRef("")
     }
 
-    async function createExpense(event: React.MouseEvent, currPage: number, expPerPage: number ) {
+    // async function createExpense(event: React.MouseEvent, currPage: number, expPerPage: number ) {
+    //     event.preventDefault()
+    //
+    //     const currentExpense = {
+    //         user_id: user.id,
+    //         created_at: new Date().toISOString(),
+    //         //created_at: expenseRefs.created_at.current.value,
+    //         description: expenseRefs.description.current.value,
+    //         place: expenseRefs.place.current.value,
+    //         amount: expenseRefs.amount.current.value
+    //     }
+    //     try{
+    //         const response = await baseApi.post<ExpenseResponse>("expenses", {
+    //             UserId: user.id,
+    //             Place: currentExpense.place,
+    //             Description: currentExpense.description,
+    //             Amount: currentExpense.amount,
+    //             CreatedAt: currentExpense.created_at,
+    //             Page: currPage + 1,
+    //             PageSize: expPerPage,
+    //         })
+    //         console.log("create exp res list :",response)
+    //
+    //
+    //         if (response.status === 200) {
+    //             setExpenseList(response.data.data || [])
+    //             setPageCount(Math.ceil(response.data.totalCount/expensesPerPage))
+    //             clearExpenseRefs()
+    //
+    //             console.log("set total pages create :", pageCount)
+    //         }
+    //     } catch (error) {
+    //         console.log(error);
+    //     }
+    // }
+
+    async function createExpense(event: React.MouseEvent, start: Date, end: Date, id: number, currPage: number, expPerPage: number ) {
         event.preventDefault()
 
         const currentExpense = {
             user_id: user.id,
             created_at: new Date().toISOString(),
+            //created_at: expenseRefs.created_at.current.value,
             description: expenseRefs.description.current.value,
             place: expenseRefs.place.current.value,
             amount: expenseRefs.amount.current.value
         }
         try{
-            const response = await baseApi.post<ExpenseResponse>("expenses", {
+            const startStr = start.toISOString().split('T')[0];
+            const endStr = end.toISOString().split('T')[0];
+            
+            const response1 = await baseApi.post<ExpenseResponse>("expenses", {
                 UserId: user.id,
                 Place: currentExpense.place,
                 Description: currentExpense.description,
@@ -55,12 +97,19 @@ export function Dashboard() {
                 Page: currPage + 1,
                 PageSize: expPerPage,
             })
-            console.log("create exp res list :",response)
+            console.log("create exp res list :",response1)
+            
+            const response2 = await baseApi.post<ExpenseResponse>("expenses/load", {
+                UserId: user.id,
+                StartDate: startStr,
+                EndDate: endStr,
+                Page: currPage + 1,
+                PageSize: expPerPage,
+            })
 
-
-            if (response.status === 200) {
-                setExpenseList(response.data.data || [])
-                setPageCount(Math.ceil(response.data.totalCount/expensesPerPage))
+            if (response2.status === 200) {
+                setExpenseList(response2.data.data || [])
+                setPageCount(Math.ceil(response2.data.totalCount/expensesPerPage))
                 clearExpenseRefs()
 
                 console.log("set total pages create :", pageCount)
@@ -72,8 +121,14 @@ export function Dashboard() {
 
     const now = new Date();
     const year = now.getFullYear()
-    const firstDay = new Date(year, now.getMonth(), 2)
-    const lastDay = new Date(year, now.getMonth() + 1, 2)
+    // const firstDay = new Date(year, now.getMonth(), 2)
+    const firstDay = new Date(year, now.getMonth(), 1)
+
+    console.log("first day:", firstDay)
+    // const lastDay = new Date(year, now.getMonth() + 1, 2)
+    const lastDay = new Date(year, now.getMonth() + 1, 1)
+    
+    console.log("last day:", lastDay)
 
     // get expenses for the current month with axios and useEffect initially then implement with loader
     useEffect(() => {
@@ -142,11 +197,13 @@ export function Dashboard() {
         <>
             <section className="dashboard">
                 <div className="dashboard-top">
-                            <form onSubmit={(e) => createExpense(e, currentPage, expensesPerPage)}>
+                            {/*<form onSubmit={(e) => createExpense(e, currentPage, expensesPerPage)}>*/}
+                                <form onSubmit={(e) => createExpense(e, firstDay, lastDay, user.id, currentPage, expensesPerPage)}>
                         <label >Date</label>
                         <input
                             type="date"
                             name="date"
+                            min={today}
                             ref={expenseRefs.created_at}
                             required
                         />
