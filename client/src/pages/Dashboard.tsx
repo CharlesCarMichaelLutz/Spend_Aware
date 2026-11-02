@@ -9,7 +9,7 @@ import { format, parseISO } from "date-fns"
 
 export function Dashboard() {
     const user  = useStore( state => state.auth)
-    console.log("zustand user: ", user);
+    // console.log("zustand user: ", user);
     const [isSaving, setIsSaving] = useState(false);
     
     const today = new Date().toISOString().split('T')[0]
@@ -47,9 +47,9 @@ export function Dashboard() {
         }
         try{
             const startStr = start.toISOString().split('T')[0];
-            console.log("start:", startStr)
+            // console.log("start:", startStr)
             const endStr = end.toISOString().split('T')[0];
-            console.log("end:", endStr)
+            // console.log("end:", endStr)
             
             const response1 = await baseApi.post<boolean>("expenses", {
                 UserId: user.id,
@@ -58,7 +58,7 @@ export function Dashboard() {
                 Amount: currentExpense.amount,
                 CreatedAt: currentExpense.created_at,
             })
-            console.log("create exp res list :", response1)
+            // console.log("create exp res list :", response1)
             
             const response2 = await baseApi.post<ExpenseResponse>("expenses/load", {
                 UserId: user.id,
@@ -91,11 +91,11 @@ export function Dashboard() {
 
             try {
                 const startStr = start.toISOString().split('T')[0];
-                console.log("start:", startStr)
+                // console.log("start:", startStr)
                 const endStr = end.toISOString().split('T')[0];
-                console.log("end:", endStr)
+                // console.log("end:", endStr)
 
-                console.log("total pages type :", typeof totalPages)
+                // console.log("total pages type :", typeof totalPages)
 
                 const response = await baseApi.post<ExpenseResponse>("expenses/load", {
                     UserId: user.id,
@@ -125,17 +125,17 @@ export function Dashboard() {
                 Page: currPage + 1,
                 PageSize: expPerPage,
             })
-            console.log("total pages type :", typeof totalPages)
+            // console.log("total pages type :", typeof totalPages)
 
             if(response.status === 200) {
                 setExpenseList(response.data.data || [])
                 setPageCount(Math.ceil(response.data.totalCount/expensesPerPage))
                 setIsSaving(false);
                 
-                console.log("set total pages delete :", pageCount)
+                // console.log("set total pages delete :", pageCount)
             }
         } catch (error) {
-            console.log(error);
+            console.error(error);
         }finally {
             setIsSaving(false)
         }

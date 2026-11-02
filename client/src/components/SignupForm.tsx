@@ -71,19 +71,19 @@ export default function SignupForm({ setIsLandingModalOpen, setUserId }) {
                 onChange={handleSignupFormChange}
                 required
             />
-            <label htmlFor="password">Password</label>
-            <input
-                type="password"
-                id="password"
-                value={signupForm.password}
-                onChange={handleSignupFormChange}
-                required
-            />
             <label htmlFor="email">Email</label>
             <input
                 type="email"
                 id="email"
                 value={signupForm.email}
+                onChange={handleSignupFormChange}
+                required
+            />
+            <label htmlFor="password">Password</label>
+            <input
+                type="password"
+                id="password"
+                value={signupForm.password}
                 onChange={handleSignupFormChange}
                 required
             />

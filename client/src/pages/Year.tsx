@@ -22,12 +22,12 @@ export function Year() {
         const createdMonth = new Date(createdAt).getMonth()
         
         if(yearToInt === currentYear) {
-            console.log("compare current year :", monthIdx, currentMonth)
+            // console.log("compare current year :", monthIdx, currentMonth)
             return monthIdx > currentMonth
         }
         
         if (yearToInt === createdYear) {
-            console.log("compare created year :", monthIdx, createdMonth)
+            // console.log("compare created year :", monthIdx, createdMonth)
             return monthIdx < createdMonth
         }
         
@@ -61,7 +61,6 @@ export function Year() {
                         const disabled = isMonthDisabled(year, month, signupDate)
                         
                         return disabled ? (
-                                // <NavLink key={month} className="disabled-month-card" onClick={(e) => e.preventDefault()}>
                             <NavLink key={month} className="disabled-month-card" to={`/dashboard/${year}/${month}`}>
                                     {month}
                                 </NavLink>

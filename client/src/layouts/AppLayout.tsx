@@ -1,7 +1,6 @@
 import { Outlet, NavLink } from "react-router"
 import { useEffect, useState, useMemo } from "react";
 import type { YearEntry } from "../types/types"
-// import { useStore } from "../store/useStore.ts"
 import { useStore, authorizeUser } from "../store/useStore.ts"
 import { minidenticon } from "minidenticons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
@@ -14,7 +13,7 @@ export function AppLayout() {
     const [yearList, setYearList] = useState([]);
     const user = useStore(state => state.auth);
     const navigate = useNavigate();
-    console.log("user", user);
+    // console.log("user", user);
 
     function toggleSidebar() {
         setIsCollapsed(prev => !prev);
@@ -28,7 +27,7 @@ export function AppLayout() {
             const timeRightNow = new Date();
 
             const items = []
-            console.log("items", items);
+            // console.log("items", items);
 
                 let current = new Date(startDate.getFullYear(), startDate.getMonth());
 

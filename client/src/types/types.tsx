@@ -1,11 +1,4 @@
 
-// export type User = {
-//     id: number;
-//     username: string;
-//     email: string;
-//     created_at: string;
-// }
-
 export type User = {
     accessToken: string
     createdAt: string
@@ -13,16 +6,6 @@ export type User = {
     id: number;
     username: string;
 }
-
-// export type UserResponse = {
-//     accessToken: string
-//     createdAt: string
-//     email: string;
-//     id: number;
-//     username: string
-//     language: string
-//     currency: string
-// }
 
 export type UserResponse = {
     userId: number
@@ -32,14 +15,6 @@ export type VerifyEmail = {
     userId: number
     code: string 
 }
-
-// export interface User {
-//     accessToken: string
-//     createdAt: string
-//     email: string;
-//     id: number;
-//     username: string;
-// }
 
 export type Expense = {
     id: number;
@@ -55,10 +30,6 @@ export type ExpenseResponse = {
     expenses: Expense[]
     totalCount: number
 }
-
-// export type YearEntry = { 
-//     year: number; months: string[] 
-// }
 
 export type YearEntry = {
     year: number;

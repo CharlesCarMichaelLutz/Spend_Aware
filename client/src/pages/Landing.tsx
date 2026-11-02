@@ -21,15 +21,12 @@ export function Landing() {
 
     const toggleSignUp = () => {
         setIsSignUp((prev) => !prev);
-        // setUserErrors([]);
-        // setPassErrors([]);
-        // clearInput();
     };
 
     const [modalForm, setModalForm] = useState<object>({
         code: "",
     })
-
+    
     function clearModalForm() {
         setModalForm({
             code: "",
@@ -57,7 +54,7 @@ export function Landing() {
 
             if (response.status === 200) {
                 authorizeUser(response.data)
-                console.log("guest response: ", response)
+                // console.log("guest response: ", response)
                 navigate("/dashboard")
             }
         } catch(error) {

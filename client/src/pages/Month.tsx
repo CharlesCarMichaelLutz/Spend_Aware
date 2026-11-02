@@ -73,7 +73,7 @@ export function Month() {
                 if(response.status === 200) {
                     setExpenseList(response.data.data || [])
                     setMonthPageCount(Math.ceil(response.data.totalCount/monthExpensesPerPage))
-                    console.log("load month expense list: ", response)
+                    // console.log("load month expense list: ", response)
                 }
 
             } catch(error) {
