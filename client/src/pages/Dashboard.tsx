@@ -24,14 +24,12 @@ export function Dashboard() {
     }
 
     function clearExpenseRefs() {
-        expenseRefs.created_at.current.value = "";
         expenseRefs.description.current.value = "";
         expenseRefs.place.current.value = "";
         expenseRefs.amount.current.value = "";
     }
 
     const expenseRefs = {
-        created_at: useRef(""),
         description: useRef(""),
         place: useRef(""),
         amount: useRef("")
@@ -43,14 +41,15 @@ export function Dashboard() {
         const currentExpense = {
             user_id: user.id,
             created_at: new Date().toISOString(),
-            //created_at: expenseRefs.created_at.current.value,
             description: expenseRefs.description.current.value,
             place: expenseRefs.place.current.value,
             amount: expenseRefs.amount.current.value
         }
         try{
             const startStr = start.toISOString().split('T')[0];
+            console.log("start:", startStr)
             const endStr = end.toISOString().split('T')[0];
+            console.log("end:", endStr)
             
             const response1 = await baseApi.post<boolean>("expenses", {
                 UserId: user.id,
@@ -59,7 +58,7 @@ export function Dashboard() {
                 Amount: currentExpense.amount,
                 CreatedAt: currentExpense.created_at,
             })
-            console.log("create exp res list :",response1)
+            console.log("create exp res list :", response1)
             
             const response2 = await baseApi.post<ExpenseResponse>("expenses/load", {
                 UserId: user.id,
@@ -83,21 +82,19 @@ export function Dashboard() {
 
     const now = new Date();
     const year = now.getFullYear()
-    const firstDay = new Date(year, now.getMonth(), 1)
-    console.log("first day:", firstDay)
-    const lastDay = new Date(year, now.getMonth() + 1, 1)
-    console.log("last day:", lastDay)
+    const firstDay = new Date(year, now.getMonth(), 2)
+    const lastDay = new Date(year, now.getMonth() + 1, 2)
 
-    // get expenses for the current month with axios and useEffect initially then implement with loader
     useEffect(() => {
         if(!user) return;
         async function getCurrentMonthExpenseList(start: Date, end: Date, id: number, currPage: number, expPerPage: number):Promise<void> {
 
             try {
                 const startStr = start.toISOString().split('T')[0];
+                console.log("start:", startStr)
                 const endStr = end.toISOString().split('T')[0];
+                console.log("end:", endStr)
 
-                // console.log("current month load request :", user.id,  startStr, endStr);
                 console.log("total pages type :", typeof totalPages)
 
                 const response = await baseApi.post<ExpenseResponse>("expenses/load", {
@@ -108,21 +105,15 @@ export function Dashboard() {
                     PageSize: expPerPage,
                 })
 
-                console.log("initial load res :", response)
-
                 if (response.status === 200) {
                     setExpenseList(response.data.data || [])
                     setPageCount( Math.ceil(response.data.totalCount/expensesPerPage))
-                    
-                    console.log("set total pages load :", pageCount)
-                    // console.log("load expense list: ", response)
                 }
             } catch (err) {
                 console.error(err);
             }
         }
         getCurrentMonthExpenseList(firstDay, lastDay, user.id, currentPage, expensesPerPage);
-        // }, [user])
     }, [currentPage])
 
     async function deleteExpense(id: number, currPage: number, expPerPage: number) {
@@ -155,14 +146,6 @@ export function Dashboard() {
             <section className="dashboard">
                 <div className="dashboard-top">
                     <form onSubmit={(e) => createExpense(e, firstDay, lastDay, user.id, currentPage, expensesPerPage)}>
-                        <label >Date</label>
-                        <input
-                            type="date"
-                            name="date"
-                            min={today}
-                            ref={expenseRefs.created_at}
-                            required
-                        />
                         <label >Place</label>
                         <input
                             type="text"
@@ -185,6 +168,7 @@ export function Dashboard() {
                             name="amount"
                             ref={expenseRefs.amount}
                             placeholder='enter amount'
+                            step="0.01"
                             required
                         />
                         <button className="submit">Submit</button>
