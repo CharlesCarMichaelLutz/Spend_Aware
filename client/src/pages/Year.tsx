@@ -48,13 +48,45 @@ export function Year() {
         "November",
         "December"
     ]
+    
+    //for year report
+    //take year value
+        //create start and end
+        //pass to Year Report Button
+        //makes a request to server
+        //returns file stream
+    //client saves as blob type which represents binary data
+    //opens new window
+    //user can download the pdf for that month
+
+    async function createYearlyPdfReport() {
+        try {
+            // async function createMonthlyReportPdf(start, end) {
+            // const response = await baseApi.post<null>("report/month", {
+            const response = await baseApi.post<Blob>("report/month", {
+                //pass in arguments for API endpoint
+                //UserId
+                //start
+                //end
+            })
+
+            const pdf = new Blob([response.data], { type: 'application/pdf'})
+
+            const pdfUrl = URL.createObjectURL(pdf)
+
+            window.open(pdfUrl, "_blank")
+
+        } catch(error) {
+            console.error(error)
+        }
+    }
 
     return (
         <>
             <div className="year-wrapper">
                 <div className="year-title-wrapper">
                     <h3 className="year-title">Year:{year}</h3>
-                    <button>Get Report</button>
+                    <button>Year Report</button>
                 </div>
                 <div className="month-cards-grid">
                     {months.map(month => {

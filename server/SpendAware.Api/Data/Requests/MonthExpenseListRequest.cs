@@ -1,0 +1,8 @@
+namespace SpendAware.Api.Data.Requests;
+
+public class MonthExpenseListRequest
+{
+     public int UserId { get; set; }
+     public DateTimeOffset StartDate { get; set; }
+     public DateTimeOffset EndDate { get; set; }
+}

@@ -9,7 +9,7 @@ namespace SpendAware.Api.Infrastructure;
 
 public interface IPdfGenerator
 {
-    void CreateMonthlyAutomatedPdfReports(List<UserExpenseReport> reports);
+    // void CreateMonthlyAutomatedPdfReports(List<UserExpenseReport> reports);
     MemoryStream CreatePdfByYear(IEnumerable<ExpenseResponse> expenseList);
     MemoryStream CreatePdfByMonth(IEnumerable<ExpenseResponse> expenseList);
     void CreatePdf();
@@ -22,42 +22,42 @@ public class PdfGenerator : IPdfGenerator
         QuestPDF.Settings.License = LicenseType.Community;
     }
     
-    public void CreateMonthlyAutomatedPdfReports(List<UserExpenseReport> reports)
-    {
-        foreach (var report in reports)
-        {
-            var document = Document.Create(container =>
-            {
-                container.Page(page =>
-                {
-                    page.Size(PageSizes.A4);
-                    page.Margin(2, Unit.Centimetre);
-                    page.PageColor(Colors.White);
-                    page.DefaultTextStyle(x => x.FontSize(20));
-                
-                    page.Header().Text($"Spend Aware {report.UserResponse.Username}").SemiBold().FontSize(30).FontColor(Colors.Blue.Medium);
-
-                    page.Content()
-                        .PaddingVertical(1, Unit.Centimetre)
-                        .Column(x =>
-                        {
-                            x.Spacing(20);
-                            x.Item().Text(Placeholders.LoremIpsum());
-                            x.Item().Image(Placeholders.Image(200, 100));
-                        });
-
-                    page.Footer()
-                        .AlignCenter()
-                        .Text(x =>
-                        {
-                            x.Span("Page ");
-                            x.CurrentPageNumber();
-                        });
-                });
-            });
-            report.PdfFile = document.GeneratePdf();
-        }
-    }
+    // public void CreateMonthlyAutomatedPdfReports(List<UserExpenseReport> reports)
+    // {
+    //     foreach (var report in reports)
+    //     {
+    //         var document = Document.Create(container =>
+    //         {
+    //             container.Page(page =>
+    //             {
+    //                 page.Size(PageSizes.A4);
+    //                 page.Margin(2, Unit.Centimetre);
+    //                 page.PageColor(Colors.White);
+    //                 page.DefaultTextStyle(x => x.FontSize(20));
+    //             
+    //                 page.Header().Text($"Spend Aware {report.UserResponse.Username}").SemiBold().FontSize(30).FontColor(Colors.Blue.Medium);
+    //
+    //                 page.Content()
+    //                     .PaddingVertical(1, Unit.Centimetre)
+    //                     .Column(x =>
+    //                     {
+    //                         x.Spacing(20);
+    //                         x.Item().Text(Placeholders.LoremIpsum());
+    //                         x.Item().Image(Placeholders.Image(200, 100));
+    //                     });
+    //
+    //                 page.Footer()
+    //                     .AlignCenter()
+    //                     .Text(x =>
+    //                     {
+    //                         x.Span("Page ");
+    //                         x.CurrentPageNumber();
+    //                     });
+    //             });
+    //         });
+    //         report.PdfFile = document.GeneratePdf();
+    //     }
+    // }
 
     public MemoryStream CreatePdfByYear(IEnumerable<ExpenseResponse> expenseList)
     {
@@ -80,6 +80,40 @@ public class PdfGenerator : IPdfGenerator
                         x.Item().Text(Placeholders.LoremIpsum());
                         x.Item().Image(Placeholders.Image(200, 100));
                     });
+                
+                // page.Content()
+                //     .Table(table =>
+                //     {
+                //         table.ColumnsDefinition(columns =>
+                //         {
+                //             columns.ConstantColumn(50);
+                //             columns.RelativeColumn();
+                //             columns.RelativeColumn();
+                //             columns.RelativeColumn();
+                //             columns.RelativeColumn();
+                //         });
+                //         
+                //         table.Header(header =>
+                //         {
+                //             header.Cell().BorderBottom(2).Padding(8).Text("#");
+                //             header.Cell().BorderBottom(2).Padding(8).Text("Date");
+                //             header.Cell().BorderBottom(2).Padding(8).Text("Description");
+                //             header.Cell().BorderBottom(2).Padding(8).Text("Place");
+                //             header.Cell().BorderBottom(2).Padding(8).Text("Amount");
+                //         });
+                //         
+                //         // int i = 1
+                //
+                //         foreach (var e in expenses)
+                //         {
+                //             int i = 1;
+                //             table.Cell().Padding(8).Text($"{i}");
+                //             table.Cell().Padding(8).Text(e.Date);
+                //             table.Cell().Padding(8).Text(e.Description);
+                //             table.Cell().Padding(8).Text(e.Place);
+                //             table.Cell().Padding(8).Text(e.Amount);
+                //         }
+                //     });
 
                 page.Footer()
                     .AlignCenter()
@@ -110,13 +144,49 @@ public class PdfGenerator : IPdfGenerator
                 
                 page.Header().Text("Spend Aware API Month").SemiBold().FontSize(30).FontColor(Colors.Blue.Medium);
 
+                // page.Content()
+                //     .PaddingVertical(1, Unit.Centimetre)
+                //     .Column(x =>
+                //     {
+                //         x.Spacing(20);
+                //         x.Item().Text(Placeholders.LoremIpsum());
+                //         x.Item().Image(Placeholders.Image(200, 100));
+                //     });
+                
                 page.Content()
-                    .PaddingVertical(1, Unit.Centimetre)
-                    .Column(x =>
+                    .Table(table =>
                     {
-                        x.Spacing(20);
-                        x.Item().Text(Placeholders.LoremIpsum());
-                        x.Item().Image(Placeholders.Image(200, 100));
+                        table.ColumnsDefinition(columns =>
+                        {
+                            columns.ConstantColumn(50);
+                            columns.RelativeColumn();
+                            columns.RelativeColumn();
+                            columns.RelativeColumn();
+                            columns.RelativeColumn();
+                        });
+                        
+                        table.Header(header =>
+                        {
+                            header.Cell().BorderBottom(2).Padding(8).Text("#");
+                            header.Cell().BorderBottom(2).Padding(8).Text("Date");
+                            header.Cell().BorderBottom(2).Padding(8).Text("Description");
+                            header.Cell().BorderBottom(2).Padding(8).Text("Place");
+                            header.Cell().BorderBottom(2).Padding(8).Text("Amount");
+                        });
+                        
+                        // int i = 1
+
+                        foreach (var e in expenseList)
+                        {
+                            int i = 1;
+                            table.Cell().Padding(8).Text($"{i}");
+                            // table.Cell().Padding(8).Text(e.CreatedAt);
+                            table.Cell().Padding(8).Text($"{e.CreatedAt}");
+                            table.Cell().Padding(8).Text($"{e.Description}");
+                            table.Cell().Padding(8).Text($"{e.Place}");
+                            table.Cell().Padding(8).Text($"{e.Amount}");
+                            i += 1;
+                        }
                     });
 
                 page.Footer()

@@ -44,8 +44,8 @@ services.AddScoped<IUserService, UserService>();
 services.AddScoped<IUserRepository, UserRepository>();
 services.AddScoped<IExpenseService, ExpenseService>();
 services.AddScoped<IExpenseRepository, ExpenseRepository>();
-services.AddScoped<IExpenseReportService, ExpenseReportService>();
-services.AddScoped<IExpenseReportRepository, ExpenseReportRepository>();
+services.AddScoped<IReportService, ReportService>();
+services.AddScoped<IReportRepository, ReportRepository>();
 
 //Infrastructure
 services.AddSingleton<IPasswordHasher, PasswordHasher>();
@@ -191,19 +191,19 @@ app.MapPost("expenses/delete", async ( IExpenseService service, [FromBody] Delet
     }
 });
 
-app.MapPost("report/automated", async (IExpenseReportService service, [FromBody] ReportListRequest request) =>
-{
-    var response = await service.GetMonthlyReport(request);
-    return Results.Ok(response);
-});
+// app.MapPost("report/automated", async (IReportService service, [FromBody] ReportListRequest request) =>
+// {
+//     var response = await service.GetMonthlyReport(request);
+//     return Results.Ok(response);
+// });
 
-app.MapPost("report/year", async (IExpenseReportService service, [FromBody] LoadExpenseListRequest request) =>
-{
-    var stream = await service.GetAllExpensesByYear(request);
-    return Results.File(stream, "application/pdf", "test.pdf");
-});
+// app.MapPost("report/year", async (IReportService service, [FromBody] LoadExpenseListRequest request) =>
+// {
+//     var stream = await service.GetAllExpensesByYear(request);
+//     return Results.File(stream, "application/pdf", "test.pdf");
+// });
 
-app.MapPost("report/month", async (IExpenseReportService service, [FromBody] LoadExpenseListRequest request) =>
+app.MapPost("report/month", async (IReportService service, [FromBody] MonthExpenseListRequest request) =>
 {
     var stream = await service.GetAllExpensesByMonth(request);
     return Results.File(stream, "application/pdf", "test.pdf");
